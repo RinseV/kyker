@@ -1,0 +1,53 @@
+{
+    "name": "server",
+    "version": "1.0.0",
+    "main": "dist/index.js",
+    "scripts": {
+        "dev": "ts-node-dev src/index.ts",
+        "start": "ts-node src/index.ts",
+        "create:migration": "mikro-orm migration:create",
+        "lint": "eslint . --ext .ts",
+        "test": "jest --passWithNoTests --silent"
+    },
+    "license": "MIT",
+    "devDependencies": {
+        "@types/node": "^16.10.3",
+        "@typescript-eslint/eslint-plugin": "^4.33.0",
+        "@typescript-eslint/parser": "^4.33.0",
+        "eslint": "^7.32.0",
+        "eslint-config-prettier": "^8.3.0",
+        "eslint-plugin-import": "^2.24.2",
+        "eslint-plugin-prettier": "^4.0.0",
+        "prettier": "^2.4.1",
+        "ts-node": "^10.2.1",
+        "ts-node-dev": "^1.1.8",
+        "typescript": "^4.4.3"
+    },
+    "dependencies": {
+        "@mgcrea/fastify-session": "^0.14.1",
+        "@mgcrea/fastify-session-redis-store": "^0.10.1",
+        "@mikro-orm/cli": "^4.5.9",
+        "@mikro-orm/core": "^4.5.9",
+        "@mikro-orm/migrations": "^4.5.9",
+        "@mikro-orm/postgresql": "^4.5.9",
+        "@types/ioredis": "^4.27.6",
+        "apollo-server-core": "^3.3.0",
+        "apollo-server-fastify": "^3.3.0",
+        "class-validator": "^0.13.1",
+        "dotenv-safe": "^8.2.0",
+        "fastify": "^3.22.0",
+        "fastify-cookie": "^5.3.1",
+        "fastify-cors": "^6.0.2",
+        "graphql": "^15.6.1",
+        "graphql-fields-to-relations": "^1.0.5",
+        "ioredis": "^4.27.10",
+        "type-graphql": "^1.1.1"
+    },
+    "mikro-orm": {
+        "useTsNode": "true",
+        "configPaths": [
+            "./src/mikro-orm.config.ts",
+            "./dist/mikro-orm.config.js"
+        ]
+    }
+}

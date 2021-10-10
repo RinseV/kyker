@@ -28,19 +28,29 @@ export class PinResolver {
 
     @Mutation(() => Pin)
     async createPin(
+        @Arg('id', () => String) id: string,
         @Arg('input', () => PinValidator) input: PinValidator,
         @Info() info: GraphQLResolveInfo,
         @Ctx() { em, req }: MyContext
     ): Promise<Pin> {
         const relationPaths = fieldsToRelations(info);
-        // Get user from request
-        const id = req.session.data.id;
-        const user = await em.getRepository(User).findOne({
+
+        // Attempt to finder user with fingerprint
+        let user = await em.getRepository(User).findOne({
             id
         });
         if (!user) {
-            throw new Error('User not found');
+            // If there is no user yet, we must create one
+            const newUser = em.create(User, {
+                id
+            });
+            // Save user
+            await em.persistAndFlush(newUser);
+            user = newUser;
         }
+
+        // Set cookie for next time
+        req.session.data.id = user.id;
 
         // Create pin
         const pin = em.create(Pin, {

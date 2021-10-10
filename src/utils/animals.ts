@@ -1,17 +1,17 @@
 import { registerEnumType } from 'type-graphql';
 
 export enum Animal {
-    LION = 'Lion',
-    LEOPARD = 'Leopard',
-    CHEETAH = 'Cheetah',
-    WILD_DOG = 'Wild Dog',
-    HYENA = 'Hyena',
-    BUFFALO = 'Buffalo',
-    HIPPO = 'Hippo',
-    ELEPHANT = 'Elephant',
-    GIRAFFE = 'Giraffe',
-    ZEBRA = 'Zebra',
-    RHINO = 'Rhino'
+    LION = 'Lion', // Red
+    LEOPARD = 'Leopard', // Black
+    CHEETAH = 'Cheetah', // Blue
+    WILD_DOG = 'Wild Dog', // Brown
+    HYENA = 'Hyena', // None :(
+    BUFFALO = 'Buffalo', // Yellow
+    HIPPO = 'Hippo', // None :(
+    ELEPHANT = 'Elephant', // Green
+    GIRAFFE = 'Giraffe', // None :(
+    ZEBRA = 'Zebra', // None :(
+    RHINO = 'Rhino' // Orange
 }
 
 registerEnumType(Animal, {

@@ -19,6 +19,8 @@ import { COOKIE_NAME, SESSION_TTL, __prod__ } from './constants';
 import { SpottingResolver } from './resolvers/spotting.resolver';
 import { UserResolver } from './resolvers/user.resolver';
 import { AnimalResolver } from './resolvers/animal.resolver';
+import { GateResolver } from './resolvers/gate.resolver';
+import { CampResolver } from './resolvers/camp.resolver';
 
 function fastifyAppClosePlugin(app: FastifyInstance) {
     return {
@@ -94,7 +96,7 @@ export default class Application {
             // Init Apollo server
             this.apolloServer = new ApolloServer({
                 schema: await buildSchema({
-                    resolvers: [UserResolver, SpottingResolver, AnimalResolver],
+                    resolvers: [UserResolver, SpottingResolver, AnimalResolver, CampResolver, GateResolver],
                     validate: true,
                     dateScalarMode: 'timestamp'
                 }),

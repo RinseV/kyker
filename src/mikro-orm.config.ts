@@ -1,14 +1,14 @@
 import { IDatabaseDriver, Options } from '@mikro-orm/core';
 import path from 'path';
 import { __prod__ } from './constants';
-import { Animal, Color, Location, Spotting, User } from './entities';
+import { Animal, Camp, Color, Gate, Location, Spotting, User } from './entities';
 
 const config: Options<IDatabaseDriver> = {
     migrations: {
         path: path.join(__dirname, './migrations'),
         pattern: /^[\w-]+\d+\.[tj]s$/
     },
-    entities: [User, Spotting, Location, Animal, Color],
+    entities: [User, Spotting, Location, Animal, Color, Camp, Gate],
     dbName: process.env.DB_NAME,
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,

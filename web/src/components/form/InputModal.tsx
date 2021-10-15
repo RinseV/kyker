@@ -29,13 +29,12 @@ export type FormData = {
 
 type InputModalProps = {
     isOpen: boolean;
-    onOpen: () => void;
     onClose: () => void;
     coordinates: LngLat;
     onSuccess: () => void;
 };
 
-export const InputModal: React.VFC<InputModalProps> = ({ coordinates, isOpen, onOpen, onClose, onSuccess }) => {
+export const InputModal: React.VFC<InputModalProps> = ({ coordinates, isOpen, onClose, onSuccess }) => {
     const initialRef = useRef(null);
     const finalRef = useRef(null);
 
@@ -112,7 +111,9 @@ export const InputModal: React.VFC<InputModalProps> = ({ coordinates, isOpen, on
                 <ModalHeader>Add a spot</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody pb={6}>
-                    <SpotInput
+                    <SpotInput<FormData>
+                        animalName="animal"
+                        descriptionName="description"
                         register={register}
                         control={control}
                         coordinates={coordinates}

@@ -45,4 +45,5 @@ export const preferenceSlice = createSlice({
 export const { addHiddenAnimal, removeHiddenAnimal, toggleHiddenAnimal, toggleHideCamps, toggleHideGates } =
     preferenceSlice.actions;
 
+// eslint-disable-next-line import/no-default-export
 export default preferenceSlice.reducer;

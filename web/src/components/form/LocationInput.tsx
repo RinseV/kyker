@@ -18,7 +18,7 @@ export const LocationInput: React.VFC<LocationInputProps> = ({ coordinates, regi
             <FormLabel>Location</FormLabel>
             <HStack spacing={4} w="full">
                 {/* Longitude */}
-                <LngLatInput
+                <LngLatInput<FormData>
                     name="lng"
                     register={register}
                     defaultValue={coordinates.lng}
@@ -28,7 +28,7 @@ export const LocationInput: React.VFC<LocationInputProps> = ({ coordinates, regi
                 />
 
                 {/* Latitude */}
-                <LngLatInput
+                <LngLatInput<FormData>
                     name="lat"
                     register={register}
                     defaultValue={coordinates.lat}

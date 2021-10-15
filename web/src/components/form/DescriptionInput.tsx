@@ -1,25 +1,25 @@
 import { FormControl, FormLabel } from '@chakra-ui/form-control';
 import { Textarea } from '@chakra-ui/textarea';
 import React from 'react';
-import { UseFormRegister } from 'react-hook-form';
+import { FieldValues, Path, UseFormRegister } from 'react-hook-form';
 
-type DescriptionInputProps = {
-    name: string;
-    register: UseFormRegister<any>;
+type DescriptionInputProps<T extends FieldValues = FieldValues> = {
+    name: Path<T>;
+    register: UseFormRegister<T>;
     label?: string;
     isDisabled?: boolean;
     isRequired?: boolean;
     placeholder?: string;
 };
 
-export const DescriptionInput: React.VFC<DescriptionInputProps> = ({
+export function DescriptionInput<T extends FieldValues = FieldValues>({
     name,
     register,
     label,
     isDisabled,
     isRequired,
     placeholder
-}) => {
+}: DescriptionInputProps<T>): JSX.Element {
     return (
         <FormControl isDisabled={isDisabled}>
             {label ? <FormLabel htmlFor={name}>{label}</FormLabel> : null}
@@ -34,4 +34,4 @@ export const DescriptionInput: React.VFC<DescriptionInputProps> = ({
             />
         </FormControl>
     );
-};
+}

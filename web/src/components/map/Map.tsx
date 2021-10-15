@@ -18,7 +18,7 @@ interface ClickEvent {
 }
 
 const MapboxMap = ReactMapboxGl({
-    accessToken: process.env.REACT_APP_MAPBOX_API_KEY!
+    accessToken: process.env.REACT_APP_MAPBOX_API_KEY as string
 });
 
 // Centered on Skukuza
@@ -99,6 +99,7 @@ export const Map: React.VFC = () => {
     };
 
     // On click event for map that displays popup
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleClick = (map: mapboxgl.Map, evt: React.SyntheticEvent<any, Event>) => {
         const target = evt as unknown as ClickEvent;
         // Set coordinates (and other info)
@@ -136,14 +137,8 @@ export const Map: React.VFC = () => {
                 <RestCampLayer />
                 <GateLayer />
                 <SpottingsLayer />
-                <Target
-                    info={targetMarker}
-                    isOpen={isOpen}
-                    onOpen={onOpen}
-                    onClose={onClose}
-                    onSuccess={handleSuccess}
-                />
-                <Legend isOpen={legendOpen} onOpen={legendOnOpen} onClose={legendOnClose} />
+                <Target info={targetMarker} isOpen={isOpen} onClose={onClose} onSuccess={handleSuccess} />
+                <Legend isOpen={legendOpen} onClose={legendOnClose} />
             </>
         </MapboxMap>
     );

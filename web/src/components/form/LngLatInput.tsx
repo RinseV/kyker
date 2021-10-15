@@ -1,25 +1,25 @@
 import { FormControl, FormLabel } from '@chakra-ui/form-control';
 import { Input } from '@chakra-ui/input';
 import React from 'react';
-import { UseFormRegister } from 'react-hook-form';
+import { FieldValues, Path, UseFormRegister } from 'react-hook-form';
 
-type LngLatInputProps = {
-    name: string;
-    register?: UseFormRegister<any>;
+type LngLatInputProps<T extends FieldValues = FieldValues> = {
+    name: Path<T>;
+    register?: UseFormRegister<T>;
     defaultValue?: number;
     isDisabled?: boolean;
     label?: string;
     placeholder?: string;
 };
 
-export const LngLatInput: React.VFC<LngLatInputProps> = ({
+export function LngLatInput<T extends FieldValues = FieldValues>({
     name,
     register,
     defaultValue,
     isDisabled,
     label,
     placeholder
-}) => {
+}: LngLatInputProps<T>): JSX.Element {
     return (
         <FormControl isDisabled={isDisabled}>
             {label ? (
@@ -38,4 +38,4 @@ export const LngLatInput: React.VFC<LngLatInputProps> = ({
             )}
         </FormControl>
     );
-};
+}

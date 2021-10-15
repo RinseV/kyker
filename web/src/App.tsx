@@ -13,5 +13,3 @@ export const App = (): JSX.Element => {
         </Container>
     );
 };
-
-export default App;

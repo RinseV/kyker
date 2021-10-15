@@ -1,0 +1,9 @@
+fragment Animal on Animal {
+    id
+    name
+    color {
+        light
+        dark
+        colorScheme
+    }
+}

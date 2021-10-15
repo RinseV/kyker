@@ -1,0 +1,11 @@
+fragment Spotting on Spotting {
+    id
+    animal {
+        ...Animal
+    }
+    location {
+        lon
+        lat
+    }
+    description
+}

@@ -1,0 +1,5 @@
+query Spottings($animals: [Int!]) {
+    spottings(animals: $animals) {
+        ...Spotting
+    }
+}

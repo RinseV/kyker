@@ -1,13 +1,15 @@
 import React from 'react';
-import { DarkModeSwitch } from './components/common/DarkModeSwitch';
 import { Container } from './components/layout/Container';
+import { Footer } from './components/layout/Footer';
+import { Header } from './components/layout/Header';
 import { Map } from './components/map/Map';
 
 export const App = (): JSX.Element => {
     return (
         <Container>
-            <DarkModeSwitch />
+            <Header />
             <Map />
+            <Footer />
         </Container>
     );
 };

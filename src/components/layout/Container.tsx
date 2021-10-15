@@ -11,7 +11,6 @@ export const Container: React.FC<ContainerProps> = ({ children, ...props }) => {
             direction="column"
             bg={useColorModeValue('gray.50', 'gray.800')}
             transition="0.3s ease-out"
-            alignItems="center"
             {...props}
         >
             {children}

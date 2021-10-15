@@ -24,8 +24,10 @@ const bounds: FitBounds = [
     [32.692252, -22.16947]
 ];
 
+// Centered on Skukuza
 const center: [number, number] = [31.5896973, -24.9964431];
-const zoom: [number] = [10];
+// Zoom to see southern part of park
+const zoom: [number] = [8];
 
 export interface TargetMarkerInfo {
     coordinates: LngLat;
@@ -44,6 +46,7 @@ export const Map: React.VFC = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     const onMapLoad = (map: mapboxgl.Map) => {
+        map.resize();
         map.addControl(new GeolocateControl());
     };
 
@@ -62,7 +65,7 @@ export const Map: React.VFC = () => {
         <MapboxMap
             // eslint-disable-next-line react/style-prop-object
             style={style}
-            containerStyle={{ height: '100vh', width: '80%' }}
+            containerStyle={{ flex: 1 }}
             maxBounds={bounds}
             center={center}
             zoom={zoom}

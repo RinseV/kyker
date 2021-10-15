@@ -1,84 +1,94 @@
-import { MikroORM } from '@mikro-orm/core';
-import faker from 'faker';
-import { Animal, Camp, Color, Gate, Location, User } from '../src/entities';
-import { CampSize } from '../src/utils/campSize';
+import Application from '../src/application';
+import supertest, { SuperTest, Test } from 'supertest';
+import { Fixtures, loadFixtures } from '../src/utils/services/loadFixtures.service';
+import { clearDatabase } from '../src/utils/services/clearDatabase.service';
 
-export interface Fixtures {
-    animals: Animal[];
-    camps: Camp[];
-    gates: Gate[];
-    users: User[];
-}
+describe('Spotting resolver tests', () => {
+    let application: Application;
+    let request: SuperTest<Test>;
+    let fixtures: Fixtures | undefined;
 
-export const AMOUNT_OF_FIXTURES = 5;
+    beforeAll(async () => {
+        application = new Application();
+        await application.connect();
+        await application.init();
 
-export const loadFixtures = async (orm: MikroORM): Promise<Fixtures | undefined> => {
-    let fixtures: Fixtures;
+        application.orm.em.fork();
 
-    try {
-        const animals = [...Array(AMOUNT_OF_FIXTURES)].map(() => {
-            const animal = orm.em.create(Animal, {
-                name: faker.vehicle.manufacturer(),
-                color: new Color(faker.commerce.color(), faker.commerce.color()),
-                createdAt: new Date(),
-                updatedAt: new Date()
-            });
+        request = supertest(application.host.server);
+    });
 
-            orm.em.persist(animal);
+    beforeEach(async () => {
+        await clearDatabase(application.orm);
+        fixtures = await loadFixtures(application.orm);
+    });
 
-            return animal;
-        });
+    afterAll(async () => {
+        application.host.server.close();
+        await application.orm.close();
+        await application.redis.quit();
+    });
 
-        await orm.em.flush();
+    test('Retrieve spottings success', async () => {
+        if (!fixtures) {
+            throw new Error('Fixtures not loaded');
+        }
 
-        const camps = [...Array(AMOUNT_OF_FIXTURES)].map(() => {
-            const camp = orm.em.create(Camp, {
-                name: faker.commerce.department(),
-                location: new Location(faker.datatype.float(5), faker.datatype.float(5)),
-                size: CampSize.BUSH,
-                createdAt: new Date(),
-                updatedAt: new Date()
-            });
+        const response = await retrieveSpottings(request).expect(200);
 
-            orm.em.persist(camp);
+        expect(response.body.data).toStrictEqual(
+            expect.objectContaining({
+                spottings: expect.arrayContaining([
+                    expect.objectContaining({
+                        id: expect.any(Number),
+                        user: expect.objectContaining({
+                            id: expect.any(String)
+                        }),
+                        animal: expect.objectContaining({
+                            id: expect.any(Number),
+                            name: expect.any(String)
+                        }),
+                        location: expect.objectContaining({
+                            lon: expect.any(Number),
+                            lat: expect.any(Number)
+                        }),
+                        description: expect.any(String)
+                    })
+                ])
+            })
+        );
+        expect(response.body.data.spottings.length).toBe(fixtures.spottings.length);
+    });
 
-            return camp;
-        });
+    test.todo('Retrieve spottings with animal filter');
 
-        await orm.em.flush();
+    test.todo('Retrieve spottings with animals exclude filter');
 
-        const gates = [...Array(AMOUNT_OF_FIXTURES)].map(() => {
-            const gate = orm.em.create(Gate, {
-                name: faker.commerce.productName(),
-                location: new Location(faker.datatype.float(5), faker.datatype.float(5)),
-                createdAt: new Date(),
-                updatedAt: new Date()
-            });
+    test.todo('Create spotting');
+});
 
-            orm.em.persist(gate);
-
-            return gate;
-        });
-
-        await orm.em.flush();
-
-        const users = [...Array(AMOUNT_OF_FIXTURES)].map((_, userIndex) => {
-            const user = orm.em.create(User, {
-                id: userIndex.toString(),
-                name: faker.name.firstName(),
-                createdAt: new Date(),
-                updatedAt: new Date()
-            });
-
-            orm.em.persist(user);
-
-            return user;
-        });
-
-        fixtures = { animals, camps, gates, users };
-
-        return fixtures;
-    } catch (error) {
-        console.error('Could not load fixtures', error);
-    }
+const retrieveSpottings = (request: SuperTest<Test>, animals?: number[], excludedAnimals?: number[]) => {
+    return request.post('/graphql').send({
+        query: `query Spottings($animals: [Int!], $excludedAnimals: [Int!]) {
+                spottings(animals: $animals, excludedAnimals: $excludedAnimals) {
+                    id
+                    user {
+                        id
+                    }
+                    animal {
+                        id
+                        name
+                    }
+                    location {
+                        lon
+                        lat
+                    }
+                    description
+                }
+            }`,
+        variables: {
+            animals,
+            excludedAnimals
+        }
+    });
 };

@@ -24,7 +24,7 @@ module.exports = {
         indent: 'off',
         quotes: ['warn', 'single'],
         semi: ['warn', 'always'],
-        'import/no-named-as-default': 0,
+        'import/no-named-as-default': 'off',
         'import/no-default-export': 'error',
         '@typescript-eslint/ban-types': [
             'error',

@@ -14,18 +14,11 @@ export const SpottingLayer: React.VFC<SpottingLayerProps> = ({ animal, spottings
     const isHidden = useAppSelector((state) => state.preferences.hiddenAnimals).some((id) => id === animal.id);
 
     // Get spottings for current animal
-    const animalSpottings = useMemo<SpottingFragment[] | undefined>(() => {
-        return spottings?.spottings.filter((s) => s.animal.id === animal.id);
+    const animalSpottings = useMemo<SpottingFragment[]>(() => {
+        return spottings.spottings.filter((s) => s.animal.id === animal.id);
     }, [spottings, animal.id]);
 
     const features = useMemo<GeoJSON.FeatureCollection<GeoJSON.Point>>(() => {
-        if (!animalSpottings || animalSpottings.length === 0) {
-            return {
-                type: 'FeatureCollection',
-                features: []
-            };
-        }
-
         return {
             type: 'FeatureCollection',
             features: animalSpottings.map((spotting) => ({

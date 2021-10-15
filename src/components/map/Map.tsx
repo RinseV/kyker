@@ -1,4 +1,5 @@
 import { useColorModeValue } from '@chakra-ui/color-mode';
+import { useDisclosure } from '@chakra-ui/react';
 import { GeolocateControl, LngLat } from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import React, { useState } from 'react';
@@ -39,6 +40,9 @@ export const Map: React.VFC = () => {
     // Target where the click was registered (displays marker)
     const [targetMarker, setTargetMarker] = useState<TargetMarkerInfo | null>(null);
 
+    // Whether modal is open
+    const { isOpen, onOpen, onClose } = useDisclosure();
+
     const onMapLoad = (map: mapboxgl.Map) => {
         map.addControl(new GeolocateControl());
     };
@@ -46,9 +50,12 @@ export const Map: React.VFC = () => {
     // On click event for map that displays popup
     const handleClick = (map: mapboxgl.Map, evt: React.SyntheticEvent<any, Event>) => {
         const target = evt as unknown as ClickEvent;
+        // Set coordinates (and other info)
         setTargetMarker({
             coordinates: target.lngLat
         });
+        // Open input modal
+        onOpen();
     };
 
     return (
@@ -65,7 +72,7 @@ export const Map: React.VFC = () => {
             <>
                 <RestCampLayer restCamps={restCampLocations} />
                 <GateLayer gates={gateLocations} />
-                <Target info={targetMarker} />
+                <Target info={targetMarker} isOpen={isOpen} onOpen={onOpen} onClose={onClose} />
             </>
         </MapboxMap>
     );

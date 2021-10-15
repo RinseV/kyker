@@ -1,0 +1,9 @@
+fragment Camp on Camp {
+    id
+    name
+    location {
+        lon
+        lat
+    }
+    size
+}

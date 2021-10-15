@@ -25,11 +25,37 @@ export type Animal = {
     updatedAt: Scalars['Timestamp'];
 };
 
+export type Camp = {
+    __typename?: 'Camp';
+    createdAt: Scalars['Timestamp'];
+    id: Scalars['Int'];
+    location: Location;
+    name: Scalars['String'];
+    size: CampSize;
+    updatedAt: Scalars['Timestamp'];
+};
+
+/** Camp size */
+export enum CampSize {
+    Bush = 'BUSH',
+    Rest = 'REST',
+    Sattelite = 'SATTELITE'
+}
+
 export type Color = {
     __typename?: 'Color';
     colorScheme?: Maybe<Scalars['String']>;
     dark: Scalars['String'];
     light: Scalars['String'];
+};
+
+export type Gate = {
+    __typename?: 'Gate';
+    createdAt: Scalars['Timestamp'];
+    id: Scalars['Int'];
+    location: Location;
+    name: Scalars['String'];
+    updatedAt: Scalars['Timestamp'];
 };
 
 export type Location = {
@@ -56,6 +82,8 @@ export type MutationLoginArgs = {
 export type Query = {
     __typename?: 'Query';
     animals: Array<Animal>;
+    camps: Array<Camp>;
+    gates: Array<Gate>;
     spottings: Array<Spotting>;
 };
 
@@ -95,6 +123,21 @@ export type AnimalFragment = {
     id: number;
     name: string;
     color: { __typename?: 'Color'; light: string; dark: string; colorScheme?: string | null | undefined };
+};
+
+export type CampFragment = {
+    __typename?: 'Camp';
+    id: number;
+    name: string;
+    size: CampSize;
+    location: { __typename?: 'Location'; lon: number; lat: number };
+};
+
+export type GateFragment = {
+    __typename?: 'Gate';
+    id: number;
+    name: string;
+    location: { __typename?: 'Location'; lon: number; lat: number };
 };
 
 export type SpottingFragment = {
@@ -143,6 +186,31 @@ export type AnimalsQuery = {
     }>;
 };
 
+export type CampsQueryVariables = Exact<{ [key: string]: never }>;
+
+export type CampsQuery = {
+    __typename?: 'Query';
+    camps: Array<{
+        __typename?: 'Camp';
+        id: number;
+        name: string;
+        size: CampSize;
+        location: { __typename?: 'Location'; lon: number; lat: number };
+    }>;
+};
+
+export type GatesQueryVariables = Exact<{ [key: string]: never }>;
+
+export type GatesQuery = {
+    __typename?: 'Query';
+    gates: Array<{
+        __typename?: 'Gate';
+        id: number;
+        name: string;
+        location: { __typename?: 'Location'; lon: number; lat: number };
+    }>;
+};
+
 export type SpottingsQueryVariables = Exact<{
     animals?: Maybe<Array<Scalars['Int']> | Scalars['Int']>;
 }>;
@@ -163,6 +231,27 @@ export type SpottingsQuery = {
     }>;
 };
 
+export const CampFragmentDoc = gql`
+    fragment Camp on Camp {
+        id
+        name
+        location {
+            lon
+            lat
+        }
+        size
+    }
+`;
+export const GateFragmentDoc = gql`
+    fragment Gate on Gate {
+        id
+        name
+        location {
+            lon
+            lat
+        }
+    }
+`;
 export const AnimalFragmentDoc = gql`
     fragment Animal on Animal {
         id
@@ -263,6 +352,76 @@ export function useAnimalsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<An
 export type AnimalsQueryHookResult = ReturnType<typeof useAnimalsQuery>;
 export type AnimalsLazyQueryHookResult = ReturnType<typeof useAnimalsLazyQuery>;
 export type AnimalsQueryResult = Apollo.QueryResult<AnimalsQuery, AnimalsQueryVariables>;
+export const CampsDocument = gql`
+    query Camps {
+        camps {
+            ...Camp
+        }
+    }
+    ${CampFragmentDoc}
+`;
+
+/**
+ * __useCampsQuery__
+ *
+ * To run a query within a React component, call `useCampsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCampsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCampsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useCampsQuery(baseOptions?: Apollo.QueryHookOptions<CampsQuery, CampsQueryVariables>) {
+    const options = { ...defaultOptions, ...baseOptions };
+    return Apollo.useQuery<CampsQuery, CampsQueryVariables>(CampsDocument, options);
+}
+export function useCampsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CampsQuery, CampsQueryVariables>) {
+    const options = { ...defaultOptions, ...baseOptions };
+    return Apollo.useLazyQuery<CampsQuery, CampsQueryVariables>(CampsDocument, options);
+}
+export type CampsQueryHookResult = ReturnType<typeof useCampsQuery>;
+export type CampsLazyQueryHookResult = ReturnType<typeof useCampsLazyQuery>;
+export type CampsQueryResult = Apollo.QueryResult<CampsQuery, CampsQueryVariables>;
+export const GatesDocument = gql`
+    query Gates {
+        gates {
+            ...Gate
+        }
+    }
+    ${GateFragmentDoc}
+`;
+
+/**
+ * __useGatesQuery__
+ *
+ * To run a query within a React component, call `useGatesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGatesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGatesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGatesQuery(baseOptions?: Apollo.QueryHookOptions<GatesQuery, GatesQueryVariables>) {
+    const options = { ...defaultOptions, ...baseOptions };
+    return Apollo.useQuery<GatesQuery, GatesQueryVariables>(GatesDocument, options);
+}
+export function useGatesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GatesQuery, GatesQueryVariables>) {
+    const options = { ...defaultOptions, ...baseOptions };
+    return Apollo.useLazyQuery<GatesQuery, GatesQueryVariables>(GatesDocument, options);
+}
+export type GatesQueryHookResult = ReturnType<typeof useGatesQuery>;
+export type GatesLazyQueryHookResult = ReturnType<typeof useGatesLazyQuery>;
+export type GatesQueryResult = Apollo.QueryResult<GatesQuery, GatesQueryVariables>;
 export const SpottingsDocument = gql`
     query Spottings($animals: [Int!]) {
         spottings(animals: $animals) {
@@ -304,6 +463,8 @@ export type SpottingsQueryResult = Apollo.QueryResult<SpottingsQuery, SpottingsQ
 export const namedOperations = {
     Query: {
         Animals: 'Animals',
+        Camps: 'Camps',
+        Gates: 'Gates',
         Spottings: 'Spottings'
     },
     Mutation: {
@@ -311,6 +472,8 @@ export const namedOperations = {
     },
     Fragment: {
         Animal: 'Animal',
+        Camp: 'Camp',
+        Gate: 'Gate',
         Spotting: 'Spotting'
     }
 };

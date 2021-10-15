@@ -8,9 +8,7 @@ import { mapBounds } from '../../utils/constants';
 import { inBounds } from '../../utils/inBounds';
 import { MapButtons } from './buttons/MapButtons';
 import { RestCampLayer } from './camps/RestCampLayer';
-import { restCampLocations } from './camps/RestCamps';
 import { GateLayer } from './gates/GateLayer';
-import { gateLocations } from './gates/Gates';
 import { Legend } from './legend/Legend';
 import { SpottingsLayer } from './spottings/SpottingsLayer';
 import { Target } from './Target';
@@ -135,8 +133,8 @@ export const Map: React.VFC = () => {
             <>
                 <MapButtons onLocationClick={onLocationButtonClick} onLegendClick={legendOnOpen} />
 
-                <RestCampLayer restCamps={restCampLocations} />
-                <GateLayer gates={gateLocations} />
+                <RestCampLayer />
+                <GateLayer />
                 <SpottingsLayer />
                 <Target
                     info={targetMarker}

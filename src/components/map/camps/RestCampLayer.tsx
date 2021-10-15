@@ -1,35 +1,40 @@
 import { useColorModeValue } from '@chakra-ui/color-mode';
 import React, { useMemo } from 'react';
 import { GeoJSONLayer } from 'react-mapbox-gl';
-import { CampType, RestCamp } from './RestCamps';
+import { CampSize, useCampsQuery } from '../../../generated/graphql';
 
-type RestCampLayerProps = {
-    restCamps: RestCamp[];
-};
-
-export const RestCampLayer: React.VFC<RestCampLayerProps> = ({ restCamps }) => {
-    const restCampColor = useColorModeValue('#B83280', '#F687B3');
-    const otherCampColor = useColorModeValue('#6B46C1', '#B794F4');
+export const RestCampLayer: React.VFC = () => {
+    // TODO: change color or symbol
+    const campColor = useColorModeValue('#B83280', '#F687B3');
     const textColor = useColorModeValue('black', 'white');
 
+    const { data: camps } = useCampsQuery();
+
     const features = useMemo<GeoJSON.FeatureCollection<GeoJSON.Point>>(() => {
+        if (!camps?.camps || camps.camps.length === 0) {
+            return {
+                type: 'FeatureCollection',
+                features: []
+            };
+        }
+
         return {
             type: 'FeatureCollection',
-            features: restCamps.map((restCamp) => {
+            features: camps.camps.map((restCamp) => {
                 return {
                     type: 'Feature',
                     geometry: {
                         type: 'Point',
-                        coordinates: [restCamp.lon, restCamp.lat]
+                        coordinates: [restCamp.location.lon, restCamp.location.lat]
                     },
                     properties: {
                         name: restCamp.name,
-                        type: restCamp.type
+                        size: restCamp.size
                     }
                 };
             })
         };
-    }, [restCamps]);
+    }, [camps]);
 
     return (
         <>
@@ -38,15 +43,15 @@ export const RestCampLayer: React.VFC<RestCampLayerProps> = ({ restCamps }) => {
                 circlePaint={{
                     'circle-radius': [
                         'case',
-                        ['==', ['get', 'type'], CampType.REST],
+                        ['==', ['get', 'size'], CampSize.Rest],
                         6,
-                        ['==', ['get', 'type'], CampType.BUSH],
+                        ['==', ['get', 'size'], CampSize.Bush],
                         4,
-                        ['==', ['get', 'type'], CampType.SATTELITE],
+                        ['==', ['get', 'size'], CampSize.Sattelite],
                         3,
                         2
                     ],
-                    'circle-color': ['case', ['==', ['get', 'type'], CampType.REST], restCampColor, otherCampColor]
+                    'circle-color': campColor
                 }}
                 symbolLayout={{
                     'text-field': ['get', 'name'],

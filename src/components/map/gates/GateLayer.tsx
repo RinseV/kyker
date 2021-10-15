@@ -1,12 +1,10 @@
 import { useColorModeValue } from '@chakra-ui/color-mode';
 import React, { useMemo } from 'react';
-import { GeoJSONLayer } from 'react-mapbox-gl';
+import { GeoJSONLayer, Image } from 'react-mapbox-gl';
 import { useGatesQuery } from '../../../generated/graphql';
 
 export const GateLayer: React.VFC = () => {
     const textColor = useColorModeValue('black', 'white');
-    // TODO: change color or symbol
-    const gateColor = useColorModeValue('#2C7A7B', '#4FD1C5');
 
     const { data: gates } = useGatesQuery();
 
@@ -36,13 +34,13 @@ export const GateLayer: React.VFC = () => {
 
     return (
         <>
+            <Image id="gate" url={'/gate.png'} />
+
             <GeoJSONLayer
                 data={features}
-                circlePaint={{
-                    'circle-radius': ['get', 'size'],
-                    'circle-color': gateColor
-                }}
                 symbolLayout={{
+                    'icon-image': 'gate',
+                    'icon-size': 0.3,
                     'text-field': ['get', 'name'],
                     'text-size': 14,
                     'text-variable-anchor': ['left', 'top', 'bottom', 'right'],

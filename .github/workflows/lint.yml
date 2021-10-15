@@ -4,7 +4,10 @@ jobs:
     eslint:
         runs-on: ubuntu-latest
         strategy:
-            matrix: { dir: ['./web', './server'] }
+            matrix: { dir: ['web', 'server'] }
+        defaults:
+            run:
+                working-directory: ${{ matrix.dir }}
         steps:
             - uses: actions/checkout@v2
             - name: Use Node.js

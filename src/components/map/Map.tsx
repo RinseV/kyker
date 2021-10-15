@@ -1,14 +1,17 @@
 import { useColorModeValue } from '@chakra-ui/color-mode';
-import { useDisclosure } from '@chakra-ui/react';
-import { GeolocateControl, LngLat } from 'mapbox-gl';
+import { useDisclosure, useToast } from '@chakra-ui/react';
+import { LngLat } from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import ReactMapboxGl from 'react-mapbox-gl';
-import { FitBounds } from 'react-mapbox-gl/lib/map';
+import { mapBounds } from '../../utils/constants';
+import { inBounds } from '../../utils/inBounds';
+import { MapButtons } from './buttons/MapButtons';
 import { RestCampLayer } from './camps/RestCampLayer';
 import { restCampLocations } from './camps/RestCamps';
 import { GateLayer } from './gates/GateLayer';
 import { gateLocations } from './gates/Gates';
+import { Legend } from './legend/Legend';
 import { SpottingsLayer } from './spottings/SpottingsLayer';
 import { Target } from './Target';
 
@@ -19,11 +22,6 @@ interface ClickEvent {
 const MapboxMap = ReactMapboxGl({
     accessToken: process.env.REACT_APP_MAPBOX_API_KEY!
 });
-
-const bounds: FitBounds = [
-    [30.753648, -25.605811],
-    [32.692252, -22.16947]
-];
 
 // Centered on Skukuza
 const center: [number, number] = [31.5896973, -24.9964431];
@@ -40,15 +38,66 @@ export const Map: React.VFC = () => {
         'mapbox://styles/r1ns3v/ckul61lvm3lbx17q1k88qsuyf'
     );
 
+    const mapRef = useRef<mapboxgl.Map | null>(null);
+    const toast = useToast();
+
     // Target where the click was registered (displays marker)
     const [targetMarker, setTargetMarker] = useState<TargetMarkerInfo | null>(null);
+    // User location
+    const [userLocation, setUserLocation] = useState<LngLat | null>(null);
 
-    // Whether modal is open
+    // Whether input modal is open
     const { isOpen, onOpen, onClose } = useDisclosure();
 
+    // Whether legend modal is open
+    const { isOpen: legendOpen, onOpen: legendOnOpen, onClose: legendOnClose } = useDisclosure();
+
     const onMapLoad = (map: mapboxgl.Map) => {
+        mapRef.current = map;
         map.resize();
-        map.addControl(new GeolocateControl());
+        // map.addControl(new GeolocateControl());
+        if (window.navigator.geolocation) {
+            window.navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    // Set user location
+                    const { latitude, longitude } = position.coords;
+                    setUserLocation(new LngLat(longitude, latitude));
+                },
+                () => {
+                    // Not allowed -> do nothing
+                }
+            );
+        }
+    };
+
+    const onLocationButtonClick = () => {
+        if (userLocation) {
+            if (inBounds(userLocation, mapBounds)) {
+                mapRef.current?.flyTo(
+                    {
+                        center: userLocation,
+                        zoom: 12
+                    },
+                    { duration: 1000 }
+                );
+            } else {
+                toast({
+                    title: 'You are not in the park',
+                    description: 'You can only see the park',
+                    status: 'error',
+                    duration: 5000,
+                    isClosable: true
+                });
+            }
+        } else {
+            toast({
+                title: 'Could not find your location',
+                description: 'Please allow location access',
+                status: 'error',
+                duration: 5000,
+                isClosable: true
+            });
+        }
     };
 
     // On click event for map that displays popup
@@ -77,13 +126,15 @@ export const Map: React.VFC = () => {
             // eslint-disable-next-line react/style-prop-object
             style={style}
             containerStyle={{ flex: 1 }}
-            maxBounds={bounds}
+            maxBounds={mapBounds}
             center={center}
             zoom={zoom}
             onStyleLoad={onMapLoad}
             onClick={handleClick}
         >
             <>
+                <MapButtons onLocationClick={onLocationButtonClick} onLegendClick={legendOnOpen} />
+
                 <RestCampLayer restCamps={restCampLocations} />
                 <GateLayer gates={gateLocations} />
                 <SpottingsLayer />
@@ -94,6 +145,7 @@ export const Map: React.VFC = () => {
                     onClose={onClose}
                     onSuccess={handleSuccess}
                 />
+                <Legend isOpen={legendOpen} onOpen={legendOnOpen} onClose={legendOnClose} />
             </>
         </MapboxMap>
     );

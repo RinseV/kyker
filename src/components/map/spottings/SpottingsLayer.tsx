@@ -10,15 +10,16 @@ export const SpottingsLayer: React.VFC = () => {
         return null;
     }
 
-    // TODO: legend for different colours
     // TODO: toggle different animal layers
     // TODO: onClick for each spotting?
     // TODO: clusters for spottings?
+    // TODO: move camps & gates to backend
+    // TODO: change camps & gates colors
 
     return (
         <>
             {data.animals.map((animal) => (
-                <SpottingLayer animal={animal} />
+                <SpottingLayer key={animal.id} animal={animal} />
             ))}
         </>
     );

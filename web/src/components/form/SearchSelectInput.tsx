@@ -1,25 +1,24 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
-import { Control, RegisterOptions, useController } from 'react-hook-form';
+import { Control, FieldValues, Path, RegisterOptions, useController } from 'react-hook-form';
 import { Select } from 'chakra-react-select';
 import { FormControl, FormErrorIcon, FormErrorMessage, FormLabel } from '@chakra-ui/form-control';
 
-type SearchSelectInputProps = {
-    name: string;
-    control: Control<any>;
+type SearchSelectInputProps<T extends FieldValues = FieldValues> = {
+    name: Path<T>;
+    control: Control<T>;
     isDisabled?: boolean;
     label?: string;
     rules?: Exclude<RegisterOptions, 'valueAsNumber' | 'valueAsDate' | 'setValueAs'>;
 } & React.ComponentProps<typeof Select>;
 
-export const SearchSelectInput: React.VFC<SearchSelectInputProps> = ({
+export function SearchSelectInput<T extends FieldValues = FieldValues>({
     name,
     control,
     isDisabled,
     label,
     rules,
     ...props
-}) => {
+}: SearchSelectInputProps<T>): JSX.Element {
     const {
         field: { onChange, onBlur, value, ref },
         fieldState: { invalid, error }
@@ -37,4 +36,4 @@ export const SearchSelectInput: React.VFC<SearchSelectInputProps> = ({
             </FormErrorMessage>
         </FormControl>
     );
-};
+}

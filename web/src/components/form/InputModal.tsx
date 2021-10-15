@@ -111,7 +111,9 @@ export const InputModal: React.VFC<InputModalProps> = ({ coordinates, isOpen, on
                 <ModalHeader>Add a spot</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody pb={6}>
-                    <SpotInput
+                    <SpotInput<FormData>
+                        animalName="animal"
+                        descriptionName="description"
                         register={register}
                         control={control}
                         coordinates={coordinates}

@@ -1,17 +1,21 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useMemo } from 'react';
-import { Control } from 'react-hook-form';
+import { Control, FieldValues, Path } from 'react-hook-form';
 import { useAnimalsQuery } from '../../generated/graphql';
 import { SearchSelectInput } from './SearchSelectInput';
 
-type AnimalInputProps = {
-    name: string;
-    control: Control<any>;
+type AnimalInputProps<T extends FieldValues = FieldValues> = {
+    name: Path<T>;
+    control: Control<T>;
     label?: string;
     isDisabled?: boolean;
 };
 
-export const AnimalInput: React.VFC<AnimalInputProps> = ({ name, control, label, isDisabled }) => {
+export function AnimalInput<T extends FieldValues = FieldValues>({
+    name,
+    control,
+    label,
+    isDisabled
+}: AnimalInputProps<T>): JSX.Element {
     // Get animals from backend
     const { data } = useAnimalsQuery();
 
@@ -27,7 +31,7 @@ export const AnimalInput: React.VFC<AnimalInputProps> = ({ name, control, label,
     }, [data]);
 
     return (
-        <SearchSelectInput
+        <SearchSelectInput<T>
             name={name}
             control={control}
             isDisabled={isDisabled}
@@ -36,4 +40,4 @@ export const AnimalInput: React.VFC<AnimalInputProps> = ({ name, control, label,
             rules={{ required: 'Animal is required' }}
         />
     );
-};
+}

@@ -2,6 +2,7 @@ import { useColorModeValue } from '@chakra-ui/color-mode';
 import React, { useMemo } from 'react';
 import { GeoJSONLayer } from 'react-mapbox-gl';
 import { AnimalFragment, useSpottingsQuery } from '../../../generated/graphql';
+import { useAppSelector } from '../../../store/hooks';
 
 type SpottingLayerProps = {
     animal: AnimalFragment;
@@ -9,6 +10,7 @@ type SpottingLayerProps = {
 
 export const SpottingLayer: React.VFC<SpottingLayerProps> = ({ animal }) => {
     const spottingColor = useColorModeValue(animal.color.light, animal.color.dark);
+    const isHidden = useAppSelector((state) => state.preferences.hiddenAnimals).some((id) => id === animal.id);
 
     // Get spottings for given animal
     const { data: spottings } = useSpottingsQuery({
@@ -39,6 +41,10 @@ export const SpottingLayer: React.VFC<SpottingLayerProps> = ({ animal }) => {
             }))
         };
     }, [spottings]);
+
+    if (isHidden) {
+        return null;
+    }
 
     return (
         <>

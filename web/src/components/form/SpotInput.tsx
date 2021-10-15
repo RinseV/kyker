@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Stack } from '@chakra-ui/layout';
 import { LngLat } from 'mapbox-gl';
 import React from 'react';

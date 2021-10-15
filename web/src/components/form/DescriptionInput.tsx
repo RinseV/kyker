@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FormControl, FormLabel } from '@chakra-ui/form-control';
 import { Textarea } from '@chakra-ui/textarea';
 import React from 'react';

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 import { Control, RegisterOptions, useController } from 'react-hook-form';
 import { Select } from 'chakra-react-select';

@@ -6,11 +6,10 @@ import { LegendContent } from './LegendContent';
 
 type LegendProps = {
     isOpen: boolean;
-    onOpen: () => void;
     onClose: () => void;
 };
 
-export const Legend: React.VFC<LegendProps> = ({ isOpen, onOpen, onClose }) => {
+export const Legend: React.VFC<LegendProps> = ({ isOpen, onClose }) => {
     const initialRef = useRef(null);
     const finalRef = useRef(null);
 

@@ -31,6 +31,7 @@ export const LegendContent: React.VFC<LegendContentProps> = ({ data }) => {
                 <CampsGatesRow />
                 {data.animals.map((animal) => (
                     <AnimalRow
+                        key={animal.id}
                         animal={animal}
                         visible={!hiddenAnimals.some((id) => id === animal.id)}
                         toggleVisibility={() => dispatch(toggleHiddenAnimal(animal.id))}

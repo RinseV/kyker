@@ -29,13 +29,12 @@ export type FormData = {
 
 type InputModalProps = {
     isOpen: boolean;
-    onOpen: () => void;
     onClose: () => void;
     coordinates: LngLat;
     onSuccess: () => void;
 };
 
-export const InputModal: React.VFC<InputModalProps> = ({ coordinates, isOpen, onOpen, onClose, onSuccess }) => {
+export const InputModal: React.VFC<InputModalProps> = ({ coordinates, isOpen, onClose, onSuccess }) => {
     const initialRef = useRef(null);
     const finalRef = useRef(null);
 

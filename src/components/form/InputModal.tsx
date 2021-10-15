@@ -13,7 +13,7 @@ import {
 import { LngLat } from 'mapbox-gl';
 import React, { useRef } from 'react';
 import { useForm } from 'react-hook-form';
-import { useCreateSpottingMutation } from '../../generated/graphql';
+import { namedOperations, useCreateSpottingMutation } from '../../generated/graphql';
 import { getFingerprint } from '../../utils/fingerPrint';
 import { SpotInput } from './SpotInput';
 
@@ -41,7 +41,10 @@ export const InputModal: React.VFC<InputModalProps> = ({ coordinates, isOpen, on
 
     const toast = useToast();
 
-    const [createSpotting] = useCreateSpottingMutation();
+    const [createSpotting] = useCreateSpottingMutation({
+        // Refetch spottings on submit
+        refetchQueries: [namedOperations.Query.Spottings]
+    });
 
     const {
         register,

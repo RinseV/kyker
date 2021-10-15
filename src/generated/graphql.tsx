@@ -18,10 +18,18 @@ export type Scalars = {
 
 export type Animal = {
     __typename?: 'Animal';
+    color: Color;
     createdAt: Scalars['Timestamp'];
     id: Scalars['Int'];
     name: Scalars['String'];
     updatedAt: Scalars['Timestamp'];
+};
+
+export type Color = {
+    __typename?: 'Color';
+    colorScheme?: Maybe<Scalars['String']>;
+    dark: Scalars['String'];
+    light: Scalars['String'];
 };
 
 export type Location = {
@@ -82,13 +90,23 @@ export type User = {
     updatedAt: Scalars['Timestamp'];
 };
 
-export type AnimalFragment = { __typename?: 'Animal'; id: number; name: string };
+export type AnimalFragment = {
+    __typename?: 'Animal';
+    id: number;
+    name: string;
+    color: { __typename?: 'Color'; light: string; dark: string; colorScheme?: string | null | undefined };
+};
 
 export type SpottingFragment = {
     __typename?: 'Spotting';
     id: number;
     description: string;
-    animal: { __typename?: 'Animal'; id: number; name: string };
+    animal: {
+        __typename?: 'Animal';
+        id: number;
+        name: string;
+        color: { __typename?: 'Color'; light: string; dark: string; colorScheme?: string | null | undefined };
+    };
     location: { __typename?: 'Location'; lon: number; lat: number };
 };
 
@@ -103,7 +121,12 @@ export type CreateSpottingMutation = {
         __typename?: 'Spotting';
         id: number;
         description: string;
-        animal: { __typename?: 'Animal'; id: number; name: string };
+        animal: {
+            __typename?: 'Animal';
+            id: number;
+            name: string;
+            color: { __typename?: 'Color'; light: string; dark: string; colorScheme?: string | null | undefined };
+        };
         location: { __typename?: 'Location'; lon: number; lat: number };
     };
 };
@@ -112,7 +135,12 @@ export type AnimalsQueryVariables = Exact<{ [key: string]: never }>;
 
 export type AnimalsQuery = {
     __typename?: 'Query';
-    animals: Array<{ __typename?: 'Animal'; id: number; name: string }>;
+    animals: Array<{
+        __typename?: 'Animal';
+        id: number;
+        name: string;
+        color: { __typename?: 'Color'; light: string; dark: string; colorScheme?: string | null | undefined };
+    }>;
 };
 
 export type SpottingsQueryVariables = Exact<{
@@ -125,7 +153,12 @@ export type SpottingsQuery = {
         __typename?: 'Spotting';
         id: number;
         description: string;
-        animal: { __typename?: 'Animal'; id: number; name: string };
+        animal: {
+            __typename?: 'Animal';
+            id: number;
+            name: string;
+            color: { __typename?: 'Color'; light: string; dark: string; colorScheme?: string | null | undefined };
+        };
         location: { __typename?: 'Location'; lon: number; lat: number };
     }>;
 };
@@ -134,6 +167,11 @@ export const AnimalFragmentDoc = gql`
     fragment Animal on Animal {
         id
         name
+        color {
+            light
+            dark
+            colorScheme
+        }
     }
 `;
 export const SpottingFragmentDoc = gql`

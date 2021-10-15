@@ -9,6 +9,7 @@ import { RestCampLayer } from './camps/RestCampLayer';
 import { restCampLocations } from './camps/RestCamps';
 import { GateLayer } from './gates/GateLayer';
 import { gateLocations } from './gates/Gates';
+import { SpottingsLayer } from './spottings/SpottingsLayer';
 import { Target } from './Target';
 
 interface ClickEvent {
@@ -85,6 +86,7 @@ export const Map: React.VFC = () => {
             <>
                 <RestCampLayer restCamps={restCampLocations} />
                 <GateLayer gates={gateLocations} />
+                <SpottingsLayer />
                 <Target
                     info={targetMarker}
                     isOpen={isOpen}

@@ -4,8 +4,6 @@ import { GeoJSONLayer } from 'react-mapbox-gl';
 import { CampSize, useCampsQuery } from '../../../generated/graphql';
 
 export const RestCampLayer: React.VFC = () => {
-    // TODO: change color or symbol
-    const campColor = useColorModeValue('#B83280', '#F687B3');
     const textColor = useColorModeValue('black', 'white');
 
     const { data: camps } = useCampsQuery();
@@ -40,20 +38,18 @@ export const RestCampLayer: React.VFC = () => {
         <>
             <GeoJSONLayer
                 data={features}
-                circlePaint={{
-                    'circle-radius': [
+                symbolLayout={{
+                    'icon-image': [
                         'case',
                         ['==', ['get', 'size'], CampSize.Rest],
-                        6,
+                        'home-group',
                         ['==', ['get', 'size'], CampSize.Bush],
-                        4,
+                        'home',
                         ['==', ['get', 'size'], CampSize.Sattelite],
-                        3,
-                        2
+                        'video-input-antenna',
+                        'home'
                     ],
-                    'circle-color': campColor
-                }}
-                symbolLayout={{
+                    'icon-size': 0.6,
                     'text-field': ['get', 'name'],
                     'text-size': 14,
                     'text-variable-anchor': ['left', 'top', 'bottom', 'right'],

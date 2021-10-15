@@ -38,11 +38,11 @@ export const GateLayer: React.VFC = () => {
                 data={features}
                 symbolLayout={{
                     'icon-image': 'boom-gate',
-                    'icon-size': 0.3,
+                    'icon-size': 0.6,
                     'text-field': ['get', 'name'],
                     'text-size': 14,
                     'text-variable-anchor': ['left', 'top', 'bottom', 'right'],
-                    'text-offset': [1, 0]
+                    'text-offset': [0.75, 0]
                 }}
                 symbolPaint={{
                     'text-color': textColor

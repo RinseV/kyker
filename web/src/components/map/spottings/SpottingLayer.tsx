@@ -1,26 +1,23 @@
 import { useColorModeValue } from '@chakra-ui/color-mode';
 import React, { useMemo } from 'react';
 import { GeoJSONLayer } from 'react-mapbox-gl';
-import { AnimalFragment, useSpottingsQuery } from '../../../generated/graphql';
+import { AnimalFragment, SpottingsQuery } from '../../../generated/graphql';
 import { useAppSelector } from '../../../store/hooks';
 
 type SpottingLayerProps = {
     animal: AnimalFragment;
+    spottings: SpottingsQuery | undefined;
 };
 
-export const SpottingLayer: React.VFC<SpottingLayerProps> = ({ animal }) => {
+export const SpottingLayer: React.VFC<SpottingLayerProps> = ({ animal, spottings }) => {
     const spottingColor = useColorModeValue(animal.color.light, animal.color.dark);
     const isHidden = useAppSelector((state) => state.preferences.hiddenAnimals).some((id) => id === animal.id);
 
-    // Get spottings for given animal
-    const { data: spottings } = useSpottingsQuery({
-        variables: {
-            animals: [animal.id]
-        }
-    });
+    // Get spottings for current animal
+    const animalSpottings = spottings?.spottings.filter((s) => s.animal.id === animal.id);
 
     const features = useMemo<GeoJSON.FeatureCollection<GeoJSON.Point>>(() => {
-        if (!spottings?.spottings || spottings.spottings.length === 0) {
+        if (!animalSpottings || animalSpottings.length === 0) {
             return {
                 type: 'FeatureCollection',
                 features: []
@@ -29,7 +26,7 @@ export const SpottingLayer: React.VFC<SpottingLayerProps> = ({ animal }) => {
 
         return {
             type: 'FeatureCollection',
-            features: spottings.spottings.map((spotting) => ({
+            features: animalSpottings.map((spotting) => ({
                 type: 'Feature',
                 geometry: {
                     type: 'Point',
@@ -40,7 +37,7 @@ export const SpottingLayer: React.VFC<SpottingLayerProps> = ({ animal }) => {
                 }
             }))
         };
-    }, [spottings]);
+    }, [animalSpottings]);
 
     if (isHidden) {
         return null;

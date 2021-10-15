@@ -11,4 +11,8 @@ export class Color {
     @Field(() => String)
     @Property({ type: 'text' })
     dark: string;
+
+    @Field(() => String, { nullable: true })
+    @Property({ type: 'text', nullable: true })
+    colorScheme?: string;
 }

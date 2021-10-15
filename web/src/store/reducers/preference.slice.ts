@@ -22,6 +22,17 @@ export const preferenceSlice = createSlice({
         removeHiddenAnimal: (state, action: PayloadAction<number>) => {
             state.hiddenAnimals = state.hiddenAnimals.filter((id) => id !== action.payload);
         },
+        toggleHiddenAnimal: (state, action: PayloadAction<number>) => {
+            // Get index of animal in hiddenAnimals
+            const index = state.hiddenAnimals.indexOf(action.payload);
+            if (index > -1) {
+                // If animal is in hiddenAnimals, remove it
+                state.hiddenAnimals.splice(index, 1);
+            } else {
+                // If animal is not in hiddenAnimals, add it
+                state.hiddenAnimals.push(action.payload);
+            }
+        },
         toggleHideCamps: (state) => {
             state.hideCamps = !state.hideCamps;
         },
@@ -31,6 +42,7 @@ export const preferenceSlice = createSlice({
     }
 });
 
-export const { addHiddenAnimal, removeHiddenAnimal, toggleHideCamps, toggleHideGates } = preferenceSlice.actions;
+export const { addHiddenAnimal, removeHiddenAnimal, toggleHiddenAnimal, toggleHideCamps, toggleHideGates } =
+    preferenceSlice.actions;
 
 export default preferenceSlice.reducer;

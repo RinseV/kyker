@@ -1,5 +1,6 @@
-import { BaseEntity, Entity, PrimaryKey, Property } from '@mikro-orm/core';
+import { BaseEntity, Embedded, Entity, PrimaryKey, Property } from '@mikro-orm/core';
 import { Field, Int, ObjectType } from 'type-graphql';
+import { Color } from '.';
 
 @ObjectType()
 @Entity()
@@ -11,6 +12,10 @@ export class Animal extends BaseEntity<Animal, 'id'> {
     @Field(() => String)
     @Property({ type: 'text' })
     name: string;
+
+    @Field(() => Color)
+    @Embedded(() => Color)
+    color: Color;
 
     @Field(() => Date)
     @Property({ type: 'date' })

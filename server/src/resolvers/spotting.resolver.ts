@@ -1,3 +1,4 @@
+import { FilterQuery } from '@mikro-orm/core';
 import { GraphQLResolveInfo } from 'graphql';
 import fieldsToRelations from 'graphql-fields-to-relations';
 import { Arg, Ctx, Info, Int, Mutation, Query, Resolver } from 'type-graphql';
@@ -15,20 +16,13 @@ export class SpottingResolver {
     @Query(() => [Spotting])
     async spottings(
         @Arg('animals', () => [Int], { nullable: true }) animals: number[],
+        @Arg('excludedAnimals', () => [Int], { nullable: true }) excludedAnimals: number[],
         @Info() info: GraphQLResolveInfo,
         @Ctx() { em }: MyContext
     ): Promise<Spotting[]> {
         const relationPaths = fieldsToRelations(info);
-        const spottings = await em.getRepository(Spotting).find(
-            {
-                animal: {
-                    id: {
-                        $in: animals ? animals : undefined
-                    }
-                }
-            },
-            relationPaths
-        );
+        const filter = generateAnimalFilter(animals, excludedAnimals);
+        const spottings = await em.getRepository(Spotting).find(filter, relationPaths);
         return spottings;
     }
 
@@ -84,3 +78,39 @@ export class SpottingResolver {
         );
     }
 }
+
+const generateAnimalFilter = (animals?: number[], excludedAnimals?: number[]): FilterQuery<Spotting> => {
+    // No animals or exludedAnimals => no filter
+    if (!animals && !excludedAnimals) {
+        return {};
+    }
+    // If there are animals, but no excludedAnimals, we can just filter on animals
+    if (animals && !excludedAnimals) {
+        return {
+            animal: {
+                id: {
+                    $in: animals
+                }
+            }
+        };
+    }
+    // If there are excludedAnimals, but no animals, we can just filter on excludedAnimals
+    if (!animals && excludedAnimals) {
+        return {
+            animal: {
+                id: {
+                    $nin: excludedAnimals
+                }
+            }
+        };
+    }
+    // If there are both animals and excludedAnimals, we need to filter on both
+    return {
+        animal: {
+            id: {
+                $in: animals,
+                $nin: excludedAnimals
+            }
+        }
+    };
+};

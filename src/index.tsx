@@ -6,11 +6,13 @@ import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reportWebVitals from './reportWebVitals';
 import { ApolloProvider } from '@apollo/client';
 import { client } from './utils/apolloClient';
+import { theme } from './theme';
+import './index.css';
 
 ReactDOM.render(
     <React.StrictMode>
         <ApolloProvider client={client}>
-            <ChakraProvider>
+            <ChakraProvider theme={theme}>
                 <App />
             </ChakraProvider>
         </ApolloProvider>

@@ -148,3 +148,5 @@ modules.xml
 .DS_Store
 
 .vscode
+
+sql/

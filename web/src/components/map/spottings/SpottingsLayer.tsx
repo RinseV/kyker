@@ -26,9 +26,12 @@ export const SpottingsLayer: React.VFC = () => {
 
     return (
         <>
-            {animals.animals.map((animal) => (
-                <SpottingLayer key={animal.id} animal={animal} spottings={spottings} />
-            ))}
+            {/* Only add a SpottingLayer if the animal is not hidden */}
+            {animals.animals
+                .filter((animal) => !hiddenAnimals.some((id) => id === animal.id))
+                .map((animal) => (
+                    <SpottingLayer key={animal.id} animal={animal} spottings={spottings} />
+                ))}
         </>
     );
 };

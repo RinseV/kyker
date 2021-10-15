@@ -2,9 +2,11 @@ import { useColorModeValue } from '@chakra-ui/color-mode';
 import React, { useMemo } from 'react';
 import { GeoJSONLayer } from 'react-mapbox-gl';
 import { CampSize, useCampsQuery } from '../../../generated/graphql';
+import { useAppSelector } from '../../../store/hooks';
 
 export const RestCampLayer: React.VFC = () => {
     const textColor = useColorModeValue('black', 'white');
+    const isHidden = useAppSelector((state) => state.preferences.hideCamps);
 
     const { data: camps } = useCampsQuery();
 
@@ -33,6 +35,10 @@ export const RestCampLayer: React.VFC = () => {
             })
         };
     }, [camps]);
+
+    if (isHidden) {
+        return null;
+    }
 
     return (
         <>

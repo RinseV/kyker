@@ -2,10 +2,14 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export interface PreferenceState {
     hiddenAnimals: number[];
+    hideCamps: boolean;
+    hideGates: boolean;
 }
 
 const initialState: PreferenceState = {
-    hiddenAnimals: []
+    hiddenAnimals: [],
+    hideCamps: false,
+    hideGates: false
 };
 
 export const preferenceSlice = createSlice({
@@ -17,10 +21,16 @@ export const preferenceSlice = createSlice({
         },
         removeHiddenAnimal: (state, action: PayloadAction<number>) => {
             state.hiddenAnimals = state.hiddenAnimals.filter((id) => id !== action.payload);
+        },
+        toggleHideCamps: (state) => {
+            state.hideCamps = !state.hideCamps;
+        },
+        toggleHideGates: (state) => {
+            state.hideGates = !state.hideGates;
         }
     }
 });
 
-export const { addHiddenAnimal, removeHiddenAnimal } = preferenceSlice.actions;
+export const { addHiddenAnimal, removeHiddenAnimal, toggleHideCamps, toggleHideGates } = preferenceSlice.actions;
 
 export default preferenceSlice.reducer;

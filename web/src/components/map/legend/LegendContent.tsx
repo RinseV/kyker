@@ -4,6 +4,7 @@ import { AnimalFragment, AnimalsQuery } from '../../../generated/graphql';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { addHiddenAnimal, removeHiddenAnimal } from '../../../store/reducers/preference.slice';
 import { AnimalRow } from './AnimalRow';
+import { CampsGatesRow } from './CampsGatesRow';
 
 type LegendContentProps = {
     data: AnimalsQuery | undefined;
@@ -31,12 +32,13 @@ export const LegendContent: React.VFC<LegendContentProps> = ({ data }) => {
         <Table>
             <Thead>
                 <Tr>
-                    <Th>Color</Th>
+                    <Th>Display</Th>
                     <Th>Animal</Th>
                     <Th>Visible</Th>
                 </Tr>
             </Thead>
             <Tbody>
+                <CampsGatesRow />
                 {data.animals.map((animal) => (
                     <AnimalRow
                         animal={animal}

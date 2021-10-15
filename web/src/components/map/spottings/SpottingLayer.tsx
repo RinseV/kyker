@@ -1,12 +1,12 @@
 import { useColorModeValue } from '@chakra-ui/color-mode';
 import React, { useMemo } from 'react';
 import { GeoJSONLayer } from 'react-mapbox-gl';
-import { AnimalFragment, SpottingsQuery } from '../../../generated/graphql';
+import { AnimalFragment, SpottingFragment, SpottingsQuery } from '../../../generated/graphql';
 import { useAppSelector } from '../../../store/hooks';
 
 type SpottingLayerProps = {
     animal: AnimalFragment;
-    spottings: SpottingsQuery | undefined;
+    spottings: SpottingsQuery;
 };
 
 export const SpottingLayer: React.VFC<SpottingLayerProps> = ({ animal, spottings }) => {
@@ -14,16 +14,11 @@ export const SpottingLayer: React.VFC<SpottingLayerProps> = ({ animal, spottings
     const isHidden = useAppSelector((state) => state.preferences.hiddenAnimals).some((id) => id === animal.id);
 
     // Get spottings for current animal
-    const animalSpottings = spottings?.spottings.filter((s) => s.animal.id === animal.id);
+    const animalSpottings = useMemo<SpottingFragment[]>(() => {
+        return spottings.spottings.filter((s) => s.animal.id === animal.id);
+    }, [spottings, animal.id]);
 
     const features = useMemo<GeoJSON.FeatureCollection<GeoJSON.Point>>(() => {
-        if (!animalSpottings || animalSpottings.length === 0) {
-            return {
-                type: 'FeatureCollection',
-                features: []
-            };
-        }
-
         return {
             type: 'FeatureCollection',
             features: animalSpottings.map((spotting) => ({

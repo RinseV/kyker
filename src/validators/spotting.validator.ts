@@ -1,11 +1,11 @@
 import { Max, Min } from 'class-validator';
-import { Field, Float, InputType } from 'type-graphql';
-import { Animal } from '../utils/animals';
+import { Field, Float, InputType, Int } from 'type-graphql';
 
 @InputType()
-export class PinValidator {
-    @Field(() => Animal)
-    animal: Animal;
+export class SpottingValidator {
+    // Animal ID
+    @Field(() => Int)
+    animal: number;
 
     // Latitude is always between -90 and 90
     // TODO: limit to Kruger Park?

@@ -1,6 +1,6 @@
 import { BaseEntity, Collection, Entity, OneToMany, PrimaryKey, Property } from '@mikro-orm/core';
 import { Field, ID, ObjectType } from 'type-graphql';
-import { Pin } from './pin.entity';
+import { Spotting } from './spotting.entity';
 
 @ObjectType()
 @Entity()
@@ -9,9 +9,9 @@ export class User extends BaseEntity<User, 'id'> {
     @PrimaryKey({ type: 'text', unique: true })
     id: string;
 
-    @Field(() => [Pin])
-    @OneToMany(() => Pin, (p: Pin) => p.user)
-    pins = new Collection<Pin>(this);
+    @Field(() => [Spotting])
+    @OneToMany(() => Spotting, (p: Spotting) => p.user)
+    spottings = new Collection<Spotting>(this);
 
     @Field(() => Date)
     @Property({ type: 'date' })

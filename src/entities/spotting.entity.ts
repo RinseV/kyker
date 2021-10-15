@@ -1,12 +1,12 @@
-import { BaseEntity, Embedded, Entity, Enum, ManyToOne, PrimaryKey, Property } from '@mikro-orm/core';
+import { BaseEntity, Embedded, Entity, ManyToOne, PrimaryKey, Property } from '@mikro-orm/core';
 import { Field, Int, ObjectType } from 'type-graphql';
-import { Animal } from '../utils/animals';
+import { Animal } from '.';
 import { Location } from './location.entity';
 import { User } from './user.entity';
 
 @ObjectType()
 @Entity()
-export class Pin extends BaseEntity<Pin, 'id'> {
+export class Spotting extends BaseEntity<Spotting, 'id'> {
     @Field(() => Int)
     @PrimaryKey()
     id: number;
@@ -15,13 +15,21 @@ export class Pin extends BaseEntity<Pin, 'id'> {
     @ManyToOne(() => User)
     user: User;
 
-    @Field(() => Animal)
-    @Enum(() => Animal)
-    animal: Animal;
-
     @Field(() => Location)
     @Embedded(() => Location)
     location: Location;
+
+    @Field(() => Animal)
+    @ManyToOne(() => Animal)
+    animal: Animal;
+
+    @Field(() => String)
+    @Property({ type: 'text', nullable: true })
+    description?: string;
+
+    @Field(() => String)
+    @Property({ type: 'text', nullable: true })
+    imageId?: string;
 
     @Field(() => Date)
     @Property({ type: 'date' })

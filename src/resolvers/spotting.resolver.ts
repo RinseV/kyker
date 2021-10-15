@@ -1,38 +1,50 @@
 import { GraphQLResolveInfo } from 'graphql';
 import fieldsToRelations from 'graphql-fields-to-relations';
-import { Arg, Ctx, Info, Mutation, Query, Resolver } from 'type-graphql';
-import { Pin, User } from '../entities';
-import { Animal } from '../utils/animals';
+import { Arg, Ctx, Info, Int, Mutation, Query, Resolver } from 'type-graphql';
+import { Spotting, User } from '../entities';
 import { MyContext } from '../utils/types';
-import { PinValidator } from '../validators/pin.validator';
+import { SpottingValidator } from '../validators/spotting.validator';
 
-@Resolver(() => Pin)
-export class PinResolver {
-    @Query(() => [Pin])
-    async pins(
-        @Arg('animals', () => [Animal], { nullable: true }) animals: Animal[],
+@Resolver(() => Spotting)
+export class SpottingResolver {
+    /**
+     * Query to get all spottings
+     * @param animals Optional animal ID to get spottings from
+     * @returns All spottings
+     */
+    @Query(() => [Spotting])
+    async spottings(
+        @Arg('animals', () => [Int], { nullable: true }) animals: number[],
         @Info() info: GraphQLResolveInfo,
         @Ctx() { em }: MyContext
-    ): Promise<Pin[]> {
+    ): Promise<Spotting[]> {
         const relationPaths = fieldsToRelations(info);
-        const pins = await em.getRepository(Pin).find(
+        const spottings = await em.getRepository(Spotting).find(
             {
                 animal: {
-                    $in: animals ? animals : undefined
+                    id: {
+                        $in: animals ? animals : undefined
+                    }
                 }
             },
             relationPaths
         );
-        return pins;
+        return spottings;
     }
 
-    @Mutation(() => Pin)
-    async createPin(
+    /**
+     * Mutation to create a spotting
+     * @param id User ID (fingerprint)
+     * @param input Spotting input
+     * @returns Created spotting
+     */
+    @Mutation(() => Spotting)
+    async createSpotting(
         @Arg('id', () => String) id: string,
-        @Arg('input', () => PinValidator) input: PinValidator,
+        @Arg('input', () => SpottingValidator) input: SpottingValidator,
         @Info() info: GraphQLResolveInfo,
         @Ctx() { em, req }: MyContext
-    ): Promise<Pin> {
+    ): Promise<Spotting> {
         const relationPaths = fieldsToRelations(info);
 
         // Attempt to finder user with fingerprint
@@ -53,7 +65,7 @@ export class PinResolver {
         req.session.data.id = user.id;
 
         // Create pin
-        const pin = em.create(Pin, {
+        const spotting = em.create(Spotting, {
             user,
             animal: input.animal,
             location: {
@@ -61,11 +73,11 @@ export class PinResolver {
                 lon: input.lon
             }
         });
-        await em.persistAndFlush(pin);
+        await em.persistAndFlush(spotting);
 
-        return em.getRepository(Pin).findOneOrFail(
+        return em.getRepository(Spotting).findOneOrFail(
             {
-                id: pin.id
+                id: spotting.id
             },
             relationPaths
         );

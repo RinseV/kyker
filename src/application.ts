@@ -16,8 +16,9 @@ import {
 } from 'apollo-server-core';
 import { Server } from 'http';
 import { COOKIE_NAME, SESSION_TTL, __prod__ } from './constants';
-import { PinResolver } from './resolvers/pin.resolver';
+import { SpottingResolver } from './resolvers/spotting.resolver';
 import { UserResolver } from './resolvers/user.resolver';
+import { AnimalResolver } from './resolvers/animal.resolver';
 
 function fastifyAppClosePlugin(app: FastifyInstance) {
     return {
@@ -93,7 +94,7 @@ export default class Application {
             // Init Apollo server
             this.apolloServer = new ApolloServer({
                 schema: await buildSchema({
-                    resolvers: [UserResolver, PinResolver],
+                    resolvers: [UserResolver, SpottingResolver, AnimalResolver],
                     validate: true,
                     dateScalarMode: 'timestamp'
                 }),

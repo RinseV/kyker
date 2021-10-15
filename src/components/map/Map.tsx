@@ -55,7 +55,11 @@ export const Map: React.VFC = () => {
         const target = evt as unknown as ClickEvent;
         // Set coordinates (and other info)
         setTargetMarker({
-            coordinates: target.lngLat
+            // Limit lon, lat to 4 decimal places (~11 meters of accuracy)
+            coordinates: new LngLat(
+                Math.ceil(target.lngLat.lng * 10000) / 10000,
+                Math.ceil(target.lngLat.lat * 10000) / 10000
+            )
         });
         // Open input modal
         onOpen();

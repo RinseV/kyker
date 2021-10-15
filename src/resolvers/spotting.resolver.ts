@@ -71,7 +71,8 @@ export class SpottingResolver {
             location: {
                 lat: input.lat,
                 lon: input.lon
-            }
+            },
+            description: input.description
         });
         await em.persistAndFlush(spotting);
 

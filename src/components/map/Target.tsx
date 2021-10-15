@@ -8,9 +8,10 @@ type TargetProps = {
     isOpen: boolean;
     onOpen: () => void;
     onClose: () => void;
+    onSuccess: () => void;
 };
 
-export const Target: React.VFC<TargetProps> = ({ info, isOpen, onOpen, onClose }) => {
+export const Target: React.VFC<TargetProps> = ({ info, isOpen, onOpen, onClose, onSuccess }) => {
     // No info -> no marker
     if (!info) {
         return null;
@@ -19,7 +20,13 @@ export const Target: React.VFC<TargetProps> = ({ info, isOpen, onOpen, onClose }
     return (
         <>
             <Marker coordinates={[info.coordinates.lng, info.coordinates.lat]} />
-            <InputModal coordinates={info.coordinates} isOpen={isOpen} onOpen={onOpen} onClose={onClose} />
+            <InputModal
+                coordinates={info.coordinates}
+                isOpen={isOpen}
+                onOpen={onOpen}
+                onClose={onClose}
+                onSuccess={onSuccess}
+            />
         </>
     );
 };

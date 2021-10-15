@@ -4,12 +4,16 @@ import { ChakraProvider } from '@chakra-ui/react';
 import App from './App';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reportWebVitals from './reportWebVitals';
+import { ApolloProvider } from '@apollo/client';
+import { client } from './utils/apolloClient';
 
 ReactDOM.render(
     <React.StrictMode>
-        <ChakraProvider>
-            <App />
-        </ChakraProvider>
+        <ApolloProvider client={client}>
+            <ChakraProvider>
+                <App />
+            </ChakraProvider>
+        </ApolloProvider>
     </React.StrictMode>,
     document.getElementById('root')
 );

@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import { Control } from 'react-hook-form';
+import { useAnimalsQuery } from '../../generated/graphql';
 import { SearchSelectInput } from './SearchSelectInput';
 
 type AnimalInputProps = {
@@ -10,38 +11,19 @@ type AnimalInputProps = {
 };
 
 export const AnimalInput: React.VFC<AnimalInputProps> = ({ name, control, label, isDisabled }) => {
+    // Get animals from backend
+    const { data } = useAnimalsQuery();
+
     const options = useMemo(() => {
-        return [
-            {
-                label: 'Dog',
-                value: 1
-            },
-            {
-                label: 'Cat',
-                value: 2
-            },
-            {
-                label: 'Bird',
-                value: 3
-            },
-            {
-                label: 'Fish',
-                value: 4
-            },
-            {
-                label: 'Rabbit',
-                value: 5
-            },
-            {
-                label: 'Snake',
-                value: 6
-            },
-            {
-                label: 'Other',
-                value: 7
-            }
-        ];
-    }, []);
+        if (!data?.animals || data.animals.length === 0) {
+            return [];
+        }
+
+        return data.animals.map((animal) => ({
+            value: animal.id,
+            label: animal.name
+        }));
+    }, [data]);
 
     return (
         <SearchSelectInput

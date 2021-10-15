@@ -1,0 +1,4 @@
+fragment Animal on Animal {
+    id
+    name
+}

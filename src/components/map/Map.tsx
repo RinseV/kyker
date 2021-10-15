@@ -61,6 +61,12 @@ export const Map: React.VFC = () => {
         onOpen();
     };
 
+    // Called if spotting was successfully submitted
+    const handleSuccess = () => {
+        // Remove current marker
+        setTargetMarker(null);
+    };
+
     return (
         <MapboxMap
             // eslint-disable-next-line react/style-prop-object
@@ -75,7 +81,13 @@ export const Map: React.VFC = () => {
             <>
                 <RestCampLayer restCamps={restCampLocations} />
                 <GateLayer gates={gateLocations} />
-                <Target info={targetMarker} isOpen={isOpen} onOpen={onOpen} onClose={onClose} />
+                <Target
+                    info={targetMarker}
+                    isOpen={isOpen}
+                    onOpen={onOpen}
+                    onClose={onClose}
+                    onSuccess={handleSuccess}
+                />
             </>
         </MapboxMap>
     );

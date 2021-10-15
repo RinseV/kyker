@@ -15,21 +15,23 @@ type SpotInputProps = {
 
 export const SpotInput: React.VFC<SpotInputProps> = ({ coordinates, register, control, isSubmitting }) => {
     return (
-        <Stack spacing={4}>
-            {/* Location input (disabled) */}
-            <LocationInput coordinates={coordinates} isDisabled />
+        <form>
+            <Stack spacing={4}>
+                {/* Location input (disabled) */}
+                <LocationInput coordinates={coordinates} isDisabled />
 
-            {/* Animal search select */}
-            <AnimalInput name="animal" control={control} label="Animal" isDisabled={isSubmitting} />
+                {/* Animal search select */}
+                <AnimalInput name="animal" control={control} label="Animal" isDisabled={isSubmitting} />
 
-            {/* Description */}
-            <DescriptionInput
-                name="description"
-                register={register}
-                label="Description"
-                placeholder="North-West side of the road in a tree"
-                isDisabled={isSubmitting}
-            />
-        </Stack>
+                {/* Description */}
+                <DescriptionInput
+                    name="description"
+                    register={register}
+                    label="Description"
+                    placeholder="North-West side of the road in a tree"
+                    isDisabled={isSubmitting}
+                />
+            </Stack>
+        </form>
     );
 };

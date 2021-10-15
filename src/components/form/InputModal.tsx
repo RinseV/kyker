@@ -6,7 +6,8 @@ import {
     ModalContent,
     ModalFooter,
     ModalHeader,
-    ModalOverlay
+    ModalOverlay,
+    useToast
 } from '@chakra-ui/react';
 import { LngLat } from 'mapbox-gl';
 import React, { useRef } from 'react';
@@ -34,6 +35,8 @@ export const InputModal: React.VFC<InputModalProps> = ({ coordinates, isOpen, on
     const initialRef = useRef(null);
     const finalRef = useRef(null);
 
+    const toast = useToast();
+
     const {
         register,
         control,
@@ -48,8 +51,20 @@ export const InputModal: React.VFC<InputModalProps> = ({ coordinates, isOpen, on
     });
 
     // TODO: Submit data to the server
-    const onSubmit = (data: FormData) => {
+    const onSubmit = async (data: FormData) => {
         console.log(data);
+        await new Promise((resolve) => {
+            setTimeout(resolve, 1000);
+        });
+
+        onClose();
+        toast({
+            title: 'Spot added',
+            description: 'The spot has been added to the map',
+            status: 'success',
+            duration: 5000,
+            isClosable: true
+        });
     };
 
     return (
@@ -59,21 +74,27 @@ export const InputModal: React.VFC<InputModalProps> = ({ coordinates, isOpen, on
                 <ModalHeader>Add a spot</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody pb={6}>
-                    <form>
-                        <SpotInput
-                            register={register}
-                            control={control}
-                            coordinates={coordinates}
-                            isSubmitting={isSubmitting}
-                        />
-                    </form>
+                    <SpotInput
+                        register={register}
+                        control={control}
+                        coordinates={coordinates}
+                        isSubmitting={isSubmitting}
+                    />
                 </ModalBody>
 
                 <ModalFooter>
-                    <Button colorScheme="green" mr={3} type="submit" onClick={() => handleSubmit(onSubmit)()}>
+                    <Button
+                        colorScheme="green"
+                        mr={3}
+                        type="submit"
+                        onClick={() => handleSubmit(onSubmit)()}
+                        isLoading={isSubmitting}
+                    >
                         Save
                     </Button>
-                    <Button onClick={onClose}>Cancel</Button>
+                    <Button onClick={onClose} isDisabled={isSubmitting}>
+                        Cancel
+                    </Button>
                 </ModalFooter>
             </ModalContent>
         </Modal>

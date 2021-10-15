@@ -1,25 +1,37 @@
 import React from 'react';
-import { useAnimalsQuery } from '../../../generated/graphql';
+import { useAnimalsQuery, useSpottingsQuery } from '../../../generated/graphql';
+import { useAppSelector } from '../../../store/hooks';
 import { SpottingLayer } from './SpottingLayer';
 
 export const SpottingsLayer: React.VFC = () => {
-    const { data } = useAnimalsQuery();
+    const hiddenAnimals = useAppSelector((state) => state.preferences.hiddenAnimals);
+
+    const { data: animals } = useAnimalsQuery();
+    // We only query on animals that are not hidden
+    const { data: spottings } = useSpottingsQuery({
+        variables: {
+            excludedAnimals: hiddenAnimals
+        }
+    });
 
     // Return null if loading or no data
-    if (!data?.animals || data.animals.length === 0) {
+    if (
+        !animals?.animals ||
+        animals.animals.length === 0 ||
+        !spottings?.spottings ||
+        spottings.spottings.length === 0
+    ) {
         return null;
     }
 
-    // TODO: toggle different animal layers
-    // TODO: onClick for each spotting?
-    // TODO: clusters for spottings?
-    // TODO: change camps & gates colors
-
     return (
         <>
-            {data.animals.map((animal) => (
-                <SpottingLayer key={animal.id} animal={animal} />
-            ))}
+            {/* Only add a SpottingLayer if the animal is not hidden */}
+            {animals.animals
+                .filter((animal) => !hiddenAnimals.some((id) => id === animal.id))
+                .map((animal) => (
+                    <SpottingLayer key={animal.id} animal={animal} spottings={spottings} />
+                ))}
         </>
     );
 };

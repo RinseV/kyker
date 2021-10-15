@@ -1,12 +1,14 @@
-import { Td, Tr, useColorModeValue } from '@chakra-ui/react';
+import { Checkbox, Td, Tr, useColorModeValue } from '@chakra-ui/react';
 import React from 'react';
 import { AnimalFragment } from '../../../generated/graphql';
 
 type AnimalRowProps = {
     animal: AnimalFragment;
+    visible: boolean;
+    toggleVisibility: () => void;
 };
 
-export const AnimalRow: React.VFC<AnimalRowProps> = ({ animal }) => {
+export const AnimalRow: React.VFC<AnimalRowProps> = ({ animal, visible, toggleVisibility }) => {
     return (
         <Tr>
             <Td>
@@ -20,6 +22,9 @@ export const AnimalRow: React.VFC<AnimalRowProps> = ({ animal }) => {
                 />
             </Td>
             <Td>{animal.name}</Td>
+            <Td>
+                <Checkbox isChecked={visible} onChange={toggleVisibility} />
+            </Td>
         </Tr>
     );
 };

@@ -89,6 +89,7 @@ export type Query = {
 
 export type QuerySpottingsArgs = {
     animals?: Maybe<Array<Scalars['Int']>>;
+    excludedAnimals?: Maybe<Array<Scalars['Int']>>;
 };
 
 export type Spotting = {
@@ -213,6 +214,7 @@ export type GatesQuery = {
 
 export type SpottingsQueryVariables = Exact<{
     animals?: Maybe<Array<Scalars['Int']> | Scalars['Int']>;
+    excludedAnimals?: Maybe<Array<Scalars['Int']> | Scalars['Int']>;
 }>;
 
 export type SpottingsQuery = {
@@ -423,8 +425,8 @@ export type GatesQueryHookResult = ReturnType<typeof useGatesQuery>;
 export type GatesLazyQueryHookResult = ReturnType<typeof useGatesLazyQuery>;
 export type GatesQueryResult = Apollo.QueryResult<GatesQuery, GatesQueryVariables>;
 export const SpottingsDocument = gql`
-    query Spottings($animals: [Int!]) {
-        spottings(animals: $animals) {
+    query Spottings($animals: [Int!], $excludedAnimals: [Int!]) {
+        spottings(animals: $animals, excludedAnimals: $excludedAnimals) {
             ...Spotting
         }
     }
@@ -444,6 +446,7 @@ export const SpottingsDocument = gql`
  * const { data, loading, error } = useSpottingsQuery({
  *   variables: {
  *      animals: // value for 'animals'
+ *      excludedAnimals: // value for 'excludedAnimals'
  *   },
  * });
  */

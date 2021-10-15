@@ -6,7 +6,7 @@ import { useAppSelector } from '../../../store/hooks';
 
 type SpottingLayerProps = {
     animal: AnimalFragment;
-    spottings: SpottingsQuery | undefined;
+    spottings: SpottingsQuery;
 };
 
 export const SpottingLayer: React.VFC<SpottingLayerProps> = ({ animal, spottings }) => {

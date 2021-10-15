@@ -1,4 +1,5 @@
 import { FilterQuery } from '@mikro-orm/core';
+import { endOfDay, startOfDay } from 'date-fns';
 import { GraphQLResolveInfo } from 'graphql';
 import fieldsToRelations from 'graphql-fields-to-relations';
 import { Arg, Ctx, Info, Int, Mutation, Query, Resolver } from 'type-graphql';
@@ -17,11 +18,12 @@ export class SpottingResolver {
     async spottings(
         @Arg('animals', () => [Int], { nullable: true }) animals: number[],
         @Arg('excludedAnimals', () => [Int], { nullable: true }) excludedAnimals: number[],
+        @Arg('date', () => Date, { defaultValue: new Date() }) date: Date,
         @Info() info: GraphQLResolveInfo,
         @Ctx() { em }: MyContext
     ): Promise<Spotting[]> {
         const relationPaths = fieldsToRelations(info);
-        const filter = generateAnimalFilter(animals, excludedAnimals);
+        const filter = generateAnimalFilter(animals, excludedAnimals, date);
         const spottings = await em.getRepository(Spotting).find(filter, relationPaths);
         return spottings;
     }
@@ -79,14 +81,29 @@ export class SpottingResolver {
     }
 }
 
-const generateAnimalFilter = (animals?: number[], excludedAnimals?: number[]): FilterQuery<Spotting> => {
+const generateAnimalFilter = (animals?: number[], excludedAnimals?: number[], date?: Date): FilterQuery<Spotting> => {
+    let filter: FilterQuery<Spotting> = {};
+    // Add date filter if given
+    if (date) {
+        // Get start & end of day from date
+        const start = startOfDay(date);
+        const end = endOfDay(date);
+        // Filter between these 2 timestamps
+        filter = {
+            createdAt: {
+                $gte: start,
+                $lte: end
+            }
+        };
+    }
     // No animals or exludedAnimals => no filter
     if (!animals && !excludedAnimals) {
-        return {};
+        return filter;
     }
     // If there are animals, but no excludedAnimals, we can just filter on animals
     if (animals && !excludedAnimals) {
         return {
+            ...filter,
             animal: {
                 id: {
                     $in: animals
@@ -97,6 +114,7 @@ const generateAnimalFilter = (animals?: number[], excludedAnimals?: number[]): F
     // If there are excludedAnimals, but no animals, we can just filter on excludedAnimals
     if (!animals && excludedAnimals) {
         return {
+            ...filter,
             animal: {
                 id: {
                     $nin: excludedAnimals
@@ -106,6 +124,7 @@ const generateAnimalFilter = (animals?: number[], excludedAnimals?: number[]): F
     }
     // If there are both animals and excludedAnimals, we need to filter on both
     return {
+        ...filter,
         animal: {
             id: {
                 $in: animals,

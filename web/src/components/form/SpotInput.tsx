@@ -1,19 +1,28 @@
 import { Stack } from '@chakra-ui/layout';
 import { LngLat } from 'mapbox-gl';
 import React from 'react';
-import { Control, UseFormRegister } from 'react-hook-form';
+import { Control, FieldValues, Path, UseFormRegister } from 'react-hook-form';
 import { AnimalInput } from './AnimalInput';
 import { DescriptionInput } from './DescriptionInput';
 import { LocationInput } from './LocationInput';
 
-type SpotInputProps = {
+type SpotInputProps<T extends FieldValues = FieldValues> = {
+    animalName: Path<T>;
+    descriptionName: Path<T>;
     coordinates: LngLat;
-    register: UseFormRegister<any>;
-    control: Control<any>;
+    register: UseFormRegister<T>;
+    control: Control<T>;
     isSubmitting?: boolean;
 };
 
-export const SpotInput: React.VFC<SpotInputProps> = ({ coordinates, register, control, isSubmitting }) => {
+export function SpotInput<T extends FieldValues = FieldValues>({
+    animalName,
+    descriptionName,
+    coordinates,
+    register,
+    control,
+    isSubmitting
+}: SpotInputProps<T>): JSX.Element {
     return (
         <form>
             <Stack spacing={4}>
@@ -21,11 +30,11 @@ export const SpotInput: React.VFC<SpotInputProps> = ({ coordinates, register, co
                 <LocationInput coordinates={coordinates} isDisabled />
 
                 {/* Animal search select */}
-                <AnimalInput name="animal" control={control} label="Animal" isDisabled={isSubmitting} />
+                <AnimalInput<T> name={animalName} control={control} label="Animal" isDisabled={isSubmitting} />
 
                 {/* Description */}
-                <DescriptionInput
-                    name="description"
+                <DescriptionInput<T>
+                    name={descriptionName}
                     register={register}
                     label="Description"
                     placeholder="North-West side of the road in a tree"
@@ -34,4 +43,4 @@ export const SpotInput: React.VFC<SpotInputProps> = ({ coordinates, register, co
             </Stack>
         </form>
     );
-};
+}

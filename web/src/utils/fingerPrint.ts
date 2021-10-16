@@ -1,6 +1,6 @@
-import FingerprintJS from '@fingerprintjs/fingerprintjs';
+import { load } from '@fingerprintjs/fingerprintjs';
 
-const fpPromise = FingerprintJS.load();
+const fpPromise = load();
 
 export const getFingerprint = async (): Promise<string> => {
     const fp = await fpPromise;

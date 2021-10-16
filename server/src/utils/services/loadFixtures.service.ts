@@ -7,7 +7,6 @@ export interface Fixtures {
     animals: Animal[];
     camps: Camp[];
     gates: Gate[];
-    users: User[];
     spottings: Spotting[];
 }
 
@@ -17,69 +16,72 @@ export const loadFixtures = async (orm: MikroORM): Promise<Fixtures | undefined>
     let fixtures: Fixtures;
 
     try {
-        const animals = [...Array(AMOUNT_OF_FIXTURES)].map((_, animalIndex) =>
-            orm.em.create(Animal, {
-                id: animalIndex + 1,
+        const animals = [...Array(AMOUNT_OF_FIXTURES)].map(() => {
+            const animal = orm.em.create(Animal, {
                 name: faker.vehicle.manufacturer(),
-                color: new Color(faker.commerce.color(), faker.commerce.color()),
-                createdAt: new Date(),
-                updatedAt: new Date()
-            })
-        );
-        orm.em.persist(animals);
+                color: new Color(faker.commerce.color(), faker.commerce.color())
+            });
 
-        const camps = [...Array(AMOUNT_OF_FIXTURES)].map((_, campIndex) =>
-            orm.em.create(Camp, {
-                id: campIndex + 1,
-                name: faker.commerce.department(),
-                location: new Location(faker.datatype.float(5), faker.datatype.float(5)),
-                size: CampSize.BUSH,
-                createdAt: new Date(),
-                updatedAt: new Date()
-            })
-        );
-        orm.em.persist(camps);
+            orm.em.persist(animal);
 
-        const gates = [...Array(AMOUNT_OF_FIXTURES)].map((_, gateIndex) =>
-            orm.em.create(Gate, {
-                id: gateIndex + 1,
-                name: faker.commerce.productName(),
-                location: new Location(faker.datatype.float(5), faker.datatype.float(5)),
-                createdAt: new Date(),
-                updatedAt: new Date()
-            })
-        );
-        orm.em.persist(gates);
+            return animal;
+        });
 
         await orm.em.flush();
 
-        const users = [...Array(AMOUNT_OF_FIXTURES)].map((_, userIndex) =>
-            orm.em.create(User, {
-                id: (userIndex + 1).toString(),
-                name: faker.name.firstName(),
-                createdAt: new Date(),
-                updatedAt: new Date()
-            })
-        );
-        await orm.em.persistAndFlush(users);
+        const camps = [...Array(AMOUNT_OF_FIXTURES)].map(() => {
+            const camp = orm.em.create(Camp, {
+                name: faker.commerce.department(),
+                location: new Location(faker.datatype.number(80), faker.datatype.number(100)),
+                size: CampSize.BUSH
+            });
 
-        const spottings = [...Array(AMOUNT_OF_FIXTURES)].map((_, spottingIndex) =>
-            orm.em.create(Spotting, {
-                id: spottingIndex + 1,
-                user: users[spottingIndex].id,
-                location: new Location(faker.datatype.float(5), faker.datatype.float(5)),
+            orm.em.persist(camp);
+
+            return camp;
+        });
+
+        await orm.em.flush();
+
+        const gates = [...Array(AMOUNT_OF_FIXTURES)].map(() => {
+            const gate = orm.em.create(Gate, {
+                name: faker.commerce.productName(),
+                location: new Location(faker.datatype.number(80), faker.datatype.number(100))
+            });
+
+            orm.em.persist(gate);
+
+            return gate;
+        });
+
+        const spottings = [...Array(AMOUNT_OF_FIXTURES)].map((_, spottingIndex) => {
+            // Create user for spotting
+            const user = orm.em.create(User, {
+                id: faker.random.alphaNumeric(20)
+            });
+
+            orm.em.persist(user);
+
+            const spotting = orm.em.create(Spotting, {
+                user: user,
+                location: new Location(faker.datatype.number(80), faker.datatype.number(100)),
                 animal: animals[spottingIndex].id,
-                description: faker.lorem.sentence(),
-                createdAt: new Date(),
-                updatedAt: new Date()
-            })
-        );
-        await orm.em.persistAndFlush(spottings);
+                description: faker.lorem.sentence()
+            });
 
-        fixtures = { animals, camps, gates, users, spottings };
+            orm.em.persist(spotting);
+
+            return spotting;
+        });
+
+        await orm.em.flush();
+
+        fixtures = { animals, camps, gates, spottings };
 
         return fixtures;
     } catch (error) {
         console.error('Could not load fixtures', error);
     }
+
+    return undefined;
 };

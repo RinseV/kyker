@@ -4,12 +4,14 @@ export interface PreferenceState {
     hiddenAnimals: number[];
     hideCamps: boolean;
     hideGates: boolean;
+    queryDate: number;
 }
 
 const initialState: PreferenceState = {
     hiddenAnimals: [],
     hideCamps: false,
-    hideGates: false
+    hideGates: false,
+    queryDate: new Date().getTime()
 };
 
 export const preferenceSlice = createSlice({
@@ -38,12 +40,21 @@ export const preferenceSlice = createSlice({
         },
         toggleHideGates: (state) => {
             state.hideGates = !state.hideGates;
+        },
+        setQueryDate: (state, action: PayloadAction<number>) => {
+            state.queryDate = action.payload;
         }
     }
 });
 
-export const { addHiddenAnimal, removeHiddenAnimal, toggleHiddenAnimal, toggleHideCamps, toggleHideGates } =
-    preferenceSlice.actions;
+export const {
+    addHiddenAnimal,
+    removeHiddenAnimal,
+    toggleHiddenAnimal,
+    toggleHideCamps,
+    toggleHideGates,
+    setQueryDate
+} = preferenceSlice.actions;
 
 // eslint-disable-next-line import/no-default-export
 export default preferenceSlice.reducer;

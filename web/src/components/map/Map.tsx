@@ -147,7 +147,7 @@ export const Map: React.VFC = () => {
                 <SpottingsLayer />
                 <Target info={targetMarker} isOpen={isOpen} onClose={onClose} onSuccess={handleSuccess} />
                 <Legend isOpen={legendOpen} onClose={legendOnClose} />
-                <Calendar isOpen={calendarOpen} onOpen={calendarOnOpen} onClose={calendarOnClose} />
+                <Calendar isOpen={calendarOpen} onClose={calendarOnClose} />
             </>
         </MapboxMap>
     );

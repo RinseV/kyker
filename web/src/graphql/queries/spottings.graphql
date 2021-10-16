@@ -1,5 +1,5 @@
-query Spottings($animals: [Int!], $excludedAnimals: [Int!]) {
-    spottings(animals: $animals, excludedAnimals: $excludedAnimals) {
+query Spottings($animals: [Int!], $excludedAnimals: [Int!], $date: Timestamp) {
+    spottings(animals: $animals, excludedAnimals: $excludedAnimals, date: $date) {
         ...Spotting
     }
 }

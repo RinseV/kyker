@@ -11,6 +11,7 @@ type SpottingLayerProps = {
 
 export const SpottingLayer: React.VFC<SpottingLayerProps> = ({ animal, spottings }) => {
     const spottingColor = useColorModeValue(animal.color.light, animal.color.dark);
+    // Text color is just white or black since the contrast is fine for all colors used
     const textColor = useColorModeValue('#FFFFFF', '#000000');
     const isHidden = useAppSelector((state) => state.preferences.hiddenAnimals).some((id) => id === animal.id);
 
@@ -41,6 +42,7 @@ export const SpottingLayer: React.VFC<SpottingLayerProps> = ({ animal, spottings
 
     return (
         <>
+            {/* Layer with data */}
             <GeoJSONLayer
                 sourceOptions={{
                     cluster: true,
@@ -61,7 +63,7 @@ export const SpottingLayer: React.VFC<SpottingLayerProps> = ({ animal, spottings
                     'circle-color': spottingColor
                 }}
             />
-            {/* Layer of cluster points */}
+            {/* Layer of cluster point count */}
             <Layer
                 id={`${animal.id}-cluster-count`}
                 sourceId={`${animal.id}-cluster`}

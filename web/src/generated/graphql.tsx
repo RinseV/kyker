@@ -20,6 +20,7 @@ export type Animal = {
     __typename?: 'Animal';
     color: Color;
     createdAt: Scalars['Timestamp'];
+    disabled: Scalars['Boolean'];
     id: Scalars['Int'];
     name: Scalars['String'];
     updatedAt: Scalars['Timestamp'];
@@ -122,6 +123,7 @@ export type AnimalFragment = {
     __typename?: 'Animal';
     id: number;
     name: string;
+    disabled: boolean;
     color: { __typename?: 'Color'; light: string; dark: string };
 };
 
@@ -148,6 +150,7 @@ export type SpottingFragment = {
         __typename?: 'Animal';
         id: number;
         name: string;
+        disabled: boolean;
         color: { __typename?: 'Color'; light: string; dark: string };
     };
     location: { __typename?: 'Location'; lon: number; lat: number };
@@ -168,6 +171,7 @@ export type CreateSpottingMutation = {
             __typename?: 'Animal';
             id: number;
             name: string;
+            disabled: boolean;
             color: { __typename?: 'Color'; light: string; dark: string };
         };
         location: { __typename?: 'Location'; lon: number; lat: number };
@@ -182,6 +186,7 @@ export type AnimalsQuery = {
         __typename?: 'Animal';
         id: number;
         name: string;
+        disabled: boolean;
         color: { __typename?: 'Color'; light: string; dark: string };
     }>;
 };
@@ -227,6 +232,7 @@ export type SpottingsQuery = {
             __typename?: 'Animal';
             id: number;
             name: string;
+            disabled: boolean;
             color: { __typename?: 'Color'; light: string; dark: string };
         };
         location: { __typename?: 'Location'; lon: number; lat: number };
@@ -262,6 +268,7 @@ export const AnimalFragmentDoc = gql`
             light
             dark
         }
+        disabled
     }
 `;
 export const SpottingFragmentDoc = gql`

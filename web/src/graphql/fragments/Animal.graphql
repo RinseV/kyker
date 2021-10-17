@@ -5,4 +5,5 @@ fragment Animal on Animal {
         light
         dark
     }
+    disabled
 }

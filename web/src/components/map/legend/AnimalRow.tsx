@@ -24,10 +24,14 @@ export const AnimalRow: React.VFC<AnimalRowProps> = ({ animal, visible, toggleVi
                 />
             </Td>
             <Td>
-                <Text textColor={animal.disabled ? disabledColor : undefined}>{animal.name}</Text>
+                <Text textColor={animal.disabled ? disabledColor : undefined}>
+                    {animal.name}
+                    {animal.disabled ? '*' : null}
+                </Text>
             </Td>
             <Td>
                 <Checkbox
+                    // Disable checkbox if animal is disabled, also set unchecked if animal is disabled
                     isChecked={animal.disabled ? false : visible}
                     onChange={toggleVisibility}
                     isDisabled={animal.disabled}

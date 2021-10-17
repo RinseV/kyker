@@ -1,3 +1,4 @@
+import { subDays } from 'date-fns';
 import faker from 'faker';
 import supertest, { SuperTest, Test } from 'supertest';
 import Application from '../src/application';
@@ -172,6 +173,24 @@ describe('Spotting resolver tests', () => {
         expect(response.body.data.spottings.length).toBe(1);
     });
 
+    test('Retrieve spottings on certain date', async () => {
+        if (!fixtures) {
+            throw new Error('Fixtures not loaded');
+        }
+
+        // Get all spottings from yesterday (should be none)
+        const yesterday = subDays(new Date(), 1);
+        const response = await retrieveSpottings(request, undefined, undefined, yesterday).expect(200);
+
+        expect(response.body.data).toStrictEqual(
+            expect.objectContaining({
+                spottings: expect.arrayContaining([])
+            })
+        );
+        // Should be none
+        expect(response.body.data.spottings.length).toBe(0);
+    });
+
     test('Create spotting', async () => {
         if (!fixtures) {
             throw new Error('Fixtures not loaded');
@@ -203,10 +222,10 @@ describe('Spotting resolver tests', () => {
     });
 });
 
-const retrieveSpottings = (request: SuperTest<Test>, animals?: number[], excludedAnimals?: number[]) => {
+const retrieveSpottings = (request: SuperTest<Test>, animals?: number[], excludedAnimals?: number[], date?: Date) => {
     return request.post('/graphql').send({
-        query: `query Spottings($animals: [Int!], $excludedAnimals: [Int!]) {
-                spottings(animals: $animals, excludedAnimals: $excludedAnimals) {
+        query: `query Spottings($animals: [Int!], $excludedAnimals: [Int!], $date: Timestamp) {
+                spottings(animals: $animals, excludedAnimals: $excludedAnimals, date: $date) {
                     id
                     user {
                         id
@@ -224,7 +243,8 @@ const retrieveSpottings = (request: SuperTest<Test>, animals?: number[], exclude
             }`,
         variables: {
             animals,
-            excludedAnimals
+            excludedAnimals,
+            date: date?.getTime()
         }
     });
 };

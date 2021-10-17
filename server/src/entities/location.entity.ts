@@ -11,4 +11,9 @@ export class Location {
     @Field(() => Float)
     @Property({ type: 'float' })
     lon: number;
+
+    constructor(lat: number, lon: number) {
+        this.lat = lat;
+        this.lon = lon;
+    }
 }

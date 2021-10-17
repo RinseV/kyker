@@ -3,6 +3,7 @@ import faker from 'faker';
 import supertest, { SuperTest, Test } from 'supertest';
 import Application from '../src/application';
 import { ISO_DATE_FORMAT } from '../src/constants';
+import { Spotting } from '../src/entities';
 import { clearDatabase } from '../src/utils/services/clearDatabase.service';
 import { Fixtures, loadFixtures } from '../src/utils/services/loadFixtures.service';
 
@@ -183,6 +184,29 @@ describe('Spotting resolver tests', () => {
         // Get all spottings from yesterday (should be none)
         const yesterday = format(subDays(new Date(), 1), ISO_DATE_FORMAT);
         const response = await retrieveSpottings(request, undefined, undefined, yesterday).expect(200);
+
+        expect(response.body.data).toStrictEqual(
+            expect.objectContaining({
+                spottings: expect.arrayContaining([])
+            })
+        );
+        // Should be none
+        expect(response.body.data.spottings.length).toBe(0);
+    });
+
+    test('Retrieve spottings of disabled animal', async () => {
+        if (!fixtures) {
+            throw new Error('Fixtures not loaded');
+        }
+
+        // Make sure there is a spotting for animal 6 in the DB
+        const dbSpotting = await application.orm.em.getRepository(Spotting).findOne({
+            animal: fixtures.animals[5].id
+        });
+        expect(dbSpotting).toBeDefined();
+
+        // Get all spottings from animal 6 (disabled)
+        const response = await retrieveSpottings(request, [fixtures.animals[5].id]).expect(200);
 
         expect(response.body.data).toStrictEqual(
             expect.objectContaining({

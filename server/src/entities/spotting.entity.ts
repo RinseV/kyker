@@ -23,11 +23,11 @@ export class Spotting extends BaseEntity<Spotting, 'id'> {
     @ManyToOne(() => Animal)
     animal: Animal;
 
-    @Field(() => String)
+    @Field(() => String, { nullable: true })
     @Property({ type: 'text', nullable: true })
     description?: string;
 
-    @Field(() => String)
+    @Field(() => String, { nullable: true })
     @Property({ type: 'text', nullable: true })
     imageId?: string;
 

@@ -150,6 +150,8 @@ export type GateFragment = {
 export type SpottingFragment = {
     __typename?: 'Spotting';
     id: number;
+    description: string;
+    createdAt: any;
     animal: {
         __typename?: 'Animal';
         id: number;
@@ -184,6 +186,8 @@ export type CreateSpottingMutation = {
     createSpotting: {
         __typename?: 'Spotting';
         id: number;
+        description: string;
+        createdAt: any;
         animal: {
             __typename?: 'Animal';
             id: number;
@@ -265,6 +269,8 @@ export type SpottingsQuery = {
     spottings: Array<{
         __typename?: 'Spotting';
         id: number;
+        description: string;
+        createdAt: any;
         animal: {
             __typename?: 'Animal';
             id: number;
@@ -318,6 +324,8 @@ export const SpottingFragmentDoc = gql`
             lon
             lat
         }
+        description
+        createdAt
     }
     ${AnimalFragmentDoc}
 `;

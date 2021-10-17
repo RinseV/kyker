@@ -1,10 +1,10 @@
 import React from 'react';
-import { useAnimalsQuery, useSpottingsQuery } from '../../../generated/graphql';
+import { SpottingFragment, useAnimalsQuery, useSpottingsQuery } from '../../../generated/graphql';
 import { useAppSelector } from '../../../store/hooks';
 import { SpottingLayer } from './SpottingLayer';
 
 type SpottingLayersProps = {
-    setSelectedSpotting: React.Dispatch<React.SetStateAction<number | null>>;
+    setSelectedSpotting: React.Dispatch<React.SetStateAction<SpottingFragment | null>>;
     onOpen: () => void;
 };
 

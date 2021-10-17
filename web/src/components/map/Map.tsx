@@ -5,6 +5,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import React, { useEffect, useRef, useState } from 'react';
 import ReactMapboxGl from 'react-mapbox-gl';
 import { MapEvent } from 'react-mapbox-gl/lib/map-events';
+import { SpottingFragment } from '../../generated/graphql';
 import { mapBounds } from '../../utils/constants';
 import { MapButtons } from './buttons/MapButtons';
 import { Calendar } from './calendar/Calendar';
@@ -46,7 +47,7 @@ export const Map: React.VFC = () => {
     // User location
     const [userLocation, setUserLocation] = useState<LngLat | null>(null);
     // Selected spotting
-    const [selectedSpotting, setSelectedSpotting] = useState<number | null>(null);
+    const [selectedSpotting, setSelectedSpotting] = useState<SpottingFragment | null>(null);
 
     // Whether input modal is open
     const { isOpen, onOpen, onClose } = useDisclosure();

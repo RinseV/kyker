@@ -8,7 +8,7 @@ import { useAppSelector } from '../../../store/hooks';
 type SpottingLayerProps = {
     animal: AnimalFragment;
     spottings: SpottingsQuery;
-    setSelectedSpotting: React.Dispatch<React.SetStateAction<number | null>>;
+    setSelectedSpotting: React.Dispatch<React.SetStateAction<SpottingFragment | null>>;
     onOpen: () => void;
 };
 
@@ -32,11 +32,13 @@ export const SpottingLayer: React.VFC<SpottingLayerProps> = ({ animal, spottings
             }
 
             const feature = e.features?.[0];
-            setSelectedSpotting(feature?.properties?.id);
+            // Get spotting from spottings using ID
+            setSelectedSpotting(spottings.spottings.filter((s) => s.id === feature?.properties?.id)[0]);
+            // Open spotting modal
             onOpen();
             return;
         },
-        [onOpen, setSelectedSpotting]
+        [onOpen, setSelectedSpotting, spottings.spottings]
     );
 
     const features = useMemo<GeoJSON.FeatureCollection<GeoJSON.Point>>(() => {

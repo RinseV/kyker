@@ -20,7 +20,9 @@ export const AddButton: React.VFC<AddButtonProps> = ({ editMode, setEditMode, se
             if (editToastRef.current) {
                 toast.close(editToastRef.current);
             }
+            // Remove marker
             setTargetMarker(null);
+            // Set edit mode to false
             setEditMode(false);
         } else {
             // Otherwise, enter edit mode and show the toast

@@ -5,12 +5,12 @@ import { Marker } from './Marker';
 
 type TargetProps = {
     info: TargetMarkerInfo | null;
+    setInfo: React.Dispatch<React.SetStateAction<TargetMarkerInfo | null>>;
     isOpen: boolean;
     onClose: () => void;
-    onSuccess: () => void;
 };
 
-export const Target: React.VFC<TargetProps> = ({ info, isOpen, onClose, onSuccess }) => {
+export const Target: React.VFC<TargetProps> = ({ info, setInfo, isOpen, onClose }) => {
     // No info -> no marker
     if (!info) {
         return null;
@@ -19,7 +19,19 @@ export const Target: React.VFC<TargetProps> = ({ info, isOpen, onClose, onSucces
     return (
         <>
             <Marker coordinates={[info.coordinates.lng, info.coordinates.lat]} />
-            <InputModal coordinates={info.coordinates} isOpen={isOpen} onClose={onClose} onSuccess={onSuccess} />
+            <InputModal
+                coordinates={info.coordinates}
+                isOpen={isOpen}
+                // Remove marker on modal close
+                onClose={() => {
+                    setInfo(null);
+                    onClose();
+                }}
+                // Remove marker on success
+                onSuccess={() => {
+                    setInfo(null);
+                }}
+            />
         </>
     );
 };

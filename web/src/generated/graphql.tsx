@@ -83,8 +83,12 @@ export type Query = {
 
 export type QuerySpottingsArgs = {
     animals?: Maybe<Array<Scalars['Int']>>;
-    date?: Maybe<Scalars['Timestamp']>;
+    date?: Maybe<QueryDate>;
     excludedAnimals?: Maybe<Array<Scalars['Int']>>;
+};
+
+export type QueryDate = {
+    date: Scalars['String'];
 };
 
 export type Spotting = {
@@ -210,7 +214,7 @@ export type GatesQuery = {
 export type SpottingsQueryVariables = Exact<{
     animals?: Maybe<Array<Scalars['Int']> | Scalars['Int']>;
     excludedAnimals?: Maybe<Array<Scalars['Int']> | Scalars['Int']>;
-    date?: Maybe<Scalars['Timestamp']>;
+    date?: Maybe<QueryDate>;
 }>;
 
 export type SpottingsQuery = {
@@ -420,7 +424,7 @@ export type GatesQueryHookResult = ReturnType<typeof useGatesQuery>;
 export type GatesLazyQueryHookResult = ReturnType<typeof useGatesLazyQuery>;
 export type GatesQueryResult = Apollo.QueryResult<GatesQuery, GatesQueryVariables>;
 export const SpottingsDocument = gql`
-    query Spottings($animals: [Int!], $excludedAnimals: [Int!], $date: Timestamp) {
+    query Spottings($animals: [Int!], $excludedAnimals: [Int!], $date: QueryDate) {
         spottings(animals: $animals, excludedAnimals: $excludedAnimals, date: $date) {
             ...Spotting
         }

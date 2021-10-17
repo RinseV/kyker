@@ -34,7 +34,7 @@ export const CalendarInput: React.VFC<CalenderInputProps> = ({ onClose }) => {
         if (!selectable) return;
         if (!lodash_isNil(date)) {
             // Update timestamp in store
-            dispatch(setQueryDate(date.getTime()));
+            dispatch(setQueryDate(date));
             toast({
                 title: 'Date changed',
                 description: `Date changed to ${date.toLocaleDateString()}`,

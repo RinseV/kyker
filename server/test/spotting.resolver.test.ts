@@ -1,6 +1,8 @@
+import { format, subDays } from 'date-fns';
 import faker from 'faker';
 import supertest, { SuperTest, Test } from 'supertest';
 import Application from '../src/application';
+import { ISO_DATE_FORMAT } from '../src/constants';
 import { clearDatabase } from '../src/utils/services/clearDatabase.service';
 import { Fixtures, loadFixtures } from '../src/utils/services/loadFixtures.service';
 
@@ -35,8 +37,9 @@ describe('Spotting resolver tests', () => {
             throw new Error('Fixtures not loaded');
         }
 
-        // Get all spottings
-        const response = await retrieveSpottings(request).expect(200);
+        // Get all spottings for today
+        const today = format(new Date(), ISO_DATE_FORMAT);
+        const response = await retrieveSpottings(request, undefined, undefined, today).expect(200);
 
         expect(response.body.data).toStrictEqual(
             expect.objectContaining({
@@ -172,6 +175,24 @@ describe('Spotting resolver tests', () => {
         expect(response.body.data.spottings.length).toBe(1);
     });
 
+    test('Retrieve spottings on certain date', async () => {
+        if (!fixtures) {
+            throw new Error('Fixtures not loaded');
+        }
+
+        // Get all spottings from yesterday (should be none)
+        const yesterday = format(subDays(new Date(), 1), ISO_DATE_FORMAT);
+        const response = await retrieveSpottings(request, undefined, undefined, yesterday).expect(200);
+
+        expect(response.body.data).toStrictEqual(
+            expect.objectContaining({
+                spottings: expect.arrayContaining([])
+            })
+        );
+        // Should be none
+        expect(response.body.data.spottings.length).toBe(0);
+    });
+
     test('Create spotting', async () => {
         if (!fixtures) {
             throw new Error('Fixtures not loaded');
@@ -203,10 +224,14 @@ describe('Spotting resolver tests', () => {
     });
 });
 
-const retrieveSpottings = (request: SuperTest<Test>, animals?: number[], excludedAnimals?: number[]) => {
+const retrieveSpottings = (request: SuperTest<Test>, animals?: number[], excludedAnimals?: number[], date?: string) => {
     return request.post('/graphql').send({
-        query: `query Spottings($animals: [Int!], $excludedAnimals: [Int!]) {
-                spottings(animals: $animals, excludedAnimals: $excludedAnimals) {
+        query: `query Spottings($animals: [Int!], $excludedAnimals: [Int!], $date: QueryDate) {
+            spottings(
+                animals: $animals
+                excludedAnimals: $excludedAnimals
+                date: $date
+            ) {
                     id
                     user {
                         id
@@ -224,7 +249,12 @@ const retrieveSpottings = (request: SuperTest<Test>, animals?: number[], exclude
             }`,
         variables: {
             animals,
-            excludedAnimals
+            excludedAnimals,
+            date: date
+                ? {
+                      date
+                  }
+                : undefined
         }
     });
 };

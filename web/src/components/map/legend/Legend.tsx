@@ -16,7 +16,7 @@ export const Legend: React.VFC<LegendProps> = ({ isOpen, onClose }) => {
     const { data, loading } = useAnimalsQuery();
 
     return (
-        <Modal initialFocusRef={initialRef} finalFocusRef={finalRef} isOpen={isOpen} onClose={onClose}>
+        <Modal initialFocusRef={initialRef} finalFocusRef={finalRef} isOpen={isOpen} onClose={onClose} size="lg">
             <ModalOverlay />
             <ModalContent m={4}>
                 <ModalHeader>Legend</ModalHeader>

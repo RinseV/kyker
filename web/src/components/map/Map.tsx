@@ -7,6 +7,7 @@ import ReactMapboxGl from 'react-mapbox-gl';
 import { mapBounds } from '../../utils/constants';
 import { inBounds } from '../../utils/inBounds';
 import { MapButtons } from './buttons/MapButtons';
+import { Calendar } from './calendar/Calendar';
 import { RestCampLayer } from './camps/RestCampLayer';
 import { GateLayer } from './gates/GateLayer';
 import { Legend } from './legend/Legend';
@@ -49,6 +50,9 @@ export const Map: React.VFC = () => {
 
     // Whether legend modal is open
     const { isOpen: legendOpen, onOpen: legendOnOpen, onClose: legendOnClose } = useDisclosure();
+
+    // Whether the calendar modal is open
+    const { isOpen: calendarOpen, onOpen: calendarOnOpen, onClose: calendarOnClose } = useDisclosure();
 
     const onMapLoad = (map: mapboxgl.Map) => {
         mapRef.current = map;
@@ -132,13 +136,18 @@ export const Map: React.VFC = () => {
             onClick={handleClick}
         >
             <>
-                <MapButtons onLocationClick={onLocationButtonClick} onLegendClick={legendOnOpen} />
+                <MapButtons
+                    onLocationClick={onLocationButtonClick}
+                    onLegendClick={legendOnOpen}
+                    onDateClick={calendarOnOpen}
+                />
 
                 <RestCampLayer />
                 <GateLayer />
                 <SpottingsLayer />
                 <Target info={targetMarker} isOpen={isOpen} onClose={onClose} onSuccess={handleSuccess} />
                 <Legend isOpen={legendOpen} onClose={legendOnClose} />
+                <Calendar isOpen={calendarOpen} onClose={calendarOnClose} />
             </>
         </MapboxMap>
     );

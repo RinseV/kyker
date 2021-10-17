@@ -5,12 +5,16 @@ import { SpottingLayer } from './SpottingLayer';
 
 export const SpottingsLayer: React.VFC = () => {
     const hiddenAnimals = useAppSelector((state) => state.preferences.hiddenAnimals);
+    const queryDate = useAppSelector((state) => state.preferences.queryDate);
 
     const { data: animals } = useAnimalsQuery();
     // We only query on animals that are not hidden
     const { data: spottings } = useSpottingsQuery({
         variables: {
-            excludedAnimals: hiddenAnimals
+            excludedAnimals: hiddenAnimals,
+            date: {
+                date: queryDate
+            }
         }
     });
 

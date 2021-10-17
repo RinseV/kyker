@@ -130,7 +130,13 @@ export const Map: React.VFC = () => {
 
                 <UserLocation userLocation={userLocation} />
 
-                <Target info={targetMarker} setInfo={setTargetMarker} isOpen={isOpen} onClose={onClose} />
+                <Target
+                    info={targetMarker}
+                    setInfo={setTargetMarker}
+                    setEditMode={setEditMode}
+                    isOpen={isOpen}
+                    onClose={onClose}
+                />
                 <Legend isOpen={legendOpen} onClose={legendOnClose} />
                 <Calendar isOpen={calendarOpen} onClose={calendarOnClose} />
 

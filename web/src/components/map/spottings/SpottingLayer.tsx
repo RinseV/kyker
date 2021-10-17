@@ -1,6 +1,6 @@
 import { useColorModeValue } from '@chakra-ui/color-mode';
 import React, { useMemo } from 'react';
-import { GeoJSONLayer } from 'react-mapbox-gl';
+import { GeoJSONLayer, Layer } from 'react-mapbox-gl';
 import { AnimalFragment, SpottingFragment, SpottingsQuery } from '../../../generated/graphql';
 import { useAppSelector } from '../../../store/hooks';
 
@@ -11,6 +11,8 @@ type SpottingLayerProps = {
 
 export const SpottingLayer: React.VFC<SpottingLayerProps> = ({ animal, spottings }) => {
     const spottingColor = useColorModeValue(animal.color.light, animal.color.dark);
+    // Text color is just white or black since the contrast is fine for all colors used
+    const textColor = useColorModeValue('#FFFFFF', '#000000');
     const isHidden = useAppSelector((state) => state.preferences.hiddenAnimals).some((id) => id === animal.id);
 
     // Get spottings for current animal
@@ -40,9 +42,48 @@ export const SpottingLayer: React.VFC<SpottingLayerProps> = ({ animal, spottings
 
     return (
         <>
+            {/* Layer with data */}
             <GeoJSONLayer
+                sourceOptions={{
+                    cluster: true,
+                    clusterMaxZoom: 12,
+                    clusterRadius: 40
+                }}
+                id={`${animal.id}-cluster`}
                 data={features}
-                circlePaint={{
+            />
+            {/* Layer of cluster spots */}
+            <Layer
+                id={`${animal.id}-cluster-layer`}
+                sourceId={`${animal.id}-cluster`}
+                filter={['has', 'point_count']}
+                type="circle"
+                paint={{
+                    'circle-radius': 12,
+                    'circle-color': spottingColor
+                }}
+            />
+            {/* Layer of cluster point count */}
+            <Layer
+                id={`${animal.id}-cluster-count`}
+                sourceId={`${animal.id}-cluster`}
+                filter={['has', 'point_count']}
+                layout={{
+                    'text-field': ['get', 'point_count'],
+                    'text-size': 14,
+                    'text-font': ['Open Sans Bold']
+                }}
+                paint={{
+                    'text-color': textColor
+                }}
+            />
+            {/* Layer of unclustered spots */}
+            <Layer
+                id={`${animal.id}-unclustered`}
+                sourceId={`${animal.id}-cluster`}
+                filter={['!has', 'point_count']}
+                type="circle"
+                paint={{
                     'circle-radius': 4,
                     'circle-color': spottingColor
                 }}

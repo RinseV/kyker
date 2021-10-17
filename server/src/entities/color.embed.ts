@@ -12,13 +12,8 @@ export class Color {
     @Property({ type: 'text' })
     dark: string;
 
-    @Field(() => String, { nullable: true })
-    @Property({ type: 'text', nullable: true })
-    colorScheme?: string;
-
-    constructor(light: string, dark: string, colorScheme?: string) {
+    constructor(light: string, dark: string) {
         this.light = light;
         this.dark = dark;
-        this.colorScheme = colorScheme;
     }
 }

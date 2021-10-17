@@ -4,6 +4,5 @@ fragment Animal on Animal {
     color {
         light
         dark
-        colorScheme
     }
 }

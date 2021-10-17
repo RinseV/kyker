@@ -1,17 +1,19 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { format } from 'date-fns';
+import { ISO_DATE_FORMAT } from '../../utils/constants';
 
 export interface PreferenceState {
     hiddenAnimals: number[];
     hideCamps: boolean;
     hideGates: boolean;
-    queryDate: number;
+    queryDate: string;
 }
 
 const initialState: PreferenceState = {
     hiddenAnimals: [],
     hideCamps: false,
     hideGates: false,
-    queryDate: new Date().getTime()
+    queryDate: format(new Date(), ISO_DATE_FORMAT)
 };
 
 export const preferenceSlice = createSlice({
@@ -41,8 +43,8 @@ export const preferenceSlice = createSlice({
         toggleHideGates: (state) => {
             state.hideGates = !state.hideGates;
         },
-        setQueryDate: (state, action: PayloadAction<number>) => {
-            state.queryDate = action.payload;
+        setQueryDate: (state, action: PayloadAction<Date>) => {
+            state.queryDate = format(action.payload, ISO_DATE_FORMAT);
         }
     }
 });

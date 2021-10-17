@@ -12,7 +12,9 @@ export const SpottingsLayer: React.VFC = () => {
     const { data: spottings } = useSpottingsQuery({
         variables: {
             excludedAnimals: hiddenAnimals,
-            date: queryDate
+            date: {
+                date: queryDate
+            }
         }
     });
 

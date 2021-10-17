@@ -19,6 +19,7 @@
     "@types/react": "^16.9.53",
     "@types/react-dom": "^16.9.8",
     "chakra-react-select": "^1.2.2",
+    "date-fns": "^2.25.0",
     "dayzed": "^3.2.2",
     "framer-motion": "^4",
     "graphql": "^15.6.1",

@@ -1,10 +1,12 @@
 import { FilterQuery } from '@mikro-orm/core';
-import { endOfDay, startOfDay } from 'date-fns';
+import { endOfDay, format, startOfDay, parse } from 'date-fns';
 import { GraphQLResolveInfo } from 'graphql';
 import fieldsToRelations from 'graphql-fields-to-relations';
 import { Arg, Ctx, Info, Int, Mutation, Query, Resolver } from 'type-graphql';
+import { ISO_DATE_FORMAT } from '../constants';
 import { Spotting, User } from '../entities';
 import { MyContext } from '../utils/types';
+import { QueryDate } from '../validators/date.validator';
 import { SpottingValidator } from '../validators/spotting.validator';
 
 @Resolver(() => Spotting)
@@ -12,18 +14,20 @@ export class SpottingResolver {
     /**
      * Query to get all spottings
      * @param animals Optional animal ID to get spottings from
+     * @param excludedAnimals Optional animal ID to exclude from spottings
+     * @param date Optional date to get spottings from (as ISO8601 string)
      * @returns All spottings
      */
     @Query(() => [Spotting])
     async spottings(
         @Arg('animals', () => [Int], { nullable: true }) animals: number[],
         @Arg('excludedAnimals', () => [Int], { nullable: true }) excludedAnimals: number[],
-        @Arg('date', () => Date, { defaultValue: new Date() }) date: Date,
+        @Arg('date', () => QueryDate, { defaultValue: format(new Date(), ISO_DATE_FORMAT) }) date: QueryDate,
         @Info() info: GraphQLResolveInfo,
         @Ctx() { em }: MyContext
     ): Promise<Spotting[]> {
         const relationPaths = fieldsToRelations(info);
-        const filter = generateAnimalFilter(animals, excludedAnimals, date);
+        const filter = generateAnimalFilter(animals, excludedAnimals, date.date);
         const spottings = await em.getRepository(Spotting).find(filter, relationPaths);
         return spottings;
     }
@@ -81,13 +85,15 @@ export class SpottingResolver {
     }
 }
 
-const generateAnimalFilter = (animals?: number[], excludedAnimals?: number[], date?: Date): FilterQuery<Spotting> => {
+const generateAnimalFilter = (animals?: number[], excludedAnimals?: number[], date?: string): FilterQuery<Spotting> => {
     let filter: FilterQuery<Spotting> = {};
     // Add date filter if given
     if (date) {
+        // Convert date string to Date
+        const dateAsDate = parse(date, ISO_DATE_FORMAT, new Date());
         // Get start & end of day from date
-        const start = startOfDay(date);
-        const end = endOfDay(date);
+        const start = startOfDay(dateAsDate);
+        const end = endOfDay(dateAsDate);
         // Filter between these 2 timestamps
         filter = {
             createdAt: {

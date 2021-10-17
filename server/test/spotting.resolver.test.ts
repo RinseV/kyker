@@ -1,7 +1,8 @@
-import { subDays } from 'date-fns';
+import { format, subDays } from 'date-fns';
 import faker from 'faker';
 import supertest, { SuperTest, Test } from 'supertest';
 import Application from '../src/application';
+import { ISO_DATE_FORMAT } from '../src/constants';
 import { clearDatabase } from '../src/utils/services/clearDatabase.service';
 import { Fixtures, loadFixtures } from '../src/utils/services/loadFixtures.service';
 
@@ -179,7 +180,7 @@ describe('Spotting resolver tests', () => {
         }
 
         // Get all spottings from yesterday (should be none)
-        const yesterday = subDays(new Date(), 1);
+        const yesterday = format(subDays(new Date(), 1), ISO_DATE_FORMAT);
         const response = await retrieveSpottings(request, undefined, undefined, yesterday).expect(200);
 
         expect(response.body.data).toStrictEqual(
@@ -222,10 +223,14 @@ describe('Spotting resolver tests', () => {
     });
 });
 
-const retrieveSpottings = (request: SuperTest<Test>, animals?: number[], excludedAnimals?: number[], date?: Date) => {
+const retrieveSpottings = (request: SuperTest<Test>, animals?: number[], excludedAnimals?: number[], date?: string) => {
     return request.post('/graphql').send({
-        query: `query Spottings($animals: [Int!], $excludedAnimals: [Int!], $date: Timestamp) {
-                spottings(animals: $animals, excludedAnimals: $excludedAnimals, date: $date) {
+        query: `query Spottings($animals: [Int!], $excludedAnimals: [Int!], $date: QueryDate) {
+            spottings(
+                animals: $animals
+                excludedAnimals: $excludedAnimals
+                date: $date
+            ) {
                     id
                     user {
                         id
@@ -244,7 +249,11 @@ const retrieveSpottings = (request: SuperTest<Test>, animals?: number[], exclude
         variables: {
             animals,
             excludedAnimals,
-            date: date?.getTime()
+            date: date
+                ? {
+                      date
+                  }
+                : undefined
         }
     });
 };

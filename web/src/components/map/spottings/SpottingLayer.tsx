@@ -9,10 +9,17 @@ type SpottingLayerProps = {
     animal: AnimalFragment;
     spottings: SpottingsQuery;
     setSelectedSpotting: React.Dispatch<React.SetStateAction<SpottingFragment | null>>;
+    editMode: boolean;
     onOpen: () => void;
 };
 
-export const SpottingLayer: React.VFC<SpottingLayerProps> = ({ animal, spottings, setSelectedSpotting, onOpen }) => {
+export const SpottingLayer: React.VFC<SpottingLayerProps> = ({
+    animal,
+    spottings,
+    setSelectedSpotting,
+    editMode,
+    onOpen
+}) => {
     const spottingColor = useColorModeValue(animal.color.light, animal.color.dark);
     // Text color is just white or black since the contrast is fine for all colors used
     const textColor = useColorModeValue('#FFFFFF', '#000000');
@@ -26,6 +33,11 @@ export const SpottingLayer: React.VFC<SpottingLayerProps> = ({ animal, spottings
     // Triggered when a spotting is clicked
     const onSpottingClick = useCallback(
         (e: MapLayerMouseEvent) => {
+            // If we are in edit mode, we don't want to select a spotting
+            if (editMode) {
+                return;
+            }
+
             if (e.features?.length === 0) {
                 setSelectedSpotting(null);
                 return;
@@ -38,7 +50,7 @@ export const SpottingLayer: React.VFC<SpottingLayerProps> = ({ animal, spottings
             onOpen();
             return;
         },
-        [onOpen, setSelectedSpotting, spottings.spottings]
+        [editMode, onOpen, setSelectedSpotting, spottings.spottings]
     );
 
     const features = useMemo<GeoJSON.FeatureCollection<GeoJSON.Point>>(() => {

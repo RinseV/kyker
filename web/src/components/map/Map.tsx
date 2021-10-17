@@ -126,7 +126,7 @@ export const Map: React.VFC = () => {
 
                 <RestCampLayer />
                 <GateLayer />
-                <SpottingsLayer setSelectedSpotting={setSelectedSpotting} onOpen={spottingOnOpen} />
+                <SpottingsLayer setSelectedSpotting={setSelectedSpotting} editMode={editMode} onOpen={spottingOnOpen} />
 
                 <UserLocation userLocation={userLocation} />
 

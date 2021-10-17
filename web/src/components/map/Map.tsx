@@ -11,6 +11,7 @@ import { Calendar } from './calendar/Calendar';
 import { RestCampLayer } from './camps/RestCampLayer';
 import { GateLayer } from './gates/GateLayer';
 import { Legend } from './legend/Legend';
+import { UserLocation } from './location/UserLocation';
 import { SpottingsLayer } from './spottings/SpottingsLayer';
 import { Target } from './Target';
 
@@ -78,7 +79,7 @@ export const Map: React.VFC = () => {
                 mapRef.current?.flyTo(
                     {
                         center: userLocation,
-                        zoom: 12
+                        zoom: 14
                     },
                     { duration: 1000 }
                 );
@@ -145,6 +146,9 @@ export const Map: React.VFC = () => {
                 <RestCampLayer />
                 <GateLayer />
                 <SpottingsLayer />
+
+                <UserLocation userLocation={userLocation} />
+
                 <Target info={targetMarker} isOpen={isOpen} onClose={onClose} onSuccess={handleSuccess} />
                 <Legend isOpen={legendOpen} onClose={legendOnClose} />
                 <Calendar isOpen={calendarOpen} onClose={calendarOnClose} />

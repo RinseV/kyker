@@ -1,11 +1,7 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { Fragment, useRef, useState } from 'react';
-import lodash_isEmpty from 'lodash/isEmpty';
-import lodash_map from 'lodash/map';
-import lodash_isNil from 'lodash/isNil';
 import {
     Box,
     Button,
+    ButtonProps,
     Divider,
     Heading,
     HStack,
@@ -20,8 +16,9 @@ import {
     useOutsideClick,
     VStack
 } from '@chakra-ui/react';
-import { DateObj, useDayzed, RenderProps, GetBackForwardPropsOptions, Calendar } from 'dayzed';
 import { format } from 'date-fns';
+import { Calendar, DateObj, GetBackForwardPropsOptions, RenderProps, useDayzed } from 'dayzed';
+import React, { Fragment, useRef, useState } from 'react';
 
 // Source: https://github.com/aboveyunhai/chakra-dayzed-datepicker
 
@@ -31,12 +28,12 @@ const DATE_FORMAT_DEFAULT = 'yyyy-MM-dd';
 
 interface SingleDatepickerBackButtonsProps {
     calendars: Calendar[];
-    getBackProps: (data: GetBackForwardPropsOptions) => Record<string, any>;
+    getBackProps: (data: GetBackForwardPropsOptions) => ButtonProps;
 }
 
 interface SingleDatepickerForwardButtonsProps {
     calendars: Calendar[];
-    getForwardProps: (data: GetBackForwardPropsOptions) => Record<string, any>;
+    getForwardProps: (data: GetBackForwardPropsOptions) => ButtonProps;
 }
 
 export interface SingleDatepickerProps {
@@ -104,13 +101,13 @@ export const SingleDatepickerCalendar = (
     const borderColor = useColorModeValue('green.400', 'green.200');
     const bgColor = useColorModeValue('green.200', 'green.400');
 
-    if (lodash_isEmpty(calendars)) {
+    if (calendars.length === 0) {
         return null;
     }
 
     return (
         <HStack className="datepicker-calendar">
-            {lodash_map(calendars, (calendar) => {
+            {calendars.map((calendar) => {
                 return (
                     <VStack key={`${calendar.month}${calendar.year}`}>
                         <HStack>
@@ -122,15 +119,18 @@ export const SingleDatepickerCalendar = (
                         </HStack>
                         <Divider />
                         <SimpleGrid columns={7} spacing={2} textAlign="center">
-                            {lodash_map(configs.dayNames, (day) => (
+                            {configs.dayNames.map((day) => (
                                 <Box key={`${calendar.month}${calendar.year}${day}`}>
                                     <Text fontSize="sm" fontWeight="semibold">
                                         {day}
                                     </Text>
                                 </Box>
                             ))}
-                            {lodash_map(calendar.weeks, (week, weekIndex) => {
-                                return lodash_map(week, (dateObj: DateObj, index) => {
+                            {calendar.weeks.map((week, weekIndex) => {
+                                return week.map((dateObj: DateObj | '', index) => {
+                                    if (dateObj === '') {
+                                        return null;
+                                    }
                                     const {
                                         date,
                                         today,
@@ -188,7 +188,7 @@ export const SingleDatepicker: React.FC<SingleDatepickerProps> = ({
     const onDateSelected = (options: { selectable: boolean; date: Date }) => {
         const { selectable, date } = options;
         if (!selectable) return;
-        if (!lodash_isNil(date)) {
+        if (date) {
             onDateChange(date);
             setPopoverOpen(false);
             return;

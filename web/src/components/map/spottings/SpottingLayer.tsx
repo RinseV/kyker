@@ -78,7 +78,7 @@ export const SpottingLayer: React.VFC<SpottingLayerProps> = ({ animal, spottings
                 filter={['has', 'point_count']}
                 type="circle"
                 paint={{
-                    'circle-radius': 12,
+                    'circle-radius': 16,
                     'circle-color': spottingColor
                 }}
             />
@@ -89,7 +89,7 @@ export const SpottingLayer: React.VFC<SpottingLayerProps> = ({ animal, spottings
                 filter={['has', 'point_count']}
                 layout={{
                     'text-field': ['get', 'point_count'],
-                    'text-size': 14,
+                    'text-size': 16,
                     'text-font': ['Open Sans Bold']
                 }}
                 paint={{
@@ -103,7 +103,7 @@ export const SpottingLayer: React.VFC<SpottingLayerProps> = ({ animal, spottings
                 filter={['!has', 'point_count']}
                 type="circle"
                 paint={{
-                    'circle-radius': 4,
+                    'circle-radius': 6,
                     'circle-color': spottingColor
                 }}
                 onClick={onSpottingClick}

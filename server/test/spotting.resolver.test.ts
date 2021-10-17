@@ -37,8 +37,9 @@ describe('Spotting resolver tests', () => {
             throw new Error('Fixtures not loaded');
         }
 
-        // Get all spottings
-        const response = await retrieveSpottings(request).expect(200);
+        // Get all spottings for today
+        const today = format(new Date(), ISO_DATE_FORMAT);
+        const response = await retrieveSpottings(request, undefined, undefined, today).expect(200);
 
         expect(response.body.data).toStrictEqual(
             expect.objectContaining({

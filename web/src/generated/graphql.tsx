@@ -44,7 +44,6 @@ export enum CampSize {
 
 export type Color = {
     __typename?: 'Color';
-    colorScheme?: Maybe<Scalars['String']>;
     dark: Scalars['String'];
     light: Scalars['String'];
 };
@@ -67,16 +66,11 @@ export type Location = {
 export type Mutation = {
     __typename?: 'Mutation';
     createSpotting: Spotting;
-    login: User;
 };
 
 export type MutationCreateSpottingArgs = {
     id: Scalars['String'];
     input: SpottingValidator;
-};
-
-export type MutationLoginArgs = {
-    fingerprint: Scalars['String'];
 };
 
 export type Query = {
@@ -124,7 +118,7 @@ export type AnimalFragment = {
     __typename?: 'Animal';
     id: number;
     name: string;
-    color: { __typename?: 'Color'; light: string; dark: string; colorScheme?: string | null | undefined };
+    color: { __typename?: 'Color'; light: string; dark: string };
 };
 
 export type CampFragment = {
@@ -150,7 +144,7 @@ export type SpottingFragment = {
         __typename?: 'Animal';
         id: number;
         name: string;
-        color: { __typename?: 'Color'; light: string; dark: string; colorScheme?: string | null | undefined };
+        color: { __typename?: 'Color'; light: string; dark: string };
     };
     location: { __typename?: 'Location'; lon: number; lat: number };
 };
@@ -170,7 +164,7 @@ export type CreateSpottingMutation = {
             __typename?: 'Animal';
             id: number;
             name: string;
-            color: { __typename?: 'Color'; light: string; dark: string; colorScheme?: string | null | undefined };
+            color: { __typename?: 'Color'; light: string; dark: string };
         };
         location: { __typename?: 'Location'; lon: number; lat: number };
     };
@@ -184,7 +178,7 @@ export type AnimalsQuery = {
         __typename?: 'Animal';
         id: number;
         name: string;
-        color: { __typename?: 'Color'; light: string; dark: string; colorScheme?: string | null | undefined };
+        color: { __typename?: 'Color'; light: string; dark: string };
     }>;
 };
 
@@ -229,7 +223,7 @@ export type SpottingsQuery = {
             __typename?: 'Animal';
             id: number;
             name: string;
-            color: { __typename?: 'Color'; light: string; dark: string; colorScheme?: string | null | undefined };
+            color: { __typename?: 'Color'; light: string; dark: string };
         };
         location: { __typename?: 'Location'; lon: number; lat: number };
     }>;
@@ -263,7 +257,6 @@ export const AnimalFragmentDoc = gql`
         color {
             light
             dark
-            colorScheme
         }
     }
 `;

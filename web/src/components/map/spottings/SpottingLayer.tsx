@@ -53,6 +53,14 @@ export const SpottingLayer: React.VFC<SpottingLayerProps> = ({
         [editMode, onOpen, setSelectedSpotting, spottings.spottings]
     );
 
+    const onMouseEnter = (e: MapLayerMouseEvent) => {
+        e.target.getCanvas().style.cursor = 'pointer';
+    };
+
+    const onMouseLeave = (e: MapLayerMouseEvent) => {
+        e.target.getCanvas().style.cursor = '';
+    };
+
     const features = useMemo<GeoJSON.FeatureCollection<GeoJSON.Point>>(() => {
         return {
             type: 'FeatureCollection',
@@ -121,6 +129,8 @@ export const SpottingLayer: React.VFC<SpottingLayerProps> = ({
                     'circle-color': spottingColor
                 }}
                 onClick={onSpottingClick}
+                onMouseEnter={onMouseEnter}
+                onMouseLeave={onMouseLeave}
             />
         </>
     );

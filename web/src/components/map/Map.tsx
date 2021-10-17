@@ -3,7 +3,7 @@ import { useDisclosure } from '@chakra-ui/react';
 import { LngLat, Map as MapboxGLMap, MapMouseEvent } from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import React, { useEffect, useRef, useState } from 'react';
-import ReactMapboxGl from 'react-mapbox-gl';
+import ReactMapboxGl, { MapContext } from 'react-mapbox-gl';
 import { MapEvent } from 'react-mapbox-gl/lib/map-events';
 import { SpottingFragment } from '../../generated/graphql';
 import { mapBounds } from '../../utils/constants';
@@ -36,8 +36,6 @@ export const Map: React.VFC = () => {
         'mapbox://styles/r1ns3v/ckul61lvm3lbx17q1k88qsuyf'
     );
 
-    const mapRef = useRef<mapboxgl.Map | null>(null);
-
     // Whether we are in "edit" mode or not (able to add spottings)
     const [editMode, setEditMode] = useState(false);
     // Ref is needed for map onClick
@@ -63,8 +61,6 @@ export const Map: React.VFC = () => {
 
     // Called on map load
     const onMapLoad = (map: mapboxgl.Map) => {
-        // Set mapRef
-        mapRef.current = map;
         // Resize map to fill div
         map.resize();
         // Set user location
@@ -114,15 +110,19 @@ export const Map: React.VFC = () => {
             onClick={handleMapClick as unknown as MapEvent}
         >
             <>
-                <MapButtons
-                    editMode={editMode}
-                    setEditMode={setEditMode}
-                    setTargetMarker={setTargetMarker}
-                    userLocation={userLocation}
-                    mapRef={mapRef}
-                    onLegendClick={legendOnOpen}
-                    onDateClick={calendarOnOpen}
-                />
+                <MapContext.Consumer>
+                    {(map) => (
+                        <MapButtons
+                            editMode={editMode}
+                            setEditMode={setEditMode}
+                            setTargetMarker={setTargetMarker}
+                            userLocation={userLocation}
+                            map={map}
+                            onLegendClick={legendOnOpen}
+                            onDateClick={calendarOnOpen}
+                        />
+                    )}
+                </MapContext.Consumer>
 
                 <RestCampLayer />
                 <GateLayer />

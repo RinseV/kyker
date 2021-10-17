@@ -8,16 +8,16 @@ import { inBounds } from '../../../utils/inBounds';
 
 type LocationButtonProps = {
     userLocation: LngLat | null;
-    mapRef: React.MutableRefObject<mapboxgl.Map | null>;
+    map: mapboxgl.Map | undefined;
 };
 
-export const LocationButton: React.VFC<LocationButtonProps> = ({ userLocation, mapRef }) => {
+export const LocationButton: React.VFC<LocationButtonProps> = ({ userLocation, map }) => {
     const toast = useToast();
 
     const handleLocationButtonClick = () => {
         if (userLocation) {
             if (inBounds(userLocation, mapBounds)) {
-                mapRef.current?.flyTo(
+                map?.flyTo(
                     {
                         center: userLocation,
                         zoom: 14

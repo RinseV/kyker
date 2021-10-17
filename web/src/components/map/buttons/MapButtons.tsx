@@ -12,7 +12,7 @@ type MapButtonsProps = {
     setEditMode: React.Dispatch<React.SetStateAction<boolean>>;
     setTargetMarker: React.Dispatch<React.SetStateAction<TargetMarkerInfo | null>>;
     userLocation: LngLat | null;
-    mapRef: React.MutableRefObject<mapboxgl.Map | null>;
+    map: mapboxgl.Map | undefined;
     onLegendClick: () => void;
     onDateClick: () => void;
 };
@@ -22,14 +22,14 @@ export const MapButtons: React.VFC<MapButtonsProps> = ({
     setEditMode,
     setTargetMarker,
     userLocation,
-    mapRef,
+    map,
     onLegendClick,
     onDateClick
 }) => {
     return (
         <VStack position="absolute" top="0.5rem" right="0.5rem">
             <AddButton editMode={editMode} setEditMode={setEditMode} setTargetMarker={setTargetMarker} />
-            <LocationButton userLocation={userLocation} mapRef={mapRef} />
+            <LocationButton userLocation={userLocation} map={map} />
             <LegendButton onClick={onLegendClick} />
             <DateButton onClick={onDateClick} />
         </VStack>

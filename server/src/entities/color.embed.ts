@@ -15,4 +15,10 @@ export class Color {
     @Field(() => String, { nullable: true })
     @Property({ type: 'text', nullable: true })
     colorScheme?: string;
+
+    constructor(light: string, dark: string, colorScheme?: string) {
+        this.light = light;
+        this.dark = dark;
+        this.colorScheme = colorScheme;
+    }
 }

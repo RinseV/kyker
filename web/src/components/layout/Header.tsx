@@ -11,7 +11,7 @@ export const Header: React.VFC = () => {
                     <Logo />
                 </Box>
 
-                <Heading>Kyker</Heading>
+                <Heading fontFamily="Montserrat">Kyker</Heading>
             </Flex>
 
             <DarkModeSwitch />

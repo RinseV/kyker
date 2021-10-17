@@ -4,7 +4,7 @@ import { GraphQLResolveInfo } from 'graphql';
 import fieldsToRelations from 'graphql-fields-to-relations';
 import { Arg, Ctx, Info, Int, Mutation, Query, Resolver } from 'type-graphql';
 import { ISO_DATE_FORMAT } from '../constants';
-import { Spotting, User } from '../entities';
+import { Animal, Spotting, User } from '../entities';
 import { MyContext } from '../utils/types';
 import { QueryDate } from '../validators/date.validator';
 import { SpottingValidator } from '../validators/spotting.validator';
@@ -64,7 +64,14 @@ export class SpottingResolver {
         // Set cookie for next time
         req.session.data.id = user.id;
 
-        // Create pin
+        // Check if animal is disabled
+        const animal = await em.getRepository(Animal).findOne({
+            id: input.animal
+        });
+        if (!animal || animal.disabled) {
+            throw new Error('Not allowed to create spottings for this animal');
+        }
+        // Create spotting
         const spotting = em.create(Spotting, {
             user,
             animal: input.animal,

@@ -5,26 +5,15 @@ import {
     Divider,
     Heading,
     HStack,
-    Input,
-    Popover,
-    PopoverBody,
-    PopoverContent,
-    PopoverTrigger,
     SimpleGrid,
     Text,
     useColorModeValue,
-    useOutsideClick,
     VStack
 } from '@chakra-ui/react';
-import { format } from 'date-fns';
-import { Calendar, DateObj, GetBackForwardPropsOptions, RenderProps, useDayzed } from 'dayzed';
-import React, { Fragment, useRef, useState } from 'react';
+import { Calendar, DateObj, GetBackForwardPropsOptions, RenderProps } from 'dayzed';
+import React, { Fragment } from 'react';
 
 // Source: https://github.com/aboveyunhai/chakra-dayzed-datepicker
-
-const MONTH_NAMES_DEFAULT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const DAY_NAMES_DEFAULT = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-const DATE_FORMAT_DEFAULT = 'yyyy-MM-dd';
 
 interface SingleDatepickerBackButtonsProps {
     calendars: Calendar[];
@@ -155,71 +144,5 @@ export const SingleDatepickerCalendar = (
                 );
             })}
         </HStack>
-    );
-};
-
-export const SingleDatepicker: React.FC<SingleDatepickerProps> = ({
-    configs = {
-        dateFormat: DATE_FORMAT_DEFAULT,
-        monthNames: MONTH_NAMES_DEFAULT,
-        dayNames: DAY_NAMES_DEFAULT
-    },
-    ...props
-}) => {
-    const { date, name, disabled, onDateChange, id } = props;
-
-    const ref = useRef<HTMLElement>(null);
-    const initialFocusRef = useRef<HTMLInputElement>(null);
-
-    const [popoverOpen, setPopoverOpen] = useState(false);
-
-    useOutsideClick({
-        ref: ref,
-        handler: () => setPopoverOpen(false)
-    });
-
-    const onDateSelected = (options: { selectable: boolean; date: Date }) => {
-        const { selectable, date } = options;
-        if (!selectable) return;
-        if (date) {
-            onDateChange(date);
-            setPopoverOpen(false);
-            return;
-        }
-    };
-
-    const dayzedData = useDayzed({
-        showOutsideDays: true,
-        onDateSelected,
-        selected: date
-    });
-
-    return (
-        <Popover
-            placement="bottom-start"
-            variant="responsive"
-            isOpen={popoverOpen}
-            onClose={() => setPopoverOpen(false)}
-            initialFocusRef={initialFocusRef}
-            isLazy
-        >
-            <PopoverTrigger>
-                <Input
-                    id={id}
-                    autoComplete="off"
-                    isDisabled={disabled}
-                    ref={initialFocusRef}
-                    onClick={() => setPopoverOpen(!popoverOpen)}
-                    name={name}
-                    value={format(date, configs.dateFormat)}
-                    onChange={(e) => e.target.value}
-                />
-            </PopoverTrigger>
-            <PopoverContent ref={ref}>
-                <PopoverBody padding={'10px 5px'} borderWidth={1} borderColor="blue.400">
-                    <SingleDatepickerCalendar {...dayzedData} configs={configs} />
-                </PopoverBody>
-            </PopoverContent>
-        </Popover>
     );
 };

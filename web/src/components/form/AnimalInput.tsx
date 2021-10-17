@@ -24,10 +24,13 @@ export function AnimalInput<T extends FieldValues = FieldValues>({
             return [];
         }
 
-        return data.animals.map((animal) => ({
-            value: animal.id,
-            label: animal.name
-        }));
+        // Filter out disabled animals since we can't create spottings for them
+        return data.animals
+            .filter((animal) => !animal.disabled)
+            .map((animal) => ({
+                value: animal.id,
+                label: animal.name
+            }));
     }, [data]);
 
     return (

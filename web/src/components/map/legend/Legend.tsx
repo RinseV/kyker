@@ -1,4 +1,13 @@
-import { Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay } from '@chakra-ui/modal';
+import {
+    Modal,
+    ModalBody,
+    ModalCloseButton,
+    ModalContent,
+    ModalHeader,
+    ModalOverlay,
+    ModalFooter
+} from '@chakra-ui/modal';
+import { Text } from '@chakra-ui/react';
 import { Spinner } from '@chakra-ui/spinner';
 import React, { useRef } from 'react';
 import { useAnimalsQuery } from '../../../generated/graphql';
@@ -22,6 +31,9 @@ export const Legend: React.VFC<LegendProps> = ({ isOpen, onClose }) => {
                 <ModalHeader>Legend</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody>{loading ? <Spinner /> : <LegendContent data={data} />}</ModalBody>
+                <ModalFooter justifyContent="flex-start">
+                    <Text fontSize="sm">* This animal is currently disabled</Text>
+                </ModalFooter>
             </ModalContent>
         </Modal>
     );

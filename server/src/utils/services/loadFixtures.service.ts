@@ -19,13 +19,23 @@ export const loadFixtures = async (orm: MikroORM): Promise<Fixtures | undefined>
         const animals = [...Array(AMOUNT_OF_FIXTURES)].map(() => {
             const animal = orm.em.create(Animal, {
                 name: faker.vehicle.manufacturer(),
-                color: new Color(faker.commerce.color(), faker.commerce.color())
+                color: new Color(faker.commerce.color(), faker.commerce.color()),
+                disabled: false
             });
 
             orm.em.persist(animal);
 
             return animal;
         });
+
+        // Also create a disabled animal for testing
+        const disabledAnimal = orm.em.create(Animal, {
+            name: faker.vehicle.manufacturer(),
+            color: new Color(faker.commerce.color(), faker.commerce.color()),
+            disabled: true
+        });
+        orm.em.persist(disabledAnimal);
+        animals.push(disabledAnimal);
 
         await orm.em.flush();
 
@@ -73,6 +83,19 @@ export const loadFixtures = async (orm: MikroORM): Promise<Fixtures | undefined>
 
             return spotting;
         });
+
+        // Also create a spotting for the disabled animal for testing
+        const disabledUser = orm.em.create(User, {
+            id: faker.random.alphaNumeric(20)
+        });
+        orm.em.persist(disabledUser);
+        const disabledSpotting = orm.em.create(Spotting, {
+            user: disabledUser,
+            location: new Location(faker.datatype.number(80), faker.datatype.number(100)),
+            animal: disabledAnimal.id,
+            description: faker.lorem.sentence()
+        });
+        orm.em.persist(disabledSpotting);
 
         await orm.em.flush();
 

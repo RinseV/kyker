@@ -1,3 +1,4 @@
+import { QueryOrder } from '@mikro-orm/core';
 import { Ctx, Query, Resolver } from 'type-graphql';
 import { Animal } from '../entities';
 import { MyContext } from '../utils/types';
@@ -9,6 +10,10 @@ export class AnimalResolver {
      */
     @Query(() => [Animal])
     async animals(@Ctx() { em }: MyContext): Promise<Animal[]> {
-        return em.getRepository(Animal).findAll();
+        return em.getRepository(Animal).findAll({
+            orderBy: {
+                name: QueryOrder.ASC
+            }
+        });
     }
 }

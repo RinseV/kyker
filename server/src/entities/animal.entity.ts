@@ -17,6 +17,10 @@ export class Animal extends BaseEntity<Animal, 'id'> {
     @Embedded(() => Color)
     color: Color;
 
+    @Field(() => Boolean)
+    @Property({ type: 'boolean', default: false })
+    disabled: boolean;
+
     @Field(() => Date)
     @Property({ type: 'date' })
     createdAt: Date = new Date();

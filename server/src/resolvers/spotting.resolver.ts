@@ -22,12 +22,12 @@ export class SpottingResolver {
     async spottings(
         @Arg('animals', () => [Int], { nullable: true }) animals: number[],
         @Arg('excludedAnimals', () => [Int], { nullable: true }) excludedAnimals: number[],
-        @Arg('date', () => QueryDate, { defaultValue: format(new Date(), ISO_DATE_FORMAT) }) date: QueryDate,
+        @Arg('date', () => QueryDate, { defaultValue: { date: format(new Date(), ISO_DATE_FORMAT) } }) date: QueryDate,
         @Info() info: GraphQLResolveInfo,
         @Ctx() { em }: MyContext
     ): Promise<Spotting[]> {
         const relationPaths = fieldsToRelations(info);
-        const filter = generateAnimalFilter(animals, excludedAnimals, date.date);
+        const filter = generateAnimalFilter(excludedAnimals, date.date, animals);
         const spottings = await em.getRepository(Spotting).find(filter, relationPaths);
         return spottings;
     }
@@ -85,57 +85,42 @@ export class SpottingResolver {
     }
 }
 
-const generateAnimalFilter = (animals?: number[], excludedAnimals?: number[], date?: string): FilterQuery<Spotting> => {
-    let filter: FilterQuery<Spotting> = {};
-    // Add date filter if given
-    if (date) {
-        // Convert date string to Date
-        const dateAsDate = parse(date, ISO_DATE_FORMAT, new Date());
-        // Get start & end of day from date
-        const start = startOfDay(dateAsDate);
-        const end = endOfDay(dateAsDate);
-        // Filter between these 2 timestamps
-        filter = {
-            createdAt: {
-                $gte: start,
-                $lte: end
-            }
-        };
-    }
-    // No animals or exludedAnimals => no filter
-    if (!animals && !excludedAnimals) {
-        return filter;
-    }
-    // If there are animals, but no excludedAnimals, we can just filter on animals
-    if (animals && !excludedAnimals) {
-        return {
-            ...filter,
-            animal: {
-                id: {
-                    $in: animals
-                }
-            }
-        };
-    }
-    // If there are excludedAnimals, but no animals, we can just filter on excludedAnimals
-    if (!animals && excludedAnimals) {
-        return {
-            ...filter,
-            animal: {
-                id: {
-                    $nin: excludedAnimals
-                }
-            }
-        };
-    }
-    // If there are both animals and excludedAnimals, we need to filter on both
+/**
+ * Generates a filter for the given date and animals to include/exclude
+ * @param excludedAnimals Animal IDs to exclude
+ * @param date Date to search for spottings on
+ * @param animals Animal IDs to include
+ * @returns A filter for all spottings matching the given criteria
+ */
+const generateAnimalFilter = (
+    excludedAnimals: number[] = [],
+    date: string,
+    animals?: number[]
+): FilterQuery<Spotting> => {
+    // Convert date string to Date
+    const dateAsDate = parse(date, ISO_DATE_FORMAT, new Date());
+    // Get start & end of day from date
+    const start = startOfDay(dateAsDate);
+    const end = endOfDay(dateAsDate);
+    // Create filter with everything
     return {
-        ...filter,
         animal: {
-            id: {
-                $in: animals,
-                $nin: excludedAnimals
-            }
+            // We only want to include animals if they are not disabled
+            disabled: false,
+            // Depending on whether animals are given, we either include them or not
+            id: animals
+                ? {
+                      $in: animals,
+                      $nin: excludedAnimals
+                  }
+                : {
+                      $nin: excludedAnimals
+                  }
+        },
+        // We query between the start of the given day and the end of the given day
+        createdAt: {
+            $gte: start,
+            $lte: end
         }
     };
 };

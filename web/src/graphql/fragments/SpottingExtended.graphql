@@ -1,4 +1,4 @@
-fragment Spotting on Spotting {
+fragment SpottingExtended on Spotting {
     id
     animal {
         ...Animal
@@ -7,4 +7,5 @@ fragment Spotting on Spotting {
         lon
         lat
     }
+    description
 }

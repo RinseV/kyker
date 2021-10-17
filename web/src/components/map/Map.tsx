@@ -1,17 +1,17 @@
 import { useColorModeValue } from '@chakra-ui/color-mode';
-import { useDisclosure, useToast } from '@chakra-ui/react';
+import { useDisclosure } from '@chakra-ui/react';
 import { LngLat } from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import ReactMapboxGl from 'react-mapbox-gl';
 import { mapBounds } from '../../utils/constants';
-import { inBounds } from '../../utils/inBounds';
 import { MapButtons } from './buttons/MapButtons';
 import { Calendar } from './calendar/Calendar';
 import { RestCampLayer } from './camps/RestCampLayer';
 import { GateLayer } from './gates/GateLayer';
 import { Legend } from './legend/Legend';
 import { UserLocation } from './location/UserLocation';
+import { SpottingModal } from './spottings/SpottingModal';
 import { SpottingsLayer } from './spottings/SpottingsLayer';
 import { Target } from './Target';
 
@@ -39,12 +39,15 @@ export const Map: React.VFC = () => {
     );
 
     const mapRef = useRef<mapboxgl.Map | null>(null);
-    const toast = useToast();
 
+    // Whether we are currently in "edit" mode
+    const [editMode, setEditMode] = useState(false);
     // Target where the click was registered (displays marker)
     const [targetMarker, setTargetMarker] = useState<TargetMarkerInfo | null>(null);
     // User location
     const [userLocation, setUserLocation] = useState<LngLat | null>(null);
+    // Selected spotting
+    const [selectedSpotting, setSelectedSpotting] = useState<number | null>(null);
 
     // Whether input modal is open
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -54,6 +57,9 @@ export const Map: React.VFC = () => {
 
     // Whether the calendar modal is open
     const { isOpen: calendarOpen, onOpen: calendarOnOpen, onClose: calendarOnClose } = useDisclosure();
+
+    // Whether the spotting modal is open
+    const { isOpen: spottingOpen, onOpen: spottingOnOpen, onClose: spottingOnClose } = useDisclosure();
 
     const onMapLoad = (map: mapboxgl.Map) => {
         mapRef.current = map;
@@ -73,39 +79,10 @@ export const Map: React.VFC = () => {
         }
     };
 
-    const onLocationButtonClick = () => {
-        if (userLocation) {
-            if (inBounds(userLocation, mapBounds)) {
-                mapRef.current?.flyTo(
-                    {
-                        center: userLocation,
-                        zoom: 14
-                    },
-                    { duration: 1000 }
-                );
-            } else {
-                toast({
-                    title: 'You are not in the park',
-                    description: 'You can only see the park',
-                    status: 'error',
-                    duration: 5000,
-                    isClosable: true
-                });
-            }
-        } else {
-            toast({
-                title: 'Could not find your location',
-                description: 'Please allow location access',
-                status: 'error',
-                duration: 5000,
-                isClosable: true
-            });
-        }
-    };
-
     // On click event for map that displays popup
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const handleClick = (map: mapboxgl.Map, evt: React.SyntheticEvent<any, Event>) => {
+    const handleClick = (_: mapboxgl.Map, evt: React.SyntheticEvent<unknown, Event>) => {
+        console.log(`Click, edit mode: ${editMode}`);
+        // TODO: only set target and open modal if editMode
         const target = evt as unknown as ClickEvent;
         // Set coordinates (and other info)
         setTargetMarker({
@@ -115,7 +92,6 @@ export const Map: React.VFC = () => {
                 Math.ceil(target.lngLat.lat * 10000) / 10000
             )
         });
-        // Open input modal
         onOpen();
     };
 
@@ -124,6 +100,10 @@ export const Map: React.VFC = () => {
         // Remove current marker
         setTargetMarker(null);
     };
+
+    useEffect(() => {
+        console.log(`Edit mode: ${editMode}`);
+    }, [editMode]);
 
     return (
         <MapboxMap
@@ -138,20 +118,26 @@ export const Map: React.VFC = () => {
         >
             <>
                 <MapButtons
-                    onLocationClick={onLocationButtonClick}
+                    editMode={editMode}
+                    setEditMode={setEditMode}
+                    setTargetMarker={setTargetMarker}
+                    userLocation={userLocation}
+                    mapRef={mapRef}
                     onLegendClick={legendOnOpen}
                     onDateClick={calendarOnOpen}
                 />
 
                 <RestCampLayer />
                 <GateLayer />
-                <SpottingsLayer />
+                <SpottingsLayer setSelectedSpotting={setSelectedSpotting} onOpen={spottingOnOpen} />
 
                 <UserLocation userLocation={userLocation} />
 
                 <Target info={targetMarker} isOpen={isOpen} onClose={onClose} onSuccess={handleSuccess} />
                 <Legend isOpen={legendOpen} onClose={legendOnClose} />
                 <Calendar isOpen={calendarOpen} onClose={calendarOnClose} />
+
+                <SpottingModal isOpen={spottingOpen} onClose={spottingOnClose} selectedSpotting={selectedSpotting} />
             </>
         </MapboxMap>
     );

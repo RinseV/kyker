@@ -3,7 +3,12 @@ import { useAnimalsQuery, useSpottingsQuery } from '../../../generated/graphql';
 import { useAppSelector } from '../../../store/hooks';
 import { SpottingLayer } from './SpottingLayer';
 
-export const SpottingsLayer: React.VFC = () => {
+type SpottingLayersProps = {
+    setSelectedSpotting: React.Dispatch<React.SetStateAction<number | null>>;
+    onOpen: () => void;
+};
+
+export const SpottingsLayer: React.VFC<SpottingLayersProps> = ({ setSelectedSpotting, onOpen }) => {
     const hiddenAnimals = useAppSelector((state) => state.preferences.hiddenAnimals);
     const queryDate = useAppSelector((state) => state.preferences.queryDate);
 
@@ -34,7 +39,13 @@ export const SpottingsLayer: React.VFC = () => {
             {animals.animals
                 .filter((animal) => !hiddenAnimals.some((id) => id === animal.id))
                 .map((animal) => (
-                    <SpottingLayer key={animal.id} animal={animal} spottings={spottings} />
+                    <SpottingLayer
+                        key={animal.id}
+                        animal={animal}
+                        spottings={spottings}
+                        setSelectedSpotting={setSelectedSpotting}
+                        onOpen={onOpen}
+                    />
                 ))}
         </>
     );

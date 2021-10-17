@@ -1,5 +1,6 @@
 import { useColorModeValue } from '@chakra-ui/color-mode';
-import React, { useMemo } from 'react';
+import { MapLayerMouseEvent } from 'mapbox-gl';
+import React, { useCallback, useMemo } from 'react';
 import { GeoJSONLayer, Layer } from 'react-mapbox-gl';
 import { AnimalFragment, SpottingFragment, SpottingsQuery } from '../../../generated/graphql';
 import { useAppSelector } from '../../../store/hooks';
@@ -7,9 +8,11 @@ import { useAppSelector } from '../../../store/hooks';
 type SpottingLayerProps = {
     animal: AnimalFragment;
     spottings: SpottingsQuery;
+    setSelectedSpotting: React.Dispatch<React.SetStateAction<number | null>>;
+    onOpen: () => void;
 };
 
-export const SpottingLayer: React.VFC<SpottingLayerProps> = ({ animal, spottings }) => {
+export const SpottingLayer: React.VFC<SpottingLayerProps> = ({ animal, spottings, setSelectedSpotting, onOpen }) => {
     const spottingColor = useColorModeValue(animal.color.light, animal.color.dark);
     // Text color is just white or black since the contrast is fine for all colors used
     const textColor = useColorModeValue('#FFFFFF', '#000000');
@@ -19,6 +22,22 @@ export const SpottingLayer: React.VFC<SpottingLayerProps> = ({ animal, spottings
     const animalSpottings = useMemo<SpottingFragment[]>(() => {
         return spottings.spottings.filter((s) => s.animal.id === animal.id);
     }, [spottings, animal.id]);
+
+    // Triggered when a spotting is clicked
+    const onSpottingClick = useCallback(
+        (e: MapLayerMouseEvent) => {
+            if (e.features?.length === 0) {
+                setSelectedSpotting(null);
+                return;
+            }
+
+            const feature = e.features?.[0];
+            setSelectedSpotting(feature?.properties?.id);
+            onOpen();
+            return;
+        },
+        [onOpen, setSelectedSpotting]
+    );
 
     const features = useMemo<GeoJSON.FeatureCollection<GeoJSON.Point>>(() => {
         return {
@@ -87,6 +106,7 @@ export const SpottingLayer: React.VFC<SpottingLayerProps> = ({ animal, spottings
                     'circle-radius': 4,
                     'circle-color': spottingColor
                 }}
+                onClick={onSpottingClick}
             />
         </>
     );

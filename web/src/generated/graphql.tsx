@@ -79,7 +79,12 @@ export type Query = {
     animals: Array<Animal>;
     camps: Array<Camp>;
     gates: Array<Gate>;
+    spotting: Spotting;
     spottings: Array<Spotting>;
+};
+
+export type QuerySpottingArgs = {
+    id: Scalars['Int'];
 };
 
 export type QuerySpottingsArgs = {
@@ -145,6 +150,19 @@ export type GateFragment = {
 export type SpottingFragment = {
     __typename?: 'Spotting';
     id: number;
+    animal: {
+        __typename?: 'Animal';
+        id: number;
+        name: string;
+        disabled: boolean;
+        color: { __typename?: 'Color'; light: string; dark: string };
+    };
+    location: { __typename?: 'Location'; lon: number; lat: number };
+};
+
+export type SpottingExtendedFragment = {
+    __typename?: 'Spotting';
+    id: number;
     description: string;
     animal: {
         __typename?: 'Animal';
@@ -166,7 +184,6 @@ export type CreateSpottingMutation = {
     createSpotting: {
         __typename?: 'Spotting';
         id: number;
-        description: string;
         animal: {
             __typename?: 'Animal';
             id: number;
@@ -216,6 +233,27 @@ export type GatesQuery = {
     }>;
 };
 
+export type SpottingQueryVariables = Exact<{
+    id: Scalars['Int'];
+}>;
+
+export type SpottingQuery = {
+    __typename?: 'Query';
+    spotting: {
+        __typename?: 'Spotting';
+        id: number;
+        description: string;
+        animal: {
+            __typename?: 'Animal';
+            id: number;
+            name: string;
+            disabled: boolean;
+            color: { __typename?: 'Color'; light: string; dark: string };
+        };
+        location: { __typename?: 'Location'; lon: number; lat: number };
+    };
+};
+
 export type SpottingsQueryVariables = Exact<{
     animals?: Maybe<Array<Scalars['Int']> | Scalars['Int']>;
     excludedAnimals?: Maybe<Array<Scalars['Int']> | Scalars['Int']>;
@@ -227,7 +265,6 @@ export type SpottingsQuery = {
     spottings: Array<{
         __typename?: 'Spotting';
         id: number;
-        description: string;
         animal: {
             __typename?: 'Animal';
             id: number;
@@ -273,6 +310,19 @@ export const AnimalFragmentDoc = gql`
 `;
 export const SpottingFragmentDoc = gql`
     fragment Spotting on Spotting {
+        id
+        animal {
+            ...Animal
+        }
+        location {
+            lon
+            lat
+        }
+    }
+    ${AnimalFragmentDoc}
+`;
+export const SpottingExtendedFragmentDoc = gql`
+    fragment SpottingExtended on Spotting {
         id
         animal {
             ...Animal
@@ -430,6 +480,42 @@ export function useGatesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Gate
 export type GatesQueryHookResult = ReturnType<typeof useGatesQuery>;
 export type GatesLazyQueryHookResult = ReturnType<typeof useGatesLazyQuery>;
 export type GatesQueryResult = Apollo.QueryResult<GatesQuery, GatesQueryVariables>;
+export const SpottingDocument = gql`
+    query Spotting($id: Int!) {
+        spotting(id: $id) {
+            ...SpottingExtended
+        }
+    }
+    ${SpottingExtendedFragmentDoc}
+`;
+
+/**
+ * __useSpottingQuery__
+ *
+ * To run a query within a React component, call `useSpottingQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSpottingQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSpottingQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useSpottingQuery(baseOptions: Apollo.QueryHookOptions<SpottingQuery, SpottingQueryVariables>) {
+    const options = { ...defaultOptions, ...baseOptions };
+    return Apollo.useQuery<SpottingQuery, SpottingQueryVariables>(SpottingDocument, options);
+}
+export function useSpottingLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SpottingQuery, SpottingQueryVariables>) {
+    const options = { ...defaultOptions, ...baseOptions };
+    return Apollo.useLazyQuery<SpottingQuery, SpottingQueryVariables>(SpottingDocument, options);
+}
+export type SpottingQueryHookResult = ReturnType<typeof useSpottingQuery>;
+export type SpottingLazyQueryHookResult = ReturnType<typeof useSpottingLazyQuery>;
+export type SpottingQueryResult = Apollo.QueryResult<SpottingQuery, SpottingQueryVariables>;
 export const SpottingsDocument = gql`
     query Spottings($animals: [Int!], $excludedAnimals: [Int!], $date: QueryDate) {
         spottings(animals: $animals, excludedAnimals: $excludedAnimals, date: $date) {
@@ -475,6 +561,7 @@ export const namedOperations = {
         Animals: 'Animals',
         Camps: 'Camps',
         Gates: 'Gates',
+        Spotting: 'Spotting',
         Spottings: 'Spottings'
     },
     Mutation: {
@@ -484,6 +571,7 @@ export const namedOperations = {
         Animal: 'Animal',
         Camp: 'Camp',
         Gate: 'Gate',
-        Spotting: 'Spotting'
+        Spotting: 'Spotting',
+        SpottingExtended: 'SpottingExtended'
     }
 };

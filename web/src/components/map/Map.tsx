@@ -3,7 +3,7 @@ import { useDisclosure } from '@chakra-ui/react';
 import { LngLat, Map as MapboxGLMap, MapMouseEvent } from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import React, { useEffect, useRef, useState } from 'react';
-import ReactMapboxGl, { MapContext } from 'react-mapbox-gl';
+import ReactMapboxGl from 'react-mapbox-gl';
 import { MapEvent } from 'react-mapbox-gl/lib/map-events';
 import { SpottingFragment } from '../../generated/graphql';
 import { mapBounds } from '../../utils/constants';
@@ -110,19 +110,14 @@ export const Map: React.VFC = () => {
             onClick={handleMapClick as unknown as MapEvent}
         >
             <>
-                <MapContext.Consumer>
-                    {(map) => (
-                        <MapButtons
-                            editMode={editMode}
-                            setEditMode={setEditMode}
-                            setTargetMarker={setTargetMarker}
-                            userLocation={userLocation}
-                            map={map}
-                            onLegendClick={legendOnOpen}
-                            onDateClick={calendarOnOpen}
-                        />
-                    )}
-                </MapContext.Consumer>
+                <MapButtons
+                    editMode={editMode}
+                    setEditMode={setEditMode}
+                    setTargetMarker={setTargetMarker}
+                    userLocation={userLocation}
+                    onLegendClick={legendOnOpen}
+                    onDateClick={calendarOnOpen}
+                />
 
                 <RestCampLayer />
                 <GateLayer />

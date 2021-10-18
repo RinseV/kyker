@@ -5,6 +5,7 @@ import fieldsToRelations from 'graphql-fields-to-relations';
 import { Arg, Ctx, Info, Int, Mutation, Query, Resolver } from 'type-graphql';
 import { ISO_DATE_FORMAT } from '../constants';
 import { Animal, Spotting, User } from '../entities';
+import RateLimit from '../middleware/RateLimit';
 import { MyContext } from '../utils/types';
 import { QueryDate } from '../validators/date.validator';
 import { Hours } from '../validators/hours.validator';
@@ -36,6 +37,7 @@ export class SpottingResolver {
      * @returns All spottings
      */
     @Query(() => [Spotting])
+    @RateLimit()
     async spottings(
         @Arg('animals', () => [Int], { nullable: true }) animals: number[],
         @Arg('excludedAnimals', () => [Int], { nullable: true }) excludedAnimals: number[],
@@ -57,6 +59,7 @@ export class SpottingResolver {
      * @returns Created spotting
      */
     @Mutation(() => Spotting)
+    @RateLimit()
     async createSpotting(
         @Arg('id', () => String) id: string,
         @Arg('input', () => SpottingValidator) input: SpottingValidator,

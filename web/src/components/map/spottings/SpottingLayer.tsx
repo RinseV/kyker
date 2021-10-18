@@ -33,6 +33,9 @@ export const SpottingLayer: React.VFC<SpottingLayerProps> = ({
     // Triggered when a spotting is clicked
     const onSpottingClick = useCallback(
         (e: MapLayerMouseEvent) => {
+            // Set cursor style back to normal
+            e.target.getCanvas().style.cursor = '';
+
             // If we are in edit mode, we don't want to select a spotting
             if (editMode) {
                 return;

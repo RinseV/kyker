@@ -13,6 +13,21 @@ import { SpottingValidator } from '../validators/spotting.validator';
 @Resolver(() => Spotting)
 export class SpottingResolver {
     /**
+     * Query to get a single spotting via ID
+     * @param id Spotting ID
+     * @returns Returns spotting (if exists), null otherwise
+     */
+    @Query(() => Spotting)
+    async spotting(
+        @Arg('id', () => Int) id: number,
+        @Info() info: GraphQLResolveInfo,
+        @Ctx() { em }: MyContext
+    ): Promise<Spotting | null> {
+        const relationPaths = fieldsToRelations(info);
+        return em.getRepository(Spotting).findOne(id, relationPaths);
+    }
+
+    /**
      * Query to get all spottings
      * @param animals Optional animal ID to get spottings from
      * @param excludedAnimals Optional animal ID to exclude from spottings

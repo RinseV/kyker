@@ -10,12 +10,13 @@ type LocationInputProps = {
     coordinates: LngLat;
     register?: UseFormRegister<FormData>;
     isDisabled?: boolean;
+    labelSize?: string;
 };
 
-export const LocationInput: React.VFC<LocationInputProps> = ({ coordinates, register, isDisabled }) => {
+export const LocationInput: React.VFC<LocationInputProps> = ({ coordinates, register, isDisabled, labelSize }) => {
     return (
         <Flex direction="column">
-            <FormLabel>Location</FormLabel>
+            <FormLabel fontSize={labelSize}>Location</FormLabel>
             <HStack spacing={4} w="full">
                 {/* Longitude */}
                 <LngLatInput<FormData>

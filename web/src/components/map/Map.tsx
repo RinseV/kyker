@@ -1,23 +1,21 @@
 import { useColorModeValue } from '@chakra-ui/color-mode';
-import { useDisclosure, useToast } from '@chakra-ui/react';
-import { LngLat } from 'mapbox-gl';
+import { useDisclosure } from '@chakra-ui/react';
+import { LngLat, Map as MapboxGLMap, MapMouseEvent } from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import ReactMapboxGl from 'react-mapbox-gl';
+import { MapEvent } from 'react-mapbox-gl/lib/map-events';
+import { SpottingFragment } from '../../generated/graphql';
 import { mapBounds } from '../../utils/constants';
-import { inBounds } from '../../utils/inBounds';
 import { MapButtons } from './buttons/MapButtons';
 import { Calendar } from './calendar/Calendar';
 import { RestCampLayer } from './camps/RestCampLayer';
 import { GateLayer } from './gates/GateLayer';
 import { Legend } from './legend/Legend';
 import { UserLocation } from './location/UserLocation';
+import { SpottingModal } from './spottings/SpottingModal';
 import { SpottingsLayer } from './spottings/SpottingsLayer';
 import { Target } from './Target';
-
-interface ClickEvent {
-    lngLat: LngLat;
-}
 
 const MapboxMap = ReactMapboxGl({
     accessToken: process.env.REACT_APP_MAPBOX_API_KEY as string
@@ -38,13 +36,16 @@ export const Map: React.VFC = () => {
         'mapbox://styles/r1ns3v/ckul61lvm3lbx17q1k88qsuyf'
     );
 
-    const mapRef = useRef<mapboxgl.Map | null>(null);
-    const toast = useToast();
-
+    // Whether we are in "edit" mode or not (able to add spottings)
+    const [editMode, setEditMode] = useState(false);
+    // Ref is needed for map onClick
+    const editModeRef = useRef(false);
     // Target where the click was registered (displays marker)
     const [targetMarker, setTargetMarker] = useState<TargetMarkerInfo | null>(null);
     // User location
     const [userLocation, setUserLocation] = useState<LngLat | null>(null);
+    // Selected spotting
+    const [selectedSpotting, setSelectedSpotting] = useState<SpottingFragment | null>(null);
 
     // Whether input modal is open
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -55,10 +56,14 @@ export const Map: React.VFC = () => {
     // Whether the calendar modal is open
     const { isOpen: calendarOpen, onOpen: calendarOnOpen, onClose: calendarOnClose } = useDisclosure();
 
+    // Whether the spotting modal is open
+    const { isOpen: spottingOpen, onOpen: spottingOnOpen, onClose: spottingOnClose } = useDisclosure();
+
+    // Called on map load
     const onMapLoad = (map: mapboxgl.Map) => {
-        mapRef.current = map;
+        // Resize map to fill div
         map.resize();
-        // map.addControl(new GeolocateControl());
+        // Set user location
         if (window.navigator.geolocation) {
             window.navigator.geolocation.getCurrentPosition(
                 (position) => {
@@ -73,85 +78,64 @@ export const Map: React.VFC = () => {
         }
     };
 
-    const onLocationButtonClick = () => {
-        if (userLocation) {
-            if (inBounds(userLocation, mapBounds)) {
-                mapRef.current?.flyTo(
-                    {
-                        center: userLocation,
-                        zoom: 14
-                    },
-                    { duration: 1000 }
-                );
-            } else {
-                toast({
-                    title: 'You are not in the park',
-                    description: 'You can only see the park',
-                    status: 'error',
-                    duration: 5000,
-                    isClosable: true
-                });
-            }
-        } else {
-            toast({
-                title: 'Could not find your location',
-                description: 'Please allow location access',
-                status: 'error',
-                duration: 5000,
-                isClosable: true
+    // On click event for map that displays popup
+    const handleMapClick = (_: MapboxGLMap, e: MapMouseEvent) => {
+        // We have to use the ref here, otherwise it does not work
+        if (editModeRef.current) {
+            // Set coordinates (and other info)
+            setTargetMarker({
+                // Limit lon, lat to 4 decimal places (~11 meters of accuracy)
+                coordinates: new LngLat(
+                    Math.ceil(e.lngLat.lng * 10000) / 10000,
+                    Math.ceil(e.lngLat.lat * 10000) / 10000
+                )
             });
+            onOpen();
         }
     };
 
-    // On click event for map that displays popup
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const handleClick = (map: mapboxgl.Map, evt: React.SyntheticEvent<any, Event>) => {
-        const target = evt as unknown as ClickEvent;
-        // Set coordinates (and other info)
-        setTargetMarker({
-            // Limit lon, lat to 4 decimal places (~11 meters of accuracy)
-            coordinates: new LngLat(
-                Math.ceil(target.lngLat.lng * 10000) / 10000,
-                Math.ceil(target.lngLat.lat * 10000) / 10000
-            )
-        });
-        // Open input modal
-        onOpen();
-    };
-
-    // Called if spotting was successfully submitted
-    const handleSuccess = () => {
-        // Remove current marker
-        setTargetMarker(null);
-    };
+    // Update edit mode ref whenever editMode changes
+    useEffect(() => {
+        editModeRef.current = editMode;
+    }, [editMode]);
 
     return (
         <MapboxMap
-            // eslint-disable-next-line react/style-prop-object
             style={style}
             containerStyle={{ flex: 1 }}
             maxBounds={mapBounds}
             center={center}
             zoom={zoom}
             onStyleLoad={onMapLoad}
-            onClick={handleClick}
+            onClick={handleMapClick as unknown as MapEvent}
         >
             <>
                 <MapButtons
-                    onLocationClick={onLocationButtonClick}
+                    editMode={editMode}
+                    setEditMode={setEditMode}
+                    setTargetMarker={setTargetMarker}
+                    userLocation={userLocation}
                     onLegendClick={legendOnOpen}
                     onDateClick={calendarOnOpen}
                 />
 
                 <RestCampLayer />
                 <GateLayer />
-                <SpottingsLayer />
+                <SpottingsLayer setSelectedSpotting={setSelectedSpotting} editMode={editMode} onOpen={spottingOnOpen} />
 
                 <UserLocation userLocation={userLocation} />
 
-                <Target info={targetMarker} isOpen={isOpen} onClose={onClose} onSuccess={handleSuccess} />
+                <Target
+                    info={targetMarker}
+                    setInfo={setTargetMarker}
+                    setEditMode={setEditMode}
+                    isOpen={isOpen}
+                    onClose={onClose}
+                />
                 <Legend isOpen={legendOpen} onClose={legendOnClose} />
                 <Calendar isOpen={calendarOpen} onClose={calendarOnClose} />
+
+                <SpottingModal isOpen={spottingOpen} onClose={spottingOnClose} selectedSpotting={selectedSpotting} />
             </>
         </MapboxMap>
     );

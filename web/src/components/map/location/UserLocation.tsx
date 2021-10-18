@@ -47,7 +47,7 @@ export const UserLocation: React.VFC<UserLocationProps> = ({ userLocation }) => 
                         height: 4,
                         width: 4,
                         position: 'absolute',
-                        'box-shadow': '0 0 3px rgba(0, 0, 0, 0.35)'
+                        boxShadow: '0 0 3px rgba(0, 0, 0, 0.35)'
                     }}
                 />
             </chakra.div>

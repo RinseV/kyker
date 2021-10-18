@@ -33,7 +33,7 @@ export class SpottingResolver {
      * @param animals Optional animal ID to get spottings from
      * @param excludedAnimals Optional animal ID to exclude from spottings
      * @param date Optional date to get spottings from (as ISO8601 string)
-     * @param hoursAgo Optional number of hours ago to get spottings from (only works for today)
+     * @param hours Optional number of hours ago to get spottings from (only works for today)
      * @returns All spottings
      */
     @Query(() => [Spotting])

@@ -83,7 +83,7 @@ export const Calendar: React.VFC<CalendarProps> = ({ isOpen, onClose }) => {
                     >
                         Save
                     </Button>
-                    <Button onClick={onClose} isDisabled={isSubmitting}>
+                    <Button onClick={onClose} isDisabled={isSubmitting} ref={initialRef}>
                         Cancel
                     </Button>
                 </ModalFooter>

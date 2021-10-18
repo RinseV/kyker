@@ -122,7 +122,7 @@ export const InputModal: React.VFC<InputModalProps> = ({ coordinates, isOpen, on
                     >
                         Save
                     </Button>
-                    <Button onClick={onClose} isDisabled={isSubmitting}>
+                    <Button onClick={onClose} isDisabled={isSubmitting} ref={initialRef}>
                         Cancel
                     </Button>
                 </ModalFooter>

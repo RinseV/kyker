@@ -1,5 +1,6 @@
-import { Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay } from '@chakra-ui/react';
+import { Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay, VStack } from '@chakra-ui/react';
 import React, { useRef } from 'react';
+import { TimeRangeSlider } from '../../form/TimeRangeSlider';
 import { CalendarInput } from './CalendarInput';
 
 type CalendarProps = {
@@ -18,7 +19,10 @@ export const Calendar: React.VFC<CalendarProps> = ({ isOpen, onClose }) => {
                 <ModalHeader>Date to view</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody p={0} mb={4} justifyContent="center">
-                    <CalendarInput onClose={onClose} />
+                    <VStack spacing={4}>
+                        <CalendarInput onClose={onClose} />
+                        <TimeRangeSlider />
+                    </VStack>
                 </ModalBody>
             </ModalContent>
         </Modal>

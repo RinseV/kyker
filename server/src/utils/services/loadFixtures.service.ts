@@ -1,4 +1,5 @@
 import { MikroORM } from '@mikro-orm/core';
+import { subHours, subMinutes } from 'date-fns';
 import faker from 'faker';
 import { Animal, Camp, Gate, User, Color, Location, Spotting } from '../../entities';
 import { CampSize } from '../campSize';
@@ -72,11 +73,16 @@ export const loadFixtures = async (orm: MikroORM): Promise<Fixtures | undefined>
 
             orm.em.persist(user);
 
+            // Create the spottings hours apart (also subtract a few minutes to make it less precise)
+            const date = subMinutes(subHours(new Date(), spottingIndex), 1 + faker.datatype.number(10));
+
             const spotting = orm.em.create(Spotting, {
                 user: user,
                 location: new Location(faker.datatype.number(80), faker.datatype.number(100)),
                 animal: animals[spottingIndex].id,
-                description: faker.lorem.sentence()
+                description: faker.lorem.sentence(),
+                createdAt: date,
+                updatedAt: date
             });
 
             orm.em.persist(spotting);

@@ -1,13 +1,5 @@
 import { combineReducers } from 'redux';
 import preferenceReducer from './preference.slice';
-import { persistReducer } from 'redux-persist';
-import storage from 'redux-persist/lib/storage';
+import queryReducer from './query.slice';
 
-// Blacklist queryDate since we don't want to persist that (should reset on refresh)
-const preferenceConfig = {
-    key: 'preferences',
-    storage,
-    blacklist: ['queryDate']
-};
-
-export const rootReducer = combineReducers({ preferences: persistReducer(preferenceConfig, preferenceReducer) });
+export const rootReducer = combineReducers({ preferences: preferenceReducer, query: queryReducer });

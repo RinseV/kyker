@@ -1,4 +1,4 @@
-import { format, subDays } from 'date-fns';
+import { addHours, format, subDays, subHours } from 'date-fns';
 import faker from 'faker';
 import supertest, { SuperTest, Test } from 'supertest';
 import Application from '../src/application';
@@ -6,6 +6,7 @@ import { ISO_DATE_FORMAT } from '../src/constants';
 import { Spotting } from '../src/entities';
 import { clearDatabase } from '../src/utils/services/clearDatabase.service';
 import { Fixtures, loadFixtures } from '../src/utils/services/loadFixtures.service';
+import { Hours } from '../src/validators/hours.validator';
 
 describe('Spotting resolver tests', () => {
     let application: Application;
@@ -245,6 +246,43 @@ describe('Spotting resolver tests', () => {
         expect(response.body.data.spottings.length).toBe(0);
     });
 
+    test('Retrieve spottings in hour window', async () => {
+        if (!fixtures) {
+            throw new Error('Fixtures not loaded');
+        }
+
+        // Get all spottings between 2 hours ago and 2 hours from now (should be 2)
+        const now = new Date();
+        // Format 2 hours ago till 2 hours from now
+        const start = format(subHours(now, 2), 'HH:mm');
+        const end = format(addHours(now, 2), 'HH:mm');
+        const response = await retrieveSpottings(request, undefined, undefined, undefined, { start, end }).expect(200);
+
+        expect(response.body.data).toStrictEqual(
+            expect.objectContaining({
+                spottings: expect.arrayContaining([
+                    expect.objectContaining({
+                        id: expect.any(Number),
+                        user: expect.objectContaining({
+                            id: expect.any(String)
+                        }),
+                        animal: expect.objectContaining({
+                            id: expect.any(Number),
+                            name: expect.any(String)
+                        }),
+                        location: expect.objectContaining({
+                            lon: expect.any(Number),
+                            lat: expect.any(Number)
+                        }),
+                        description: expect.any(String)
+                    })
+                ])
+            })
+        );
+        // Spottings are created ~1 hour apart, there should 2 spottings
+        expect(response.body.data.spottings.length).toBe(2);
+    });
+
     test('Create spotting', async () => {
         if (!fixtures) {
             throw new Error('Fixtures not loaded');
@@ -301,13 +339,20 @@ const retrieveSpotting = (request: SuperTest<Test>, id: number) => {
     });
 };
 
-const retrieveSpottings = (request: SuperTest<Test>, animals?: number[], excludedAnimals?: number[], date?: string) => {
+const retrieveSpottings = (
+    request: SuperTest<Test>,
+    animals?: number[],
+    excludedAnimals?: number[],
+    date?: string,
+    hours?: Hours
+) => {
     return request.post('/graphql').send({
-        query: `query Spottings($animals: [Int!], $excludedAnimals: [Int!], $date: QueryDate) {
+        query: `query Spottings($animals: [Int!], $excludedAnimals: [Int!], $date: QueryDate, $hours: Hours) {
             spottings(
                 animals: $animals
                 excludedAnimals: $excludedAnimals
-                date: $date
+                date: $date,
+                hours: $hours
             ) {
                     id
                     user {
@@ -331,7 +376,8 @@ const retrieveSpottings = (request: SuperTest<Test>, animals?: number[], exclude
                 ? {
                       date
                   }
-                : undefined
+                : undefined,
+            hours
         }
     });
 };

@@ -29,7 +29,7 @@ export const Legend: React.VFC<LegendProps> = ({ isOpen, onClose }) => {
             <ModalOverlay />
             <ModalContent m={4}>
                 <ModalHeader>Legend</ModalHeader>
-                <ModalCloseButton />
+                <ModalCloseButton ref={initialRef} />
                 <ModalBody>{loading ? <Spinner /> : <LegendContent data={data} />}</ModalBody>
                 <ModalFooter justifyContent="flex-start">
                     <Text fontSize="sm">* This animal is currently disabled</Text>

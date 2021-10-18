@@ -1,23 +1,15 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { format } from 'date-fns';
-import { ISO_DATE_FORMAT } from '../../utils/constants';
 
 export interface PreferenceState {
     hiddenAnimals: number[];
     hideCamps: boolean;
     hideGates: boolean;
-    queryDate: string;
-    startHour: string;
-    endHour: string;
 }
 
 const initialState: PreferenceState = {
     hiddenAnimals: [],
     hideCamps: false,
-    hideGates: false,
-    queryDate: format(new Date(), ISO_DATE_FORMAT),
-    startHour: '00:00',
-    endHour: '23:59'
+    hideGates: false
 };
 
 export const preferenceSlice = createSlice({
@@ -46,26 +38,12 @@ export const preferenceSlice = createSlice({
         },
         toggleHideGates: (state) => {
             state.hideGates = !state.hideGates;
-        },
-        setQueryDate: (state, action: PayloadAction<string>) => {
-            state.queryDate = action.payload;
-        },
-        setHours: (state, action: PayloadAction<{ startHour: string; endHour: string }>) => {
-            state.startHour = action.payload.startHour;
-            state.endHour = action.payload.endHour;
         }
     }
 });
 
-export const {
-    addHiddenAnimal,
-    removeHiddenAnimal,
-    toggleHiddenAnimal,
-    toggleHideCamps,
-    toggleHideGates,
-    setQueryDate,
-    setHours
-} = preferenceSlice.actions;
+export const { addHiddenAnimal, removeHiddenAnimal, toggleHiddenAnimal, toggleHideCamps, toggleHideGates } =
+    preferenceSlice.actions;
 
 // eslint-disable-next-line import/no-default-export
 export default preferenceSlice.reducer;

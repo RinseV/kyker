@@ -13,7 +13,7 @@ import { format, parse } from 'date-fns';
 import React, { useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-import { setHours, setQueryDate } from '../../../store/reducers/preference.slice';
+import { setHours, setDate } from '../../../store/reducers/query.slice';
 import { ISO_DATE_FORMAT } from '../../../utils/constants';
 import { minutesToTime, TimeRangeSlider, timeToMinutes } from '../../form/TimeRangeSlider';
 import { CalendarInput } from './CalendarInput';
@@ -32,9 +32,9 @@ export const Calendar: React.VFC<CalendarProps> = ({ isOpen, onClose }) => {
     const initialRef = useRef(null);
     const finalRef = useRef(null);
 
-    const queryDate = useAppSelector((state) => state.preferences.queryDate);
-    const startHour = useAppSelector((state) => state.preferences.startHour);
-    const endHour = useAppSelector((state) => state.preferences.endHour);
+    const queryDate = useAppSelector((state) => state.query.date);
+    const startHour = useAppSelector((state) => state.query.startHour);
+    const endHour = useAppSelector((state) => state.query.endHour);
     const dispatch = useAppDispatch();
 
     const {
@@ -53,7 +53,7 @@ export const Calendar: React.VFC<CalendarProps> = ({ isOpen, onClose }) => {
         const startHour = minutesToTime(data.hours[0]);
         const endHour = minutesToTime(data.hours[1]);
         // Set new date and hours
-        dispatch(setQueryDate(format(data.date, ISO_DATE_FORMAT)));
+        dispatch(setDate(format(data.date, ISO_DATE_FORMAT)));
         dispatch(setHours({ startHour, endHour }));
         // Close modal
         onClose();

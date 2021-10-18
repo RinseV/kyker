@@ -11,9 +11,9 @@ type SpottingLayersProps = {
 
 export const SpottingsLayer: React.VFC<SpottingLayersProps> = ({ setSelectedSpotting, editMode, onOpen }) => {
     const hiddenAnimals = useAppSelector((state) => state.preferences.hiddenAnimals);
-    const queryDate = useAppSelector((state) => state.preferences.queryDate);
-    const startHour = useAppSelector((state) => state.preferences.startHour);
-    const endHour = useAppSelector((state) => state.preferences.endHour);
+    const queryDate = useAppSelector((state) => state.query.date);
+    const startHour = useAppSelector((state) => state.query.startHour);
+    const endHour = useAppSelector((state) => state.query.endHour);
 
     const { data: animals } = useAnimalsQuery();
     // We only query on animals that are not hidden

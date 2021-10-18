@@ -1,41 +1,39 @@
+import { getUnixTime } from 'date-fns';
+import { readFileSync } from 'fs';
+import { resolve } from 'path';
 import { ResolverData, UseMiddleware } from 'type-graphql';
 import { MyContext } from '../utils/types';
-import { createHash } from 'crypto';
-import { format } from 'date-fns';
-import { ISO_DATE_FORMAT } from '../constants';
+
+const SCRIPT = readFileSync(resolve(__dirname, '../scripts/request_rate_limiter.lua'), {
+    encoding: 'utf8'
+});
 
 /**
- * Middleware to rate limit requests
- * @param window The window in which the requests are counted (in seconds) (default 10s)
- * @param max The maximum number of requests allowed in the window (default 10)
+ * Middleware to rate limit requests using a token bucket algorithm
+ *
+ * For each IP, there is a bucket of tokens with a max capacity 50 (by default),
+ * the tokens are refilled at a rate of 10 (by default) tokens per second.
+ * A user is allowed to make requests as long as the bucket is not empty.
+ *
+ * @param replenishRate Amount of tokens to replenish per second (default 10)
+ * @param capacity Total bucket capacity (default 50)
  * @param errorMessage The error message to return if the request is over the limit
  * @returns The middleware
  */
-export default function RateLimit(window = 10, max = 10, errorMessage = 'Too many requests') {
-    return UseMiddleware(async ({ info: { fieldName }, context: { req, redis } }: ResolverData<MyContext>, next) => {
+export default function RateLimit(replenishRate = 10, capacity = 50, errorMessage = 'Too many requests') {
+    return UseMiddleware(async ({ context: { req, redis } }: ResolverData<MyContext>, next) => {
         // Don't limit if the request is from a test
         if (process.env.NODE_ENV === 'test') {
             return next();
         }
-        // Get IP from request
-        const visitorKey = 'date:' + format(new Date(), ISO_DATE_FORMAT) + ':ip:' + req.ip;
-        // Hash for GDPR compliance
-        const hashedKey = createHash('sha256').update(visitorKey).digest('hex');
-        const key: string = ['limit', fieldName, hashedKey].join(':');
-        // Get record from redis
-        // TODO: race conditions with transactions???
-        const oldRecord = await redis.get(key);
-        if (oldRecord) {
-            // If we are over the max, return error
-            if (parseInt(oldRecord) > max) {
-                throw new Error(errorMessage);
-            } else {
-                // Otherwise, increment the record and set it back in redis
-                await redis.incr(key);
-            }
-        } else {
-            // If there is no record, set it to 1 and set it back in redis
-            await redis.set(key, '1', 'EX', window);
+        const prefix = `rateLimit:${req.ip}`;
+        const keys = [prefix + ':tokens', prefix + ':timestamp'];
+        const args = [replenishRate, capacity, getUnixTime(new Date()), 1];
+
+        // Check whether the request is over the limit
+        const [allowed] = await redis.eval(SCRIPT, 2, keys, args);
+        if (!allowed) {
+            throw new Error(errorMessage);
         }
         return next();
     });

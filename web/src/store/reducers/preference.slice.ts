@@ -47,8 +47,8 @@ export const preferenceSlice = createSlice({
         toggleHideGates: (state) => {
             state.hideGates = !state.hideGates;
         },
-        setQueryDate: (state, action: PayloadAction<Date>) => {
-            state.queryDate = format(action.payload, ISO_DATE_FORMAT);
+        setQueryDate: (state, action: PayloadAction<string>) => {
+            state.queryDate = action.payload;
         },
         setHours: (state, action: PayloadAction<{ startHour: string; endHour: string }>) => {
             state.startHour = action.payload.startHour;

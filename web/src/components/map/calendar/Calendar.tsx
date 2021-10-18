@@ -9,7 +9,7 @@ import {
     ModalOverlay,
     VStack
 } from '@chakra-ui/react';
-import { parse } from 'date-fns';
+import { format, parse } from 'date-fns';
 import React, { useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
@@ -53,7 +53,7 @@ export const Calendar: React.VFC<CalendarProps> = ({ isOpen, onClose }) => {
         const startHour = minutesToTime(data.hours[0]);
         const endHour = minutesToTime(data.hours[1]);
         // Set new date and hours
-        dispatch(setQueryDate(data.date));
+        dispatch(setQueryDate(format(data.date, ISO_DATE_FORMAT)));
         dispatch(setHours({ startHour, endHour }));
         // Close modal
         onClose();

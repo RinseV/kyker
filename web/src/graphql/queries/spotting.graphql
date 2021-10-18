@@ -1,0 +1,5 @@
+query Spotting($id: Int!) {
+    spotting(id: $id) {
+        ...SpottingExtended
+    }
+}

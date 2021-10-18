@@ -34,6 +34,34 @@ describe('Spotting resolver tests', () => {
         await application.redis.quit();
     });
 
+    // test('Retrieve single spotting', async () => {
+    //     if (!fixtures) {
+    //         throw new Error('Fixtures not loaded');
+    //     }
+
+    //     const response = await retrieveSpotting(request, fixtures.spottings[0].id).expect(200);
+
+    //     expect(response.body.data).toStrictEqual(
+    //         expect.objectContaining({
+    //             spotting: expect.objectContaining({
+    //                 id: fixtures.spottings[0].id,
+    //                 user: expect.objectContaining({
+    //                     id: expect.any(String)
+    //                 }),
+    //                 animal: expect.objectContaining({
+    //                     id: expect.any(Number),
+    //                     name: expect.any(String)
+    //                 }),
+    //                 location: expect.objectContaining({
+    //                     lon: expect.any(Number),
+    //                     lat: expect.any(Number)
+    //                 }),
+    //                 description: expect.any(String)
+    //             })
+    //         })
+    //     );
+    // });
+
     test('Retrieve spottings success', async () => {
         if (!fixtures) {
             throw new Error('Fixtures not loaded');

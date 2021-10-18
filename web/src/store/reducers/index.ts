@@ -7,7 +7,7 @@ import storage from 'redux-persist/lib/storage';
 const preferenceConfig = {
     key: 'preferences',
     storage,
-    blacklist: ['queryDate']
+    blacklist: ['queryDate', 'startHour', 'endHour']
 };
 
 export const rootReducer = combineReducers({ preferences: persistReducer(preferenceConfig, preferenceReducer) });

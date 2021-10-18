@@ -7,13 +7,17 @@ export interface PreferenceState {
     hideCamps: boolean;
     hideGates: boolean;
     queryDate: string;
+    startHour: string;
+    endHour: string;
 }
 
 const initialState: PreferenceState = {
     hiddenAnimals: [],
     hideCamps: false,
     hideGates: false,
-    queryDate: format(new Date(), ISO_DATE_FORMAT)
+    queryDate: format(new Date(), ISO_DATE_FORMAT),
+    startHour: '00:00',
+    endHour: '23:59'
 };
 
 export const preferenceSlice = createSlice({
@@ -45,6 +49,10 @@ export const preferenceSlice = createSlice({
         },
         setQueryDate: (state, action: PayloadAction<Date>) => {
             state.queryDate = format(action.payload, ISO_DATE_FORMAT);
+        },
+        setHours: (state, action: PayloadAction<{ startHour: string; endHour: string }>) => {
+            state.startHour = action.payload.startHour;
+            state.endHour = action.payload.endHour;
         }
     }
 });
@@ -55,7 +63,8 @@ export const {
     toggleHiddenAnimal,
     toggleHideCamps,
     toggleHideGates,
-    setQueryDate
+    setQueryDate,
+    setHours
 } = preferenceSlice.actions;
 
 // eslint-disable-next-line import/no-default-export

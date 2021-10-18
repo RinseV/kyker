@@ -58,6 +58,11 @@ export type Gate = {
     updatedAt: Scalars['Timestamp'];
 };
 
+export type Hours = {
+    end: Scalars['String'];
+    start: Scalars['String'];
+};
+
 export type Location = {
     __typename?: 'Location';
     lat: Scalars['Float'];
@@ -91,6 +96,7 @@ export type QuerySpottingsArgs = {
     animals?: Maybe<Array<Scalars['Int']>>;
     date?: Maybe<QueryDate>;
     excludedAnimals?: Maybe<Array<Scalars['Int']>>;
+    hours?: Maybe<Hours>;
 };
 
 export type QueryDate = {
@@ -101,9 +107,9 @@ export type Spotting = {
     __typename?: 'Spotting';
     animal: Animal;
     createdAt: Scalars['Timestamp'];
-    description: Scalars['String'];
+    description?: Maybe<Scalars['String']>;
     id: Scalars['Int'];
-    imageId: Scalars['String'];
+    imageId?: Maybe<Scalars['String']>;
     location: Location;
     updatedAt: Scalars['Timestamp'];
     user: User;
@@ -150,7 +156,7 @@ export type GateFragment = {
 export type SpottingFragment = {
     __typename?: 'Spotting';
     id: number;
-    description: string;
+    description?: string | null | undefined;
     createdAt: any;
     animal: {
         __typename?: 'Animal';
@@ -165,7 +171,7 @@ export type SpottingFragment = {
 export type SpottingExtendedFragment = {
     __typename?: 'Spotting';
     id: number;
-    description: string;
+    description?: string | null | undefined;
     animal: {
         __typename?: 'Animal';
         id: number;
@@ -186,7 +192,7 @@ export type CreateSpottingMutation = {
     createSpotting: {
         __typename?: 'Spotting';
         id: number;
-        description: string;
+        description?: string | null | undefined;
         createdAt: any;
         animal: {
             __typename?: 'Animal';
@@ -246,7 +252,7 @@ export type SpottingQuery = {
     spotting: {
         __typename?: 'Spotting';
         id: number;
-        description: string;
+        description?: string | null | undefined;
         animal: {
             __typename?: 'Animal';
             id: number;
@@ -262,6 +268,7 @@ export type SpottingsQueryVariables = Exact<{
     animals?: Maybe<Array<Scalars['Int']> | Scalars['Int']>;
     excludedAnimals?: Maybe<Array<Scalars['Int']> | Scalars['Int']>;
     date?: Maybe<QueryDate>;
+    hours?: Maybe<Hours>;
 }>;
 
 export type SpottingsQuery = {
@@ -269,7 +276,7 @@ export type SpottingsQuery = {
     spottings: Array<{
         __typename?: 'Spotting';
         id: number;
-        description: string;
+        description?: string | null | undefined;
         createdAt: any;
         animal: {
             __typename?: 'Animal';
@@ -525,8 +532,8 @@ export type SpottingQueryHookResult = ReturnType<typeof useSpottingQuery>;
 export type SpottingLazyQueryHookResult = ReturnType<typeof useSpottingLazyQuery>;
 export type SpottingQueryResult = Apollo.QueryResult<SpottingQuery, SpottingQueryVariables>;
 export const SpottingsDocument = gql`
-    query Spottings($animals: [Int!], $excludedAnimals: [Int!], $date: QueryDate) {
-        spottings(animals: $animals, excludedAnimals: $excludedAnimals, date: $date) {
+    query Spottings($animals: [Int!], $excludedAnimals: [Int!], $date: QueryDate, $hours: Hours) {
+        spottings(animals: $animals, excludedAnimals: $excludedAnimals, date: $date, hours: $hours) {
             ...Spotting
         }
     }
@@ -548,6 +555,7 @@ export const SpottingsDocument = gql`
  *      animals: // value for 'animals'
  *      excludedAnimals: // value for 'excludedAnimals'
  *      date: // value for 'date'
+ *      hours: // value for 'hours'
  *   },
  * });
  */

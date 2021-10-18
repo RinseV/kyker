@@ -1,11 +1,18 @@
-import { FormControl, FormLabel } from '@chakra-ui/form-control';
+import { FormControl, FormErrorIcon, FormErrorMessage, FormLabel } from '@chakra-ui/form-control';
 import { Flex, Text } from '@chakra-ui/layout';
 import { RangeSlider, RangeSliderFilledTrack, RangeSliderThumb, RangeSliderTrack } from '@chakra-ui/slider';
-import { format } from 'date-fns';
 import React from 'react';
+import { Control, FieldValues, Path, useController } from 'react-hook-form';
+
+type TimeRangeSliderProps<T extends FieldValues = FieldValues> = {
+    name: Path<T>;
+    control: Control<T>;
+    label?: string;
+    isDisabled?: boolean;
+};
 
 // Converts the amount of minutes from midnight to HH:mm format
-const minutesToTime = (minutes: number): string => {
+export const minutesToTime = (minutes: number): string => {
     const hours = Math.floor(minutes / 60);
     const minutesRemaining = minutes % 60;
     let hoursAsString = hours.toString();
@@ -21,29 +28,25 @@ const minutesToTime = (minutes: number): string => {
     return `${hoursAsString}:${minutesAsString}`;
 };
 
-// Converts HH:mm format to amount of minutes from midnight
-const timeToMinutes = (time: string): number => {
-    // Split on hours and minutes
+export const timeToMinutes = (time: string): number => {
     const [hours, minutes] = time.split(':');
-    // Convert to amount of minutes
     return parseInt(hours) * 60 + parseInt(minutes);
 };
 
-export const TimeRangeSlider: React.VFC = () => {
-    // Get current time in amount of minutes from 0:00
-    const currentTime = format(new Date(), 'HH:mm');
-    // Default is entire day
-    const [value, setValue] = React.useState<number[]>([0, 1439]);
-
-    const handleChange = (value: number[]) => {
-        setValue(value);
-    };
-
-    // TODO: react-hook-form
+export function TimeRangeSlider<T extends FieldValues = FieldValues>({
+    name,
+    control,
+    label,
+    isDisabled
+}: TimeRangeSliderProps<T>): JSX.Element {
+    const {
+        field: { onChange, onBlur, value, ref },
+        fieldState: { invalid, error }
+    } = useController({ name, control });
 
     return (
-        <FormControl p={4} w="full" direction="column">
-            <FormLabel>Time window (current time: {currentTime})</FormLabel>
+        <FormControl p={4} w="full" direction="column" isInvalid={invalid} isDisabled={isDisabled}>
+            {label ? <FormLabel htmlFor={name}>{label}</FormLabel> : null}
             <Flex pt={8} px={4}>
                 <RangeSlider
                     aria-label={['start', 'end']}
@@ -57,7 +60,9 @@ export const TimeRangeSlider: React.VFC = () => {
                     // Hour window
                     minStepsBetweenThumbs={2}
                     value={value}
-                    onChange={handleChange}
+                    onChange={onChange}
+                    onBlur={onBlur}
+                    ref={ref}
                 >
                     <RangeSliderTrack>
                         <RangeSliderFilledTrack />
@@ -72,6 +77,10 @@ export const TimeRangeSlider: React.VFC = () => {
                     ))}
                 </RangeSlider>
             </Flex>
+            <FormErrorMessage>
+                <FormErrorIcon />
+                {error && error.message}
+            </FormErrorMessage>
         </FormControl>
     );
-};
+}

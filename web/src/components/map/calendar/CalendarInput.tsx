@@ -1,10 +1,8 @@
+import { FormControl, FormErrorIcon, FormErrorMessage, FormLabel } from '@chakra-ui/form-control';
 import { Flex } from '@chakra-ui/layout';
-import { useToast } from '@chakra-ui/toast';
 import { useDayzed } from 'dayzed';
-import lodash_isNil from 'lodash/isNil';
 import React from 'react';
-import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-import { setQueryDate } from '../../../store/reducers/preference.slice';
+import { Control, FieldValues, Path, useController } from 'react-hook-form';
 import { SingleDatepickerCalendar } from '../../form/SingleDatepicker';
 
 const MONTH_NAMES_DEFAULT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -17,45 +15,49 @@ const configs = {
     dayNames: DAY_NAMES_DEFAULT
 };
 
-type CalenderInputProps = {
-    onClose: () => void;
+type CalenderInputProps<T extends FieldValues = FieldValues> = {
+    name: Path<T>;
+    control: Control<T>;
+    label?: string;
+    isDisabled?: boolean;
 };
 
-export const CalendarInput: React.VFC<CalenderInputProps> = ({ onClose }) => {
-    // Selected date (as timestamp)
-    const date = useAppSelector((state) => state.preferences.queryDate);
-    const dispatch = useAppDispatch();
-
-    const toast = useToast();
+export function CalendarInput<T extends FieldValues = FieldValues>({
+    name,
+    control,
+    label,
+    isDisabled
+}: CalenderInputProps<T>): JSX.Element {
+    const {
+        field: { onChange, value },
+        fieldState: { invalid, error }
+    } = useController({ name, control });
 
     // Called when new date is selected
     const onDateSelected = (options: { selectable: boolean; date: Date }) => {
         const { selectable, date } = options;
         if (!selectable) return;
-        if (!lodash_isNil(date)) {
-            // Update timestamp in store
-            dispatch(setQueryDate(date));
-            toast({
-                title: 'Date changed',
-                description: `Date changed to ${date.toLocaleDateString()}`,
-                status: 'info',
-                duration: 5000,
-                isClosable: true
-            });
-            onClose();
-            return;
+        if (date) {
+            onChange(date);
         }
     };
 
     const dayzedData = useDayzed({
         showOutsideDays: true,
         onDateSelected,
-        selected: new Date(date)
+        selected: value
     });
 
     return (
         <Flex justifyContent="center">
-            <SingleDatepickerCalendar {...dayzedData} configs={configs} />
+            <FormControl isInvalid={invalid} isDisabled={isDisabled}>
+                {label ? <FormLabel htmlFor={name}>{label}</FormLabel> : null}
+                <SingleDatepickerCalendar {...dayzedData} configs={configs} />
+                <FormErrorMessage>
+                    <FormErrorIcon />
+                    {error && error.message}
+                </FormErrorMessage>
+            </FormControl>
         </Flex>
     );
-};
+}

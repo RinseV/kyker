@@ -12,6 +12,10 @@ import { MyContext } from '../utils/types';
 export default function RateLimit(window = 10, max = 10, limitByVariables = false, errorMessage = 'Too many requests') {
     return UseMiddleware(
         async ({ info: { variableValues, fieldName }, context: { req, redis } }: ResolverData<MyContext>, next) => {
+            // Don't limit if the request is from a test
+            if (process.env.NODE_ENV === 'test') {
+                return next();
+            }
             // Get IP from request
             const visitorKey = 'ip:' + req.ip;
             const variableKey =

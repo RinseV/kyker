@@ -1,5 +1,5 @@
 import { FilterQuery } from '@mikro-orm/core';
-import { endOfDay, format, startOfDay, parse } from 'date-fns';
+import { endOfDay, format, startOfDay, parse, subHours, isSameDay, isAfter } from 'date-fns';
 import { GraphQLResolveInfo } from 'graphql';
 import fieldsToRelations from 'graphql-fields-to-relations';
 import { Arg, Ctx, Info, Int, Mutation, Query, Resolver } from 'type-graphql';
@@ -16,6 +16,7 @@ export class SpottingResolver {
      * @param animals Optional animal ID to get spottings from
      * @param excludedAnimals Optional animal ID to exclude from spottings
      * @param date Optional date to get spottings from (as ISO8601 string)
+     * @param hoursAgo Optional number of hours ago to get spottings from (only works for today)
      * @returns All spottings
      */
     @Query(() => [Spotting])
@@ -23,11 +24,12 @@ export class SpottingResolver {
         @Arg('animals', () => [Int], { nullable: true }) animals: number[],
         @Arg('excludedAnimals', () => [Int], { nullable: true }) excludedAnimals: number[],
         @Arg('date', () => QueryDate, { defaultValue: { date: format(new Date(), ISO_DATE_FORMAT) } }) date: QueryDate,
+        @Arg('hoursAgo', () => Int, { nullable: true }) hoursAgo: number,
         @Info() info: GraphQLResolveInfo,
         @Ctx() { em }: MyContext
     ): Promise<Spotting[]> {
         const relationPaths = fieldsToRelations(info);
-        const filter = generateAnimalFilter(excludedAnimals, date.date, animals);
+        const filter = generateAnimalFilter(excludedAnimals, date.date, animals, hoursAgo);
         const spottings = await em.getRepository(Spotting).find(filter, relationPaths);
         return spottings;
     }
@@ -97,18 +99,31 @@ export class SpottingResolver {
  * @param excludedAnimals Animal IDs to exclude
  * @param date Date to search for spottings on
  * @param animals Animal IDs to include
+ * @param hoursAgo Number of hours to look back
  * @returns A filter for all spottings matching the given criteria
  */
 const generateAnimalFilter = (
     excludedAnimals: number[] = [],
     date: string,
-    animals?: number[]
+    animals?: number[],
+    hoursAgo?: number
 ): FilterQuery<Spotting> => {
+    const now = new Date();
     // Convert date string to Date
-    const dateAsDate = parse(date, ISO_DATE_FORMAT, new Date());
+    const dateAsDate = parse(date, ISO_DATE_FORMAT, now);
     // Get start & end of day from date
-    const start = startOfDay(dateAsDate);
+    let start = startOfDay(dateAsDate);
     const end = endOfDay(dateAsDate);
+    if (hoursAgo) {
+        // If hoursAgo is set, subtract hours from now to get start
+        const newStart = subHours(now, hoursAgo);
+        // Check if newStart is after start and whether they are on the same day
+        if (isAfter(newStart, start) && isSameDay(newStart, start)) {
+            // If newStart is later than start but still the same day, set start to newStart
+            // If newStart is earlier than start or a different day, just use start
+            start = newStart;
+        }
+    }
     // Create filter with everything
     return {
         animal: {

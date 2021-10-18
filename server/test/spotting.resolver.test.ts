@@ -217,6 +217,39 @@ describe('Spotting resolver tests', () => {
         expect(response.body.data.spottings.length).toBe(0);
     });
 
+    test('Retrieve spottings from 2 hours ago', async () => {
+        if (!fixtures) {
+            throw new Error('Fixtures not loaded');
+        }
+
+        // Get all spottings from 2 hours ago (should be 2)
+        const response = await retrieveSpottings(request, undefined, undefined, undefined, 2).expect(200);
+
+        expect(response.body.data).toStrictEqual(
+            expect.objectContaining({
+                spottings: expect.arrayContaining([
+                    expect.objectContaining({
+                        id: expect.any(Number),
+                        user: expect.objectContaining({
+                            id: expect.any(String)
+                        }),
+                        animal: expect.objectContaining({
+                            id: expect.any(Number),
+                            name: expect.any(String)
+                        }),
+                        location: expect.objectContaining({
+                            lon: expect.any(Number),
+                            lat: expect.any(Number)
+                        }),
+                        description: expect.any(String)
+                    })
+                ])
+            })
+        );
+        // Spottings are created ~1 hour apart, there should 2 spottings
+        expect(response.body.data.spottings.length).toBe(2);
+    });
+
     test('Create spotting', async () => {
         if (!fixtures) {
             throw new Error('Fixtures not loaded');
@@ -248,13 +281,20 @@ describe('Spotting resolver tests', () => {
     });
 });
 
-const retrieveSpottings = (request: SuperTest<Test>, animals?: number[], excludedAnimals?: number[], date?: string) => {
+const retrieveSpottings = (
+    request: SuperTest<Test>,
+    animals?: number[],
+    excludedAnimals?: number[],
+    date?: string,
+    hoursAgo?: number
+) => {
     return request.post('/graphql').send({
-        query: `query Spottings($animals: [Int!], $excludedAnimals: [Int!], $date: QueryDate) {
+        query: `query Spottings($animals: [Int!], $excludedAnimals: [Int!], $date: QueryDate, $hoursAgo: Int) {
             spottings(
                 animals: $animals
                 excludedAnimals: $excludedAnimals
-                date: $date
+                date: $date,
+                hoursAgo: $hoursAgo
             ) {
                     id
                     user {
@@ -278,7 +318,8 @@ const retrieveSpottings = (request: SuperTest<Test>, animals?: number[], exclude
                 ? {
                       date
                   }
-                : undefined
+                : undefined,
+            hoursAgo: hoursAgo
         }
     });
 };

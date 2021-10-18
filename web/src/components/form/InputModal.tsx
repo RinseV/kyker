@@ -46,7 +46,6 @@ export const InputModal: React.VFC<InputModalProps> = ({ coordinates, isOpen, on
     });
 
     const {
-        register,
         control,
         handleSubmit,
         formState: { isSubmitting }
@@ -80,13 +79,6 @@ export const InputModal: React.VFC<InputModalProps> = ({ coordinates, isOpen, on
                 }
             });
             if (response.data) {
-                toast({
-                    title: 'Spot added',
-                    description: 'The spot has been added to the map',
-                    status: 'success',
-                    duration: 5000,
-                    isClosable: true
-                });
                 onSuccess();
                 // TODO: navigate? update cache?
             }
@@ -114,7 +106,6 @@ export const InputModal: React.VFC<InputModalProps> = ({ coordinates, isOpen, on
                     <SpotInput<FormData>
                         animalName="animal"
                         descriptionName="description"
-                        register={register}
                         control={control}
                         coordinates={coordinates}
                         isSubmitting={isSubmitting}

@@ -1,4 +1,4 @@
-import { format, subDays } from 'date-fns';
+import { addHours, format, subDays, subHours } from 'date-fns';
 import faker from 'faker';
 import supertest, { SuperTest, Test } from 'supertest';
 import Application from '../src/application';
@@ -6,6 +6,7 @@ import { ISO_DATE_FORMAT } from '../src/constants';
 import { Spotting } from '../src/entities';
 import { clearDatabase } from '../src/utils/services/clearDatabase.service';
 import { Fixtures, loadFixtures } from '../src/utils/services/loadFixtures.service';
+import { Hours } from '../src/validators/hours.validator';
 
 describe('Spotting resolver tests', () => {
     let application: Application;
@@ -217,13 +218,17 @@ describe('Spotting resolver tests', () => {
         expect(response.body.data.spottings.length).toBe(0);
     });
 
-    test('Retrieve spottings from 2 hours ago', async () => {
+    test('Retrieve spottings in hour window', async () => {
         if (!fixtures) {
             throw new Error('Fixtures not loaded');
         }
 
-        // Get all spottings from 2 hours ago (should be 2)
-        const response = await retrieveSpottings(request, undefined, undefined, undefined, 2).expect(200);
+        // Get all spottings between 2 hours ago and 2 hours from now (should be 2)
+        const now = new Date();
+        // Format 2 hours ago till 2 hours from now
+        const start = format(subHours(now, 2), 'HH:mm');
+        const end = format(addHours(now, 2), 'HH:mm');
+        const response = await retrieveSpottings(request, undefined, undefined, undefined, { start, end }).expect(200);
 
         expect(response.body.data).toStrictEqual(
             expect.objectContaining({
@@ -286,15 +291,15 @@ const retrieveSpottings = (
     animals?: number[],
     excludedAnimals?: number[],
     date?: string,
-    hoursAgo?: number
+    hours?: Hours
 ) => {
     return request.post('/graphql').send({
-        query: `query Spottings($animals: [Int!], $excludedAnimals: [Int!], $date: QueryDate, $hoursAgo: Int) {
+        query: `query Spottings($animals: [Int!], $excludedAnimals: [Int!], $date: QueryDate, $hours: Hours) {
             spottings(
                 animals: $animals
                 excludedAnimals: $excludedAnimals
                 date: $date,
-                hoursAgo: $hoursAgo
+                hours: $hours
             ) {
                     id
                     user {
@@ -319,7 +324,7 @@ const retrieveSpottings = (
                       date
                   }
                 : undefined,
-            hoursAgo: hoursAgo
+            hours
         }
     });
 };

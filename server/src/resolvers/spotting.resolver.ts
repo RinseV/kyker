@@ -1,5 +1,5 @@
 import { FilterQuery } from '@mikro-orm/core';
-import { endOfDay, format, startOfDay, parse, subHours, isSameDay, isAfter } from 'date-fns';
+import { endOfDay, format, parse, startOfDay } from 'date-fns';
 import { GraphQLResolveInfo } from 'graphql';
 import fieldsToRelations from 'graphql-fields-to-relations';
 import { Arg, Ctx, Info, Int, Mutation, Query, Resolver } from 'type-graphql';
@@ -7,6 +7,7 @@ import { ISO_DATE_FORMAT } from '../constants';
 import { Animal, Spotting, User } from '../entities';
 import { MyContext } from '../utils/types';
 import { QueryDate } from '../validators/date.validator';
+import { Hours } from '../validators/hours.validator';
 import { SpottingValidator } from '../validators/spotting.validator';
 
 @Resolver(() => Spotting)
@@ -24,12 +25,12 @@ export class SpottingResolver {
         @Arg('animals', () => [Int], { nullable: true }) animals: number[],
         @Arg('excludedAnimals', () => [Int], { nullable: true }) excludedAnimals: number[],
         @Arg('date', () => QueryDate, { defaultValue: { date: format(new Date(), ISO_DATE_FORMAT) } }) date: QueryDate,
-        @Arg('hoursAgo', () => Int, { nullable: true }) hoursAgo: number,
+        @Arg('hours', () => Hours, { nullable: true }) hours: Hours,
         @Info() info: GraphQLResolveInfo,
         @Ctx() { em }: MyContext
     ): Promise<Spotting[]> {
         const relationPaths = fieldsToRelations(info);
-        const filter = generateAnimalFilter(excludedAnimals, date.date, animals, hoursAgo);
+        const filter = generateAnimalFilter(excludedAnimals, date.date, animals, hours);
         const spottings = await em.getRepository(Spotting).find(filter, relationPaths);
         return spottings;
     }
@@ -99,30 +100,25 @@ export class SpottingResolver {
  * @param excludedAnimals Animal IDs to exclude
  * @param date Date to search for spottings on
  * @param animals Animal IDs to include
- * @param hoursAgo Number of hours to look back
+ * @param hours Window of HH:mm to search for spottings in
  * @returns A filter for all spottings matching the given criteria
  */
 const generateAnimalFilter = (
     excludedAnimals: number[] = [],
     date: string,
     animals?: number[],
-    hoursAgo?: number
+    hours?: Hours
 ): FilterQuery<Spotting> => {
     const now = new Date();
     // Convert date string to Date
     const dateAsDate = parse(date, ISO_DATE_FORMAT, now);
     // Get start & end of day from date
     let start = startOfDay(dateAsDate);
-    const end = endOfDay(dateAsDate);
-    if (hoursAgo) {
-        // If hoursAgo is set, subtract hours from now to get start
-        const newStart = subHours(now, hoursAgo);
-        // Check if newStart is after start and whether they are on the same day
-        if (isAfter(newStart, start) && isSameDay(newStart, start)) {
-            // If newStart is later than start but still the same day, set start to newStart
-            // If newStart is earlier than start or a different day, just use start
-            start = newStart;
-        }
+    let end = endOfDay(dateAsDate);
+    if (hours) {
+        // If hours are given, add hours to start/end of day
+        start = parse(hours.start, 'HH:mm', dateAsDate);
+        end = parse(hours.end, 'HH:mm', dateAsDate);
     }
     // Create filter with everything
     return {

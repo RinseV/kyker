@@ -1,7 +1,7 @@
 import { useColorModeValue } from '@chakra-ui/color-mode';
 import { useDisclosure } from '@chakra-ui/react';
-import { LngLat, Map as MapboxGLMap, MapMouseEvent } from 'mapbox-gl';
 import * as mapboxgl from 'mapbox-gl';
+import { LngLat, Map as MapboxGLMap, MapMouseEvent } from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import React, { useEffect, useRef, useState } from 'react';
 import ReactMapboxGl from 'react-mapbox-gl';
@@ -68,19 +68,6 @@ export const Map: React.VFC = () => {
     const onMapLoad = (map: mapboxgl.Map) => {
         // Resize map to fill div
         map.resize();
-        // Set user location
-        if (window.navigator.geolocation) {
-            window.navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    // Set user location
-                    const { latitude, longitude } = position.coords;
-                    setUserLocation(new LngLat(longitude, latitude));
-                },
-                () => {
-                    // Not allowed -> do nothing
-                }
-            );
-        }
     };
 
     // On click event for map that displays popup
@@ -120,6 +107,7 @@ export const Map: React.VFC = () => {
                     setEditMode={setEditMode}
                     setTargetMarker={setTargetMarker}
                     userLocation={userLocation}
+                    setUserLocation={setUserLocation}
                     onLegendClick={legendOnOpen}
                     onDateClick={calendarOnOpen}
                 />

@@ -1,6 +1,7 @@
 import { useColorModeValue } from '@chakra-ui/color-mode';
 import { useDisclosure } from '@chakra-ui/react';
 import { LngLat, Map as MapboxGLMap, MapMouseEvent } from 'mapbox-gl';
+import * as mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import React, { useEffect, useRef, useState } from 'react';
 import ReactMapboxGl from 'react-mapbox-gl';
@@ -17,8 +18,12 @@ import { SpottingModal } from './spottings/SpottingModal';
 import { SpottingsLayer } from './spottings/SpottingsLayer';
 import { Target } from './Target';
 
+// We need to set this manually, otherwise Vite will error
+const accessTokenProperty = Object.getOwnPropertyDescriptor(mapboxgl, 'accessToken');
+accessTokenProperty?.set?.(import.meta.env.VITE_APP_MAPBOX_API_KEY);
+
 const MapboxMap = ReactMapboxGl({
-    accessToken: process.env.REACT_APP_MAPBOX_API_KEY as string
+    accessToken: import.meta.env.VITE_APP_MAPBOX_API_KEY as string
 });
 
 // Centered on Skukuza

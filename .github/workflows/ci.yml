@@ -1,7 +1,10 @@
-name: CI
-on: push
+name: Run CI
+on:
+    push:
+        branches: [main]
+    workflow_dispatch:
 jobs:
-    test:
+    build:
         runs-on: ubuntu-latest
         defaults:
             run:
@@ -25,7 +28,6 @@ jobs:
                 ports:
                     # Maps tcp port 5432 on service container to the host
                     - 5432:5432
-
         steps:
             - uses: actions/checkout@v2
             - name: Use Node.js
@@ -45,5 +47,11 @@ jobs:
                   restore-keys: |
                       ${{ runner.os }}-yarn-
             - run: yarn install --frozen-lockfile
+            - name: Build Docker image
+              uses: docker/build-push-action@v2
+              with:
+                  push: false
+                  tags: ${{ github.event.repository.name }}:latest, ${{ github.repository }}:latest
+
             - name: Run tests
               run: yarn test

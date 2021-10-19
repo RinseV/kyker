@@ -2,7 +2,7 @@ import { useColorModeValue } from '@chakra-ui/color-mode';
 import React from 'react';
 
 export const Logo = (): JSX.Element => {
-    const logoColor = useColorModeValue('#000', '#fff');
+    const logoColor = useColorModeValue('#1A202C', '#EDEEEE');
 
     return (
         <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 248.089 265.544">

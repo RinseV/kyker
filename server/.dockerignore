@@ -19,4 +19,5 @@
 **/obj
 **/secrets.dev.yaml
 **/values.dev.yaml
+**/.env
 README.md

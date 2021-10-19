@@ -1,4 +1,4 @@
-name: Run CI
+name: Push Docker image
 on:
     push:
         branches: [main]

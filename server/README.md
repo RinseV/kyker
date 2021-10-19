@@ -26,6 +26,18 @@ Run the backend using:
 yarn dev
 ```
 
+### Docker
+When running the backend via the provided Docker compose file, the following steps are required:
+```bash
+docker-compose up
+```
+
+To populate the database with the necessary data, run:
+```bash
+yarn mikro-orm database:import sql/data.sql
+```
+While the backend is running, this will insert the data into the database.
+
 ## Built with
 * [Fastify](https://www.fastify.io/), for running the web server
 * [Apollo Server](https://www.apollographql.com/docs/apollo-server/), for running the GraphQL server

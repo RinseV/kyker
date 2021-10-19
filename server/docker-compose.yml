@@ -1,0 +1,40 @@
+version: '3.4'
+
+services:
+  db:
+    image: postgres:12
+    environment:
+      - POSTGRES_HOST_AUTH_METHOD=trust
+      - POSTGRES_DB=${POSTGRES_DB:-kruger}
+      - POSTGRES_USER=${POSTGRES_USER:-user}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-password}
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+  redis:
+    image: redis:alpine
+    ports:
+      - '6379:6379'
+  app:
+    image: kykerserver
+    depends_on:
+      - db
+      - redis
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: production
+      POSTGRES_HOST: db
+      REDIS_URL: redis://redis:6379
+    ports:
+      - '4000:4000'
+    links:
+      - db
+      - redis
+
+
+volumes:
+  postgres_data: ~
+  

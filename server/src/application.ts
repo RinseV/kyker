@@ -20,6 +20,7 @@ import { SpottingResolver } from './resolvers/spotting.resolver';
 import { AnimalResolver } from './resolvers/animal.resolver';
 import { GateResolver } from './resolvers/gate.resolver';
 import { CampResolver } from './resolvers/camp.resolver';
+import { AddressInfo } from 'net';
 
 function fastifyAppClosePlugin(app: FastifyInstance) {
     return {
@@ -124,8 +125,10 @@ export default class Application {
             this.host.register(this.apolloServer.createHandler({ cors: false }));
 
             try {
-                await this.host.listen(process.env.PORT!);
-                console.log(`🚀 Server ready at ${process.env.PORT!}`);
+                // Start server on 0.0.0.0 for Docker (localhost does not work)
+                await this.host.listen(process.env.PORT!, '0.0.0.0');
+                const address = this.host.server.address() as AddressInfo;
+                console.log(`🚀 Server ready at ${address.address}:${address.port}`);
             } catch (error) {
                 this.host.log.error(error);
                 process.exit(1);

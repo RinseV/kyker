@@ -4,7 +4,7 @@ import { ChakraProvider } from '@chakra-ui/react';
 import { App } from './App';
 import reportWebVitals from './reportWebVitals';
 import { ApolloProvider } from '@apollo/client';
-import { client } from './utils/apolloClient';
+import { createClient } from './utils/apolloClient';
 import { theme } from './theme';
 import { persistor, store } from './store/store';
 import { Provider } from 'react-redux';
@@ -28,20 +28,24 @@ const updateSW = registerSW({
 
 updateSW(true);
 
-ReactDOM.render(
-    <React.StrictMode>
-        <Provider store={store}>
-            <PersistGate loading={null} persistor={persistor}>
-                <ApolloProvider client={client}>
-                    <ChakraProvider theme={theme}>
-                        <App />
-                    </ChakraProvider>
-                </ApolloProvider>
-            </PersistGate>
-        </Provider>
-    </React.StrictMode>,
-    document.getElementById('root')
-);
+(async () => {
+    const client = await createClient();
+
+    ReactDOM.render(
+        <React.StrictMode>
+            <Provider store={store}>
+                <PersistGate loading={null} persistor={persistor}>
+                    <ApolloProvider client={client}>
+                        <ChakraProvider theme={theme}>
+                            <App />
+                        </ChakraProvider>
+                    </ApolloProvider>
+                </PersistGate>
+            </Provider>
+        </React.StrictMode>,
+        document.getElementById('root')
+    );
+})();
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

@@ -9,14 +9,31 @@ import { inBounds } from '../../../utils/inBounds';
 
 type LocationButtonProps = {
     userLocation: LngLat | null;
+    setUserLocation: React.Dispatch<React.SetStateAction<LngLat | null>>;
 };
 
-export const LocationButton: React.VFC<LocationButtonProps> = ({ userLocation }) => {
+export const LocationButton: React.VFC<LocationButtonProps> = ({ userLocation, setUserLocation }) => {
     const toast = useToast();
 
     const map = useContext(MapContext);
 
     const handleLocationButtonClick = () => {
+        if (!userLocation) {
+            // Set user location
+            if (window.navigator.geolocation) {
+                window.navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        // Set user location
+                        const { latitude, longitude } = position.coords;
+                        setUserLocation(new LngLat(longitude, latitude));
+                    },
+                    () => {
+                        // Not allowed -> do nothing
+                    }
+                );
+            }
+        }
+
         if (userLocation) {
             if (inBounds(userLocation, mapBounds)) {
                 map?.flyTo(

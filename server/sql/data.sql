@@ -1,3 +1,18 @@
+-- Populates animal table with animals
+INSERT INTO animal (name, color_light, color_dark, disabled, created_at, updated_at)
+VALUES
+    ('Leopard', '#000000', '#FFFFFF', false, NOW(), NOW()),
+    ('Elephant', '#2F855A', '#68D391', false, NOW(), NOW()),
+    ('Rhino', '#C05621', '#F6AD55', true, NOW(), NOW()),
+    ('Lion', '#C53030', '#FC8181', false, NOW(), NOW()),
+    ('Buffalo', '#B7791F', '#F6E05E', false, NOW(), NOW()),
+    ('Cheetah', '#2b6cb0', '#63b3ed', false, NOW(), NOW()),
+    ('Wild Dog', '#662D11', '#C18264', false, NOW(), NOW()),
+    ('Hyena', '#6B46C1', '#B794F4', false, NOW(), NOW()),
+    ('Hippo', '#B83280', '#F687B3', false, NOW(), NOW()),
+    ('Giraffe', '#2C7A7B', '#4FD1C5', false, NOW(), NOW()),
+    ('Zebra', '#00A3C4', '#76E4F7', false, NOW(), NOW());
+
 -- Populates camp table with all camps
 INSERT INTO camp (name, location_lat, location_lon, size, created_at, updated_at)
 VALUES
@@ -26,3 +41,15 @@ VALUES
     ('Balule', -24.05349, 31.7311217, 2, NOW(), NOW()),
     ('Malelane', -25.476639, 31.5093777, 2, NOW(), NOW()),
     ('Tamboti', -24.4541312, 31.403506, 2, NOW(), NOW());
+
+-- Populates gate table with all gates
+INSERT INTO gate (name, location_lat, location_lon, created_at, updated_at)
+VALUES
+    ('Malelane', -25.461588, 31.5310544, NOW(), NOW()),
+    ('Crocodile Bridge', -25.3584331, 31.8913413, NOW(), NOW()),
+    ('Numbi', -25.155402, 31.1959276, NOW(), NOW()),
+    ('Paul Kruger', -24.9809791, 31.4826853, NOW(), NOW()),
+    ('Phabeni', -25.0249714, 31.2387993, NOW(), NOW()),
+    ('Orpen', -24.5419665, 31.3701233, NOW(), NOW()),
+    ('Phalaborwa', -23.9456776, 31.1634931, NOW(), NOW()),
+    ('Punda Maria', -22.737287, 31.0082647, NOW(), NOW());

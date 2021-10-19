@@ -1,5 +1,7 @@
-name: CI
-on: push
+name: test
+on:
+    push:
+    workflow_dispatch:
 jobs:
     test:
         runs-on: ubuntu-latest
@@ -25,7 +27,6 @@ jobs:
                 ports:
                     # Maps tcp port 5432 on service container to the host
                     - 5432:5432
-
         steps:
             - uses: actions/checkout@v2
             - name: Use Node.js

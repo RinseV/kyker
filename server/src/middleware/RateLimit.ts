@@ -21,12 +21,12 @@ const SCRIPT = readFileSync(resolve(__dirname, '../scripts/request_rate_limiter.
  * @returns The middleware
  */
 export default function RateLimit(replenishRate = 10, capacity = 50, errorMessage = 'Too many requests') {
-    return UseMiddleware(async ({ context: { req, redis } }: ResolverData<MyContext>, next) => {
+    return UseMiddleware(async ({ context: { req, redis }, info: { fieldName } }: ResolverData<MyContext>, next) => {
         // Don't limit if the request is from a test
         if (process.env.NODE_ENV === 'test') {
             return next();
         }
-        const prefix = `rateLimit:${req.ip}`;
+        const prefix = `rateLimit:${req.ip}:${fieldName}`;
         const keys = [prefix + ':tokens', prefix + ':timestamp'];
         const args = [replenishRate, capacity, getUnixTime(new Date()), 1];
 

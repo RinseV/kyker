@@ -54,12 +54,14 @@ export class SpottingResolver {
 
     /**
      * Mutation to create a spotting
+     *
+     * Rate limited with high capacity but slow replenish rate so offline spottings can be submitted at once
      * @param id User ID (fingerprint)
      * @param input Spotting input
      * @returns Created spotting
      */
     @Mutation(() => Spotting)
-    @RateLimit(1, 1)
+    @RateLimit(1, 50)
     async createSpotting(
         @Arg('id', () => String) id: string,
         @Arg('input', () => SpottingValidator) input: SpottingValidator,

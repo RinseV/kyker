@@ -59,7 +59,7 @@ export class SpottingResolver {
      * @returns Created spotting
      */
     @Mutation(() => Spotting)
-    @RateLimit()
+    @RateLimit(1, 1)
     async createSpotting(
         @Arg('id', () => String) id: string,
         @Arg('input', () => SpottingValidator) input: SpottingValidator,

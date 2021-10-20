@@ -312,6 +312,37 @@ describe('Spotting resolver tests', () => {
             })
         );
     });
+
+    test('Create spotting with bad word', async () => {
+        if (!fixtures) {
+            throw new Error('Fixtures not loaded');
+        }
+
+        const userId = faker.random.alphaNumeric(20);
+        const location = { lat: faker.datatype.number(50), lon: faker.datatype.number(50) };
+        // Should be filtered to ***** ******
+        const description = 'fukin ash0le';
+        const response = await createSpotting(request, userId, fixtures.animals[0].id, location, description).expect(
+            200
+        );
+
+        expect(response.body.data).toStrictEqual(
+            expect.objectContaining({
+                createSpotting: expect.objectContaining({
+                    id: expect.any(Number),
+                    user: expect.objectContaining({
+                        id: userId
+                    }),
+                    animal: expect.objectContaining({
+                        id: fixtures.animals[0].id,
+                        name: expect.any(String)
+                    }),
+                    location,
+                    description: '***** ******'
+                })
+            })
+        );
+    });
 });
 
 const retrieveSpotting = (request: SuperTest<Test>, id: number) => {

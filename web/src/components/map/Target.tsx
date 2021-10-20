@@ -44,6 +44,18 @@ export const Target: React.VFC<TargetProps> = ({ info, setInfo, isOpen, setEditM
                     setInfo(null);
                     setEditMode(false);
                 }}
+                onOfflineSuccess={() => {
+                    toast.closeAll();
+                    toast({
+                        title: 'Spot added (offline)',
+                        description: 'The spot will be submitted once we have a connection',
+                        status: 'success',
+                        duration: 5000,
+                        isClosable: true
+                    });
+                    setInfo(null);
+                    setEditMode(false);
+                }}
             />
         </>
     );

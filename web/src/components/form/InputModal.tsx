@@ -80,7 +80,9 @@ export const InputModal: React.VFC<InputModalProps> = ({
                         animal: data.animal.value,
                         description: data.description,
                         lon: data.lng,
-                        lat: data.lat
+                        lat: data.lat,
+                        // Add date since it will be submitted later
+                        createdAt: new Date().getTime()
                     }
                 }
             });

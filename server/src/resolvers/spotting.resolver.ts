@@ -104,6 +104,12 @@ export class SpottingResolver {
             },
             description: input.description
         });
+        if (input.createdAt) {
+            spotting.assign({
+                createdAt: input.createdAt,
+                updatedAt: input.createdAt
+            });
+        }
         await em.persistAndFlush(spotting);
 
         return em.getRepository(Spotting).findOneOrFail(

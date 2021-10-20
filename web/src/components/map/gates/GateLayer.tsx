@@ -2,13 +2,14 @@ import { useColorModeValue } from '@chakra-ui/color-mode';
 import React, { useMemo } from 'react';
 import { GeoJSONLayer } from 'react-mapbox-gl';
 import { useGatesQuery } from '../../../generated/graphql';
+import { useRefetchWhenOnline } from '../../../hooks/useRefetchWhenOnline';
 import { useAppSelector } from '../../../store/hooks';
 
 export const GateLayer: React.VFC = () => {
     const textColor = useColorModeValue('black', 'white');
     const isHidden = useAppSelector((state) => state.preferences.hideGates);
 
-    const { data: gates } = useGatesQuery();
+    const { data: gates, refetch } = useGatesQuery();
 
     const features = useMemo<GeoJSON.FeatureCollection<GeoJSON.Point>>(() => {
         if (!gates?.gates || gates.gates.length === 0) {
@@ -33,6 +34,8 @@ export const GateLayer: React.VFC = () => {
             }))
         };
     }, [gates]);
+
+    useRefetchWhenOnline(refetch);
 
     if (isHidden) {
         return null;

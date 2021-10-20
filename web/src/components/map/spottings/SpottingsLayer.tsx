@@ -1,5 +1,6 @@
 import React from 'react';
 import { SpottingFragment, useAnimalsQuery, useSpottingsQuery } from '../../../generated/graphql';
+import { useRefetchWhenOnline } from '../../../hooks/useRefetchWhenOnline';
 import { useAppSelector } from '../../../store/hooks';
 import { SpottingLayer } from './SpottingLayer';
 
@@ -15,9 +16,9 @@ export const SpottingsLayer: React.VFC<SpottingLayersProps> = ({ setSelectedSpot
     const startHour = useAppSelector((state) => state.query.startHour);
     const endHour = useAppSelector((state) => state.query.endHour);
 
-    const { data: animals } = useAnimalsQuery();
+    const { data: animals, refetch: refetchAnimals } = useAnimalsQuery();
     // We only query on animals that are not hidden
-    const { data: spottings } = useSpottingsQuery({
+    const { data: spottings, refetch: refetchSpottings } = useSpottingsQuery({
         variables: {
             excludedAnimals: hiddenAnimals,
             date: {
@@ -29,6 +30,9 @@ export const SpottingsLayer: React.VFC<SpottingLayersProps> = ({ setSelectedSpot
             }
         }
     });
+
+    useRefetchWhenOnline(refetchAnimals);
+    useRefetchWhenOnline(refetchSpottings);
 
     // Return null if loading or no data
     if (

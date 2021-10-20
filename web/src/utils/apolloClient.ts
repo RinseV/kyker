@@ -1,10 +1,13 @@
 import { ApolloClient, ApolloLink, HttpLink, InMemoryCache, NextLink, Operation } from '@apollo/client';
 import { RetryLink } from '@apollo/client/link/retry';
+import { ThunkDispatch, AnyAction } from '@reduxjs/toolkit';
 import QueueLink from 'apollo-link-queue';
 import SerializingLink from 'apollo-link-serialize';
 import { LocalStorageWrapper, persistCache } from 'apollo3-cache-persist';
+import { setOnline } from '../store/reducers/online.slice';
+import { RootState } from '../store/store';
 
-export async function createClient() {
+export async function createClient(dispatch: ThunkDispatch<RootState, null, AnyAction>) {
     // Link for sending requests to the server
     const httpLink = new HttpLink({
         uri: import.meta.env.VITE_APP_BACKEND_URL as string
@@ -21,18 +24,18 @@ export async function createClient() {
     // TODO: remove listeners on shut down
     window.addEventListener('offline', () => {
         console.log('Went offline');
-        // TODO: update store
+        // Update store
+        dispatch(setOnline(false));
         // Open queue when offline
         queueLink.close();
     });
     window.addEventListener('online', async () => {
         console.log('Went online');
-        // TODO: update store
+        // Update store
+        client.resetStore();
+        dispatch(setOnline(true));
         // Close queue when online
         queueLink.open();
-        // TODO: refetch spottings
-        // While resetting the cache works, it does require a page reload which is not ideal
-        await client.resetStore();
     });
 
     const serializingLink = new SerializingLink();

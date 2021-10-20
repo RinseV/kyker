@@ -2,6 +2,7 @@ import { ApolloClient, ApolloProvider, NormalizedCacheObject, Operation } from '
 import { ChakraProvider } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { App } from './App';
+import { useAppDispatch } from './store/hooks';
 import { theme } from './theme';
 import { createClient } from './utils/apolloClient';
 
@@ -9,15 +10,17 @@ export const ApolloApp: React.VFC = () => {
     const [loading, setLoading] = useState(true);
     const [client, setClient] = useState<ApolloClient<NormalizedCacheObject> | null>(null);
 
+    const dispatch = useAppDispatch();
+
     // Get client as soon as component mounts
     useEffect(() => {
         const getClient = async () => {
-            const client = await createClient();
+            const client = await createClient(dispatch);
             setClient(client);
             setLoading(false);
         };
         getClient();
-    }, []);
+    }, [dispatch]);
 
     useEffect(() => {
         if (!client) {

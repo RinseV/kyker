@@ -67,10 +67,10 @@ export const InputModal: React.VFC<InputModalProps> = ({
         }
     });
 
-    // TODO: Submit data to the server
     const onSubmit = async (data: FormData) => {
         // Get browser fingerprint as user ID
         const fingerPrint = await getFingerprint();
+        // If we are offline, just add spotting to queue and show success message
         if (!online) {
             // Add mutation to queue
             createSpotting({

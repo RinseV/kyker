@@ -3,6 +3,7 @@ import { endOfDay, format, parse, startOfDay } from 'date-fns';
 import { GraphQLResolveInfo } from 'graphql';
 import fieldsToRelations from 'graphql-fields-to-relations';
 import { Arg, Ctx, Info, Int, Mutation, Query, Resolver } from 'type-graphql';
+import Filter from 'bad-words';
 import { ISO_DATE_FORMAT } from '../constants';
 import { Animal, Spotting, User } from '../entities';
 import RateLimit from '../middleware/RateLimit';
@@ -10,6 +11,8 @@ import { MyContext } from '../utils/types';
 import { QueryDate } from '../validators/date.validator';
 import { Hours } from '../validators/hours.validator';
 import { SpottingValidator } from '../validators/spotting.validator';
+
+const filter = new Filter();
 
 @Resolver(() => Spotting)
 export class SpottingResolver {
@@ -102,7 +105,8 @@ export class SpottingResolver {
                 lat: input.lat,
                 lon: input.lon
             },
-            description: input.description
+            // Filter out bad words
+            description: input.description ? filter.clean(input.description) : null
         });
         await em.persistAndFlush(spotting);
 

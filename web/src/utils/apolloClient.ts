@@ -32,7 +32,6 @@ export async function createClient(dispatch: ThunkDispatch<RootState, null, AnyA
     window.addEventListener('online', async () => {
         console.log('Went online');
         // Update store
-        client.resetStore();
         dispatch(setOnline(true));
         // Close queue when online
         queueLink.open();

@@ -2,14 +2,13 @@ import { useColorModeValue } from '@chakra-ui/color-mode';
 import React, { useMemo } from 'react';
 import { GeoJSONLayer } from 'react-mapbox-gl';
 import { CampSize, useCampsQuery } from '../../../generated/graphql';
-import { useRefetchWhenOnline } from '../../../hooks/useRefetchWhenOnline';
 import { useAppSelector } from '../../../store/hooks';
 
 export const RestCampLayer: React.VFC = () => {
     const textColor = useColorModeValue('black', 'white');
     const isHidden = useAppSelector((state) => state.preferences.hideCamps);
 
-    const { data: camps, refetch } = useCampsQuery();
+    const { data: camps } = useCampsQuery();
 
     const features = useMemo<GeoJSON.FeatureCollection<GeoJSON.Point>>(() => {
         if (!camps?.camps || camps.camps.length === 0) {
@@ -36,8 +35,6 @@ export const RestCampLayer: React.VFC = () => {
             })
         };
     }, [camps]);
-
-    useRefetchWhenOnline(refetch);
 
     if (isHidden) {
         return null;

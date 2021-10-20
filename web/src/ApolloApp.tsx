@@ -1,8 +1,8 @@
 import { ApolloClient, ApolloProvider, NormalizedCacheObject, Operation } from '@apollo/client';
 import { ChakraProvider } from '@chakra-ui/react';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { App } from './App';
-import { useAppDispatch } from './store/hooks';
+import { useAppDispatch, useAppSelector } from './store/hooks';
 import { theme } from './theme';
 import { createClient } from './utils/apolloClient';
 
@@ -11,6 +11,16 @@ export const ApolloApp: React.VFC = () => {
     const [client, setClient] = useState<ApolloClient<NormalizedCacheObject> | null>(null);
 
     const dispatch = useAppDispatch();
+    const online = useAppSelector((state) => state.online.online);
+
+    // To refetch all active queries
+    const refetchAll = useCallback(async () => {
+        if (client) {
+            await client.refetchQueries({
+                include: 'active'
+            });
+        }
+    }, [client]);
 
     // Get client as soon as component mounts
     useEffect(() => {
@@ -54,6 +64,16 @@ export const ApolloApp: React.VFC = () => {
 
         execute();
     }, [client]);
+
+    // Refetch all queries when online status changes
+    useEffect(() => {
+        const refetch = async () => {
+            if (online) {
+                await refetchAll();
+            }
+        };
+        refetch();
+    }, [online, refetchAll]);
 
     // TODO: Add a loading screen?
     if (loading || !client) {

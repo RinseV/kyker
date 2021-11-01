@@ -1,4 +1,4 @@
-import { addHours, format, subDays, subHours } from 'date-fns';
+import { addHours, format, isAfter, subDays, subHours } from 'date-fns';
 import faker from 'faker';
 import supertest, { SuperTest, Test } from 'supertest';
 import Application from '../src/application';
@@ -312,6 +312,77 @@ describe('Spotting resolver tests', () => {
             })
         );
     });
+
+    test('Create spotting at earlier time', async () => {
+        if (!fixtures) {
+            throw new Error('Fixtures not loaded');
+        }
+
+        const userId = faker.random.alphaNumeric(20);
+        const location = { lat: faker.datatype.number(50), lon: faker.datatype.number(50) };
+        const description = faker.lorem.sentence();
+        const now = new Date();
+        const date = subHours(now, 1);
+        const response = await createSpotting(
+            request,
+            userId,
+            fixtures.animals[0].id,
+            location,
+            description,
+            date
+        ).expect(200);
+
+        expect(response.body.data).toStrictEqual(
+            expect.objectContaining({
+                createSpotting: expect.objectContaining({
+                    id: expect.any(Number),
+                    user: expect.objectContaining({
+                        id: userId
+                    }),
+                    animal: expect.objectContaining({
+                        id: fixtures.animals[0].id,
+                        name: expect.any(String)
+                    }),
+                    location,
+                    description,
+                    createdAt: date.getTime()
+                })
+            })
+        );
+        // updatedAt should reflect the time of creation
+        expect(isAfter(response.body.data.createSpotting.updatedAt, now)).toBe(true);
+    });
+
+    test('Create spotting with bad word', async () => {
+        if (!fixtures) {
+            throw new Error('Fixtures not loaded');
+        }
+
+        const userId = faker.random.alphaNumeric(20);
+        const location = { lat: faker.datatype.number(50), lon: faker.datatype.number(50) };
+        // Should be filtered to ***** ******
+        const description = 'fukin ash0le';
+        const response = await createSpotting(request, userId, fixtures.animals[0].id, location, description).expect(
+            200
+        );
+
+        expect(response.body.data).toStrictEqual(
+            expect.objectContaining({
+                createSpotting: expect.objectContaining({
+                    id: expect.any(Number),
+                    user: expect.objectContaining({
+                        id: userId
+                    }),
+                    animal: expect.objectContaining({
+                        id: fixtures.animals[0].id,
+                        name: expect.any(String)
+                    }),
+                    location,
+                    description: '***** ******'
+                })
+            })
+        );
+    });
 });
 
 const retrieveSpotting = (request: SuperTest<Test>, id: number) => {
@@ -387,7 +458,8 @@ const createSpotting = (
     userId: string,
     animalId: number,
     location: { lon: number; lat: number } = { lon: faker.datatype.number(100), lat: faker.datatype.number(80) },
-    description = faker.lorem.word()
+    description = faker.lorem.word(),
+    createdAt?: Date
 ) => {
     return request.post('/graphql').send({
         query: `mutation CreateSpotting($id: String!, $input: SpottingValidator!) {
@@ -405,6 +477,8 @@ const createSpotting = (
                 user {
                     id
                 }
+                createdAt
+                updatedAt
             }
         }`,
         variables: {
@@ -413,7 +487,8 @@ const createSpotting = (
                 animal: animalId,
                 lat: location.lat,
                 lon: location.lon,
-                description
+                description,
+                createdAt: createdAt ? createdAt.getTime() : undefined
             }
         }
     });

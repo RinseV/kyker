@@ -14,6 +14,7 @@ import { LngLat } from 'mapbox-gl';
 import React, { useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { namedOperations, useCreateSpottingMutation } from '../../generated/graphql';
+import { useAppSelector } from '../../store/hooks';
 import { getFingerprint } from '../../utils/fingerPrint';
 import { SpotInput } from './SpotInput';
 
@@ -32,11 +33,20 @@ type InputModalProps = {
     onClose: () => void;
     coordinates: LngLat;
     onSuccess: () => void;
+    onOfflineSuccess: () => void;
 };
 
-export const InputModal: React.VFC<InputModalProps> = ({ coordinates, isOpen, onClose, onSuccess }) => {
+export const InputModal: React.VFC<InputModalProps> = ({
+    coordinates,
+    isOpen,
+    onClose,
+    onSuccess,
+    onOfflineSuccess
+}) => {
     const initialRef = useRef(null);
     const finalRef = useRef(null);
+
+    const online = useAppSelector((state) => state.online.online);
 
     const toast = useToast();
 
@@ -57,15 +67,30 @@ export const InputModal: React.VFC<InputModalProps> = ({ coordinates, isOpen, on
         }
     });
 
-    // TODO: Submit data to the server
     const onSubmit = async (data: FormData) => {
-        console.log(data);
         // Get browser fingerprint as user ID
         const fingerPrint = await getFingerprint();
-        console.log(`Fingerprint: ${fingerPrint}`);
-        // await new Promise((resolve) => {
-        //     setTimeout(resolve, 1000);
-        // });
+        // If we are offline, just add spotting to queue and show success message
+        if (!online) {
+            // Add mutation to queue
+            createSpotting({
+                variables: {
+                    id: fingerPrint,
+                    input: {
+                        animal: data.animal.value,
+                        description: data.description,
+                        lon: data.lng,
+                        lat: data.lat,
+                        // Add date since it will be submitted later
+                        createdAt: new Date().getTime()
+                    }
+                }
+            });
+            // Show toast
+            onOfflineSuccess();
+            onClose();
+            return;
+        }
         try {
             const response = await createSpotting({
                 variables: {
@@ -80,7 +105,6 @@ export const InputModal: React.VFC<InputModalProps> = ({ coordinates, isOpen, on
             });
             if (response.data) {
                 onSuccess();
-                // TODO: navigate? update cache?
             }
         } catch (e) {
             const error = e as ApolloError;

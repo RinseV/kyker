@@ -14,6 +14,9 @@
     "@types/node": "^12.0.0",
     "@types/react": "^16.9.53",
     "@types/react-dom": "^16.9.8",
+    "apollo-link-queue": "^3.1.0",
+    "apollo-link-serialize": "^4.0.0",
+    "apollo3-cache-persist": "^0.13.0",
     "chakra-react-select": "^1.2.2",
     "date-fns": "^2.25.0",
     "dayzed": "^3.2.2",
@@ -46,7 +49,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "serve": "vite preview",
+    "serve": "vite preview --port 3000",
     "gen": "graphql-codegen --config codegen.yml",
     "lint": "eslint . --ext .ts,.tsx",
     "check-types": "tsc --noEmit --skipLibCheck"
@@ -84,6 +87,7 @@
     "eslint-plugin-react": "^7.26.1",
     "eslint-plugin-react-hooks": "^4.2.0",
     "prettier": "^2.4.1",
-    "vite": "^2.6.4"
+    "vite": "^2.6.4",
+    "vite-plugin-pwa": "^0.11.3"
   }
 }

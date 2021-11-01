@@ -3,6 +3,7 @@ import { endOfDay, format, parse, startOfDay } from 'date-fns';
 import { GraphQLResolveInfo } from 'graphql';
 import fieldsToRelations from 'graphql-fields-to-relations';
 import { Arg, Ctx, Info, Int, Mutation, Query, Resolver } from 'type-graphql';
+import Filter from 'bad-words';
 import { ISO_DATE_FORMAT } from '../constants';
 import { Animal, Spotting, User } from '../entities';
 import RateLimit from '../middleware/RateLimit';
@@ -10,6 +11,8 @@ import { MyContext } from '../utils/types';
 import { QueryDate } from '../validators/date.validator';
 import { Hours } from '../validators/hours.validator';
 import { SpottingValidator } from '../validators/spotting.validator';
+
+const filter = new Filter();
 
 @Resolver(() => Spotting)
 export class SpottingResolver {
@@ -54,12 +57,14 @@ export class SpottingResolver {
 
     /**
      * Mutation to create a spotting
+     *
+     * Rate limited with high capacity but slow replenish rate so offline spottings can be submitted at once
      * @param id User ID (fingerprint)
      * @param input Spotting input
      * @returns Created spotting
      */
     @Mutation(() => Spotting)
-    @RateLimit(1, 1)
+    @RateLimit(1, 50)
     async createSpotting(
         @Arg('id', () => String) id: string,
         @Arg('input', () => SpottingValidator) input: SpottingValidator,
@@ -100,8 +105,15 @@ export class SpottingResolver {
                 lat: input.lat,
                 lon: input.lon
             },
-            description: input.description
+            // Filter out bad words
+            description: input.description ? filter.clean(input.description) : null
         });
+        if (input.createdAt) {
+            spotting.assign({
+                createdAt: input.createdAt,
+                updatedAt: new Date()
+            });
+        }
         await em.persistAndFlush(spotting);
 
         return em.getRepository(Spotting).findOneOrFail(

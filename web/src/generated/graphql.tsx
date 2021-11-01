@@ -117,6 +117,7 @@ export type Spotting = {
 
 export type SpottingValidator = {
     animal: Scalars['Int'];
+    createdAt?: Maybe<Scalars['Timestamp']>;
     description?: Maybe<Scalars['String']>;
     lat: Scalars['Float'];
     lon: Scalars['Float'];

@@ -111,7 +111,7 @@ export class SpottingResolver {
         if (input.createdAt) {
             spotting.assign({
                 createdAt: input.createdAt,
-                updatedAt: input.createdAt
+                updatedAt: new Date()
             });
         }
         await em.persistAndFlush(spotting);

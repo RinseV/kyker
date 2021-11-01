@@ -1,4 +1,4 @@
-import { addHours, format, subDays, subHours } from 'date-fns';
+import { addHours, format, isAfter, subDays, subHours } from 'date-fns';
 import faker from 'faker';
 import supertest, { SuperTest, Test } from 'supertest';
 import Application from '../src/application';
@@ -321,7 +321,8 @@ describe('Spotting resolver tests', () => {
         const userId = faker.random.alphaNumeric(20);
         const location = { lat: faker.datatype.number(50), lon: faker.datatype.number(50) };
         const description = faker.lorem.sentence();
-        const date = subHours(new Date(), 1);
+        const now = new Date();
+        const date = subHours(now, 1);
         const response = await createSpotting(
             request,
             userId,
@@ -344,11 +345,12 @@ describe('Spotting resolver tests', () => {
                     }),
                     location,
                     description,
-                    createdAt: date.getTime(),
-                    updatedAt: date.getTime()
+                    createdAt: date.getTime()
                 })
             })
         );
+        // updatedAt should reflect the time of creation
+        expect(isAfter(response.body.data.createSpotting.updatedAt, now)).toBe(true);
     });
 
     test('Create spotting with bad word', async () => {

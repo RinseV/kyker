@@ -60,7 +60,8 @@ export const InputModal: React.VFC<InputModalProps> = ({
     const {
         control,
         handleSubmit,
-        formState: { isSubmitting }
+        formState: { isSubmitting },
+        setError
     } = useForm<FormData>({
         // Set initial values from coordinates since those can't be changed anyways
         defaultValues: {
@@ -74,6 +75,15 @@ export const InputModal: React.VFC<InputModalProps> = ({
     const onSubmit = async (data: FormData) => {
         // Get browser fingerprint as user ID
         const fingerPrint = await getFingerprint();
+        // Check that visibility and traffic ratings are set
+        if (data.visibility === 0) {
+            setError('visibility', { type: 'required', message: 'Visibility rating is required' });
+            return;
+        }
+        if (data.traffic === 0) {
+            setError('traffic', { type: 'required', message: 'Traffic rating is required' });
+            return;
+        }
         // If we are offline, just add spotting to queue and show success message
         if (!online) {
             // Add mutation to queue

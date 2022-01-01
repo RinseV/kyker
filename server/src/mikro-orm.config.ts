@@ -6,7 +6,8 @@ import { Animal, Camp, Color, Gate, Location, Spotting, User } from './entities'
 const config: Options<IDatabaseDriver> = {
     migrations: {
         path: path.join(__dirname, './migrations'),
-        pattern: /^[\w-]+\d+\.[tj]s$/
+        pattern: /^[\w-]+\d+\.[tj]s$/,
+        disableForeignKeys: false
     },
     entities: [User, Spotting, Location, Animal, Color, Camp, Gate],
     host: process.env.POSTGRES_HOST,

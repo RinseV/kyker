@@ -16,6 +16,7 @@ import { useForm } from 'react-hook-form';
 import { namedOperations, useCreateSpottingMutation } from '../../generated/graphql';
 import { useAppSelector } from '../../store/hooks';
 import { getFingerprint } from '../../utils/fingerPrint';
+import { format, parse } from 'date-fns';
 import { SpotInput } from './SpotInput';
 
 export type FormData = {
@@ -28,6 +29,7 @@ export type FormData = {
     description?: string;
     visibility: number;
     traffic: number;
+    time: string; // 24h format
 };
 
 type InputModalProps = {
@@ -68,7 +70,9 @@ export const InputModal: React.VFC<InputModalProps> = ({
             lng: coordinates.lng,
             lat: coordinates.lat,
             visibility: 0,
-            traffic: 0
+            traffic: 0,
+            // Default time is now
+            time: format(new Date(), 'HH:mm')
         }
     });
 
@@ -97,8 +101,7 @@ export const InputModal: React.VFC<InputModalProps> = ({
                         lat: data.lat,
                         visibility: data.visibility,
                         traffic: data.traffic,
-                        // Add date since it will be submitted later
-                        createdAt: new Date().getTime()
+                        createdAt: parse(data.time, 'HH:mm', new Date()).getTime()
                     }
                 }
             });
@@ -117,7 +120,8 @@ export const InputModal: React.VFC<InputModalProps> = ({
                         lon: data.lng,
                         lat: data.lat,
                         visibility: data.visibility,
-                        traffic: data.traffic
+                        traffic: data.traffic,
+                        createdAt: parse(data.time, 'HH:mm', new Date()).getTime()
                     }
                 }
             });
@@ -152,6 +156,7 @@ export const InputModal: React.VFC<InputModalProps> = ({
                         coordinates={coordinates}
                         visibilityName="visibility"
                         trafficName="traffic"
+                        dateName="time"
                         isSubmitting={isSubmitting}
                     />
                 </ModalBody>

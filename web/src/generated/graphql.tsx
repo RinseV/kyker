@@ -39,6 +39,7 @@ export type Camp = {
 /** Camp size */
 export enum CampSize {
     Bush = 'BUSH',
+    Picnic = 'PICNIC',
     Rest = 'REST',
     Sattelite = 'SATTELITE'
 }

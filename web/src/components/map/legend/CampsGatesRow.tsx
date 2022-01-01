@@ -8,6 +8,7 @@ import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { toggleHideCamps, toggleHideGates } from '../../../store/reducers/preference.slice';
 import { BoomGate } from '../../icons/BoomGate';
 import { HomeGroup } from '../../icons/HomeGroup';
+import { PicnicTable } from '../../icons/PicnicTable';
 
 export const CampsGatesRow: React.VFC = () => {
     const hiddenCamps = useAppSelector((state) => state.preferences.hideCamps);
@@ -27,6 +28,8 @@ export const CampsGatesRow: React.VFC = () => {
                         <MdHome size={20} />
                         {' / '}
                         <MdSettingsInputAntenna size={20} />
+                        {' / '}
+                        <PicnicTable color={iconColor} size={20} />
                     </Flex>
                 </Td>
                 <Td>Camps</Td>

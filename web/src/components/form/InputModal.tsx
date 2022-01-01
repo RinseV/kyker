@@ -17,7 +17,7 @@ import { namedOperations, useCreateSpottingMutation } from '../../generated/grap
 import { useAppSelector } from '../../store/hooks';
 import { getFingerprint } from '../../utils/fingerPrint';
 import { format, parse } from 'date-fns';
-import * as SpotInput from './SpotInput';
+import { SpotInput } from './SpotInput';
 
 export type FormData = {
     lng: number;
@@ -149,7 +149,7 @@ export const InputModal: React.VFC<InputModalProps> = ({
                 <ModalHeader>Add a spot</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody pb={6}>
-                    <SpotInput.SpotInput<FormData>
+                    <SpotInput<FormData>
                         animalName="animal"
                         descriptionName="description"
                         control={control}

@@ -7,6 +7,7 @@ import { AnimalInput } from './AnimalInput';
 import { DescriptionInput } from './DescriptionInput';
 import { LocationInput } from './LocationInput';
 import { RatingInput } from './RatingInput';
+import { TimeInput } from './TimeInput';
 
 type SpotInputProps<T extends FieldValues = FieldValues> = {
     animalName: Path<T>;
@@ -14,6 +15,7 @@ type SpotInputProps<T extends FieldValues = FieldValues> = {
     coordinates: LngLat;
     visibilityName: Path<T>;
     trafficName: Path<T>;
+    dateName: Path<T>;
     control: Control<T>;
     isSubmitting?: boolean;
 };
@@ -24,6 +26,7 @@ export function SpotInput<T extends FieldValues = FieldValues>({
     coordinates,
     visibilityName,
     trafficName,
+    dateName,
     control,
     isSubmitting
 }: SpotInputProps<T>): JSX.Element {
@@ -35,6 +38,9 @@ export function SpotInput<T extends FieldValues = FieldValues>({
 
                 {/* Animal search select */}
                 <AnimalInput<T> name={animalName} control={control} label="Animal" isDisabled={isSubmitting} />
+
+                {/* Time input */}
+                <TimeInput<T> name={dateName} control={control} label="Time" isDisabled={isSubmitting} />
 
                 {/* Visibility & traffic ratings */}
                 <Stack

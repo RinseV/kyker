@@ -26,6 +26,8 @@ export type FormData = {
         value: number;
     };
     description?: string;
+    visibility: number;
+    traffic: number;
 };
 
 type InputModalProps = {
@@ -58,18 +60,30 @@ export const InputModal: React.VFC<InputModalProps> = ({
     const {
         control,
         handleSubmit,
-        formState: { isSubmitting }
+        formState: { isSubmitting },
+        setError
     } = useForm<FormData>({
         // Set initial values from coordinates since those can't be changed anyways
         defaultValues: {
             lng: coordinates.lng,
-            lat: coordinates.lat
+            lat: coordinates.lat,
+            visibility: 0,
+            traffic: 0
         }
     });
 
     const onSubmit = async (data: FormData) => {
         // Get browser fingerprint as user ID
         const fingerPrint = await getFingerprint();
+        // Check that visibility and traffic ratings are set
+        if (data.visibility === 0) {
+            setError('visibility', { type: 'required', message: 'Visibility rating is required' });
+            return;
+        }
+        if (data.traffic === 0) {
+            setError('traffic', { type: 'required', message: 'Traffic rating is required' });
+            return;
+        }
         // If we are offline, just add spotting to queue and show success message
         if (!online) {
             // Add mutation to queue
@@ -81,6 +95,8 @@ export const InputModal: React.VFC<InputModalProps> = ({
                         description: data.description,
                         lon: data.lng,
                         lat: data.lat,
+                        visibility: data.visibility,
+                        traffic: data.traffic,
                         // Add date since it will be submitted later
                         createdAt: new Date().getTime()
                     }
@@ -99,7 +115,9 @@ export const InputModal: React.VFC<InputModalProps> = ({
                         animal: data.animal.value,
                         description: data.description,
                         lon: data.lng,
-                        lat: data.lat
+                        lat: data.lat,
+                        visibility: data.visibility,
+                        traffic: data.traffic
                     }
                 }
             });
@@ -132,6 +150,8 @@ export const InputModal: React.VFC<InputModalProps> = ({
                         descriptionName="description"
                         control={control}
                         coordinates={coordinates}
+                        visibilityName="visibility"
+                        trafficName="traffic"
                         isSubmitting={isSubmitting}
                     />
                 </ModalBody>

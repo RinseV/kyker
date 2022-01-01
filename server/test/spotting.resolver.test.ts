@@ -4,6 +4,7 @@ import supertest, { SuperTest, Test } from 'supertest';
 import Application from '../src/application';
 import { ISO_DATE_FORMAT } from '../src/constants';
 import { Spotting } from '../src/entities';
+import { randomIntFromInterval } from '../src/utils/random';
 import { clearDatabase } from '../src/utils/services/clearDatabase.service';
 import { Fixtures, loadFixtures } from '../src/utils/services/loadFixtures.service';
 import { Hours } from '../src/validators/hours.validator';
@@ -56,7 +57,9 @@ describe('Spotting resolver tests', () => {
                         lon: expect.any(Number),
                         lat: expect.any(Number)
                     }),
-                    description: expect.any(String)
+                    description: expect.any(String),
+                    visibility: expect.any(Number),
+                    traffic: expect.any(Number)
                 })
             })
         );
@@ -87,7 +90,9 @@ describe('Spotting resolver tests', () => {
                             lon: expect.any(Number),
                             lat: expect.any(Number)
                         }),
-                        description: expect.any(String)
+                        description: expect.any(String),
+                        visibility: expect.any(Number),
+                        traffic: expect.any(Number)
                     })
                 ])
             })
@@ -120,7 +125,9 @@ describe('Spotting resolver tests', () => {
                             lon: expect.any(Number),
                             lat: expect.any(Number)
                         }),
-                        description: expect.any(String)
+                        description: expect.any(String),
+                        visibility: expect.any(Number),
+                        traffic: expect.any(Number)
                     })
                 ])
             })
@@ -158,7 +165,9 @@ describe('Spotting resolver tests', () => {
                             lon: expect.any(Number),
                             lat: expect.any(Number)
                         }),
-                        description: expect.any(String)
+                        description: expect.any(String),
+                        visibility: expect.any(Number),
+                        traffic: expect.any(Number)
                     })
                 ])
             })
@@ -196,7 +205,9 @@ describe('Spotting resolver tests', () => {
                             lat: expect.any(Number)
                         }),
 
-                        description: expect.any(String)
+                        description: expect.any(String),
+                        visibility: expect.any(Number),
+                        traffic: expect.any(Number)
                     })
                 ])
             })
@@ -274,7 +285,9 @@ describe('Spotting resolver tests', () => {
                             lon: expect.any(Number),
                             lat: expect.any(Number)
                         }),
-                        description: expect.any(String)
+                        description: expect.any(String),
+                        visibility: expect.any(Number),
+                        traffic: expect.any(Number)
                     })
                 ])
             })
@@ -291,9 +304,17 @@ describe('Spotting resolver tests', () => {
         const userId = faker.random.alphaNumeric(20);
         const location = { lat: faker.datatype.number(50), lon: faker.datatype.number(50) };
         const description = faker.lorem.sentence();
-        const response = await createSpotting(request, userId, fixtures.animals[0].id, location, description).expect(
-            200
-        );
+        const visibility = randomIntFromInterval(1, 3);
+        const traffic = randomIntFromInterval(1, 3);
+        const response = await createSpotting(
+            request,
+            userId,
+            fixtures.animals[0].id,
+            location,
+            description,
+            visibility,
+            traffic
+        ).expect(200);
 
         expect(response.body.data).toStrictEqual(
             expect.objectContaining({
@@ -307,7 +328,9 @@ describe('Spotting resolver tests', () => {
                         name: expect.any(String)
                     }),
                     location,
-                    description
+                    description,
+                    visibility,
+                    traffic
                 })
             })
         );
@@ -329,6 +352,8 @@ describe('Spotting resolver tests', () => {
             fixtures.animals[0].id,
             location,
             description,
+            undefined,
+            undefined,
             date
         ).expect(200);
 
@@ -402,6 +427,8 @@ const retrieveSpotting = (request: SuperTest<Test>, id: number) => {
                     lat
                 }
                 description
+                visibility
+                traffic
             }
         }`,
         variables: {
@@ -438,6 +465,8 @@ const retrieveSpottings = (
                         lat
                     }
                     description
+                    visibility
+                    traffic
                 }
             }`,
         variables: {
@@ -459,6 +488,8 @@ const createSpotting = (
     animalId: number,
     location: { lon: number; lat: number } = { lon: faker.datatype.number(100), lat: faker.datatype.number(80) },
     description = faker.lorem.word(),
+    visibility = randomIntFromInterval(1, 3),
+    traffic = randomIntFromInterval(1, 3),
     createdAt?: Date
 ) => {
     return request.post('/graphql').send({
@@ -474,6 +505,8 @@ const createSpotting = (
                     lat
                 }
                 description
+                visibility
+                traffic
                 user {
                     id
                 }
@@ -488,6 +521,8 @@ const createSpotting = (
                 lat: location.lat,
                 lon: location.lon,
                 description,
+                visibility,
+                traffic,
                 createdAt: createdAt ? createdAt.getTime() : undefined
             }
         }

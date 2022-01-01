@@ -111,8 +111,10 @@ export type Spotting = {
     id: Scalars['Int'];
     imageId?: Maybe<Scalars['String']>;
     location: Location;
+    traffic?: Maybe<Scalars['Int']>;
     updatedAt: Scalars['Timestamp'];
     user: User;
+    visibility?: Maybe<Scalars['Int']>;
 };
 
 export type SpottingValidator = {
@@ -121,6 +123,8 @@ export type SpottingValidator = {
     description?: Maybe<Scalars['String']>;
     lat: Scalars['Float'];
     lon: Scalars['Float'];
+    traffic: Scalars['Int'];
+    visibility: Scalars['Int'];
 };
 
 export type User = {
@@ -158,6 +162,8 @@ export type SpottingFragment = {
     __typename?: 'Spotting';
     id: number;
     description?: string | null | undefined;
+    visibility?: number | null | undefined;
+    traffic?: number | null | undefined;
     createdAt: any;
     animal: {
         __typename?: 'Animal';
@@ -173,6 +179,8 @@ export type SpottingExtendedFragment = {
     __typename?: 'Spotting';
     id: number;
     description?: string | null | undefined;
+    visibility?: number | null | undefined;
+    traffic?: number | null | undefined;
     animal: {
         __typename?: 'Animal';
         id: number;
@@ -194,6 +202,8 @@ export type CreateSpottingMutation = {
         __typename?: 'Spotting';
         id: number;
         description?: string | null | undefined;
+        visibility?: number | null | undefined;
+        traffic?: number | null | undefined;
         createdAt: any;
         animal: {
             __typename?: 'Animal';
@@ -254,6 +264,8 @@ export type SpottingQuery = {
         __typename?: 'Spotting';
         id: number;
         description?: string | null | undefined;
+        visibility?: number | null | undefined;
+        traffic?: number | null | undefined;
         animal: {
             __typename?: 'Animal';
             id: number;
@@ -278,6 +290,8 @@ export type SpottingsQuery = {
         __typename?: 'Spotting';
         id: number;
         description?: string | null | undefined;
+        visibility?: number | null | undefined;
+        traffic?: number | null | undefined;
         createdAt: any;
         animal: {
             __typename?: 'Animal';
@@ -333,6 +347,8 @@ export const SpottingFragmentDoc = gql`
             lat
         }
         description
+        visibility
+        traffic
         createdAt
     }
     ${AnimalFragmentDoc}
@@ -348,6 +364,8 @@ export const SpottingExtendedFragmentDoc = gql`
             lat
         }
         description
+        visibility
+        traffic
     }
     ${AnimalFragmentDoc}
 `;

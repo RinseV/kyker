@@ -6,6 +6,8 @@ import { SpottingFragment } from '../../../generated/graphql';
 import { LocationInput } from '../../form/LocationInput';
 import { DATE_FORMAT } from '../../../utils/constants';
 import { useColorModeValue } from '@chakra-ui/color-mode';
+import { SpottingRating } from './SpottingRating';
+import { FaBinoculars, FaCar } from 'react-icons/fa';
 
 type SpottingContentProps = {
     spotting: SpottingFragment | undefined;
@@ -67,6 +69,17 @@ export const SpottingContent: React.VFC<SpottingContentProps> = ({ spotting }) =
                     <Text>{spotting.description}</Text>
                 </Stack>
             )}
+
+            {/* Visibility & traffic rating */}
+            <Stack
+                w="full"
+                spacing={2}
+                direction={{ base: 'column', sm: 'row' }}
+                justifyContent={{ base: undefined, sm: 'space-between' }}
+            >
+                <SpottingRating value={spotting.visibility || 0} max={3} icon={FaBinoculars} label="Visibility" />
+                <SpottingRating value={spotting.traffic || 0} max={3} icon={FaCar} label="Traffic" />
+            </Stack>
 
             {/* Date (time ago) */}
             <Stack spacing={2}>

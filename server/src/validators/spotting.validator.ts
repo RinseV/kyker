@@ -1,4 +1,4 @@
-import { IsDate, IsString, Max, MaxLength, Min } from 'class-validator';
+import { IsDate, IsInt, IsString, Max, MaxLength, Min } from 'class-validator';
 import { Field, Float, InputType, Int } from 'type-graphql';
 
 @InputType()
@@ -25,6 +25,18 @@ export class SpottingValidator {
     @IsString()
     @MaxLength(255)
     description?: string;
+
+    @Field(() => Int)
+    @IsInt()
+    @Min(1)
+    @Max(3)
+    visibility: number;
+
+    @Field(() => Int)
+    @IsInt()
+    @Min(1)
+    @Max(3)
+    traffic: number;
 
     @Field(() => Date, { nullable: true })
     @IsDate()

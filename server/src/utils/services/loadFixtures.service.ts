@@ -3,6 +3,7 @@ import { subHours, subMinutes } from 'date-fns';
 import faker from 'faker';
 import { Animal, Camp, Gate, User, Color, Location, Spotting } from '../../entities';
 import { CampSize } from '../campSize';
+import { randomIntFromInterval } from '../random';
 
 export interface Fixtures {
     animals: Animal[];
@@ -81,6 +82,8 @@ export const loadFixtures = async (orm: MikroORM): Promise<Fixtures | undefined>
                 location: new Location(faker.datatype.number(80), faker.datatype.number(100)),
                 animal: animals[spottingIndex].id,
                 description: faker.lorem.sentence(),
+                visibility: randomIntFromInterval(1, 3),
+                traffic: randomIntFromInterval(1, 3),
                 createdAt: date,
                 updatedAt: date
             });
@@ -99,7 +102,9 @@ export const loadFixtures = async (orm: MikroORM): Promise<Fixtures | undefined>
             user: disabledUser,
             location: new Location(faker.datatype.number(80), faker.datatype.number(100)),
             animal: disabledAnimal.id,
-            description: faker.lorem.sentence()
+            description: faker.lorem.sentence(),
+            visibility: randomIntFromInterval(1, 3),
+            traffic: randomIntFromInterval(1, 3)
         });
         orm.em.persist(disabledSpotting);
 

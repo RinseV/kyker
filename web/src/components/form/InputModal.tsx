@@ -26,6 +26,8 @@ export type FormData = {
         value: number;
     };
     description?: string;
+    visibility: number;
+    traffic: number;
 };
 
 type InputModalProps = {
@@ -63,7 +65,9 @@ export const InputModal: React.VFC<InputModalProps> = ({
         // Set initial values from coordinates since those can't be changed anyways
         defaultValues: {
             lng: coordinates.lng,
-            lat: coordinates.lat
+            lat: coordinates.lat,
+            visibility: 0,
+            traffic: 0
         }
     });
 
@@ -81,6 +85,8 @@ export const InputModal: React.VFC<InputModalProps> = ({
                         description: data.description,
                         lon: data.lng,
                         lat: data.lat,
+                        visibility: data.visibility,
+                        traffic: data.traffic,
                         // Add date since it will be submitted later
                         createdAt: new Date().getTime()
                     }
@@ -99,7 +105,9 @@ export const InputModal: React.VFC<InputModalProps> = ({
                         animal: data.animal.value,
                         description: data.description,
                         lon: data.lng,
-                        lat: data.lat
+                        lat: data.lat,
+                        visibility: data.visibility,
+                        traffic: data.traffic
                     }
                 }
             });
@@ -132,6 +140,8 @@ export const InputModal: React.VFC<InputModalProps> = ({
                         descriptionName="description"
                         control={control}
                         coordinates={coordinates}
+                        visibilityName="visibility"
+                        trafficName="traffic"
                         isSubmitting={isSubmitting}
                     />
                 </ModalBody>

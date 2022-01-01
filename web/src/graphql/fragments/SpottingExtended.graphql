@@ -8,4 +8,6 @@ fragment SpottingExtended on Spotting {
         lat
     }
     description
+    visibility
+    traffic
 }

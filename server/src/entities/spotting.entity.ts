@@ -27,6 +27,14 @@ export class Spotting extends BaseEntity<Spotting, 'id'> {
     @Property({ type: 'text', nullable: true })
     description?: string;
 
+    @Field(() => Int, { nullable: true })
+    @Property({ nullable: true })
+    visibility?: number;
+
+    @Field(() => Int, { nullable: true })
+    @Property({ nullable: true })
+    traffic?: number;
+
     @Field(() => String, { nullable: true })
     @Property({ type: 'text', nullable: true })
     imageId?: string;

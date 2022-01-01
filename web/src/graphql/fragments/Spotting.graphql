@@ -8,5 +8,7 @@ fragment Spotting on Spotting {
         lat
     }
     description
+    visibility
+    traffic
     createdAt
 }

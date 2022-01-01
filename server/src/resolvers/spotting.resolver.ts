@@ -106,7 +106,9 @@ export class SpottingResolver {
                 lon: input.lon
             },
             // Filter out bad words
-            description: input.description ? filter.clean(input.description) : null
+            description: input.description ? filter.clean(input.description) : null,
+            visibility: input.visibility,
+            traffic: input.traffic
         });
         if (input.createdAt) {
             spotting.assign({

@@ -1,15 +1,15 @@
-import { Flex, Heading } from 'native-base';
+import { Heading, HStack } from 'native-base';
 import React from 'react';
 import { Logo } from './Logo';
 
 export const LogoText: React.VFC = () => {
     return (
-        <Flex direction="row" alignItems="center">
-            <Logo size="3xl" />
+        <HStack space={2} alignItems="center">
+            <Logo size="xl" />
 
-            <Heading fontFamily="Montserrat_400Regular" fontWeight="normal" fontSize="6xl">
+            <Heading fontFamily="Montserrat_400Regular" fontWeight="normal" fontSize="4xl">
                 Kyker
             </Heading>
-        </Flex>
+        </HStack>
     );
 };

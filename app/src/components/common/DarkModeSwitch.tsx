@@ -3,11 +3,14 @@ import React from 'react';
 
 export const DarkModeSwitch: React.VFC = () => {
     const { toggleColorMode } = useColorMode();
-    const icon = useColorModeValue(<MoonIcon size="md" />, <SunIcon size="md" />);
+    const icon = useColorModeValue(
+        <SunIcon size="sm" color="emerald.400" />,
+        <MoonIcon size="sm" color="emerald.500" />
+    );
 
     return (
         <IconButton
-            colorScheme="green"
+            colorScheme="emerald"
             aria-label="Toggle dark mode"
             icon={icon}
             size="sm"

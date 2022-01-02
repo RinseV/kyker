@@ -53,6 +53,8 @@ export const RestCampLayer: React.VFC = () => {
                         'home',
                         ['==', ['get', 'size'], CampSize.Sattelite],
                         'video-input-antenna',
+                        ['==', ['get', 'size'], CampSize.Picnic],
+                        'picnic-table',
                         'home'
                     ],
                     'icon-size': 0.6,

@@ -1,0 +1,18 @@
+import { Center, StatusBar, useColorModeValue } from 'native-base';
+import React from 'react';
+
+type MainProps = {
+    children: React.ReactNode;
+};
+
+export const Main: React.VFC<MainProps> = ({ children }) => {
+    const statusBarStyle = useColorModeValue('dark-content', 'light-content');
+    const statusBarBackground = useColorModeValue('#f8fafc', '#1e293b');
+
+    return (
+        <Center _dark={{ bg: 'blueGray.800' }} _light={{ bg: 'blueGray.50' }} px={4} flex={1}>
+            <StatusBar barStyle={statusBarStyle} backgroundColor={statusBarBackground} />
+            {children}
+        </Center>
+    );
+};

@@ -1,0 +1,155 @@
+diff --git a/node_modules/@react-native-mapbox-gl/maps/android/rctmgl/src/main/java/com/mapbox/rctmgl/components/camera/RCTMGLCamera.java b/node_modules/@react-native-mapbox-gl/maps/android/rctmgl/src/main/java/com/mapbox/rctmgl/components/camera/RCTMGLCamera.java
+index 7bf1745..9e77f5b 100644
+--- a/node_modules/@react-native-mapbox-gl/maps/android/rctmgl/src/main/java/com/mapbox/rctmgl/components/camera/RCTMGLCamera.java
++++ b/node_modules/@react-native-mapbox-gl/maps/android/rctmgl/src/main/java/com/mapbox/rctmgl/components/camera/RCTMGLCamera.java
+@@ -40,7 +40,7 @@ import com.facebook.react.bridge.WritableNativeMap;
+ 
+ import com.mapbox.geojson.Point;
+ 
+-import com.mapbox.android.core.permissions.PermissionsManager;
++import com.mapbox.mapboxsdk.location.permissions.PermissionsManager;
+ 
+ import androidx.annotation.NonNull;
+ 
+diff --git a/node_modules/@react-native-mapbox-gl/maps/android/rctmgl/src/main/java/com/mapbox/rctmgl/components/location/RCTMGLNativeUserLocation.java b/node_modules/@react-native-mapbox-gl/maps/android/rctmgl/src/main/java/com/mapbox/rctmgl/components/location/RCTMGLNativeUserLocation.java
+index 19700fe..745f185 100644
+--- a/node_modules/@react-native-mapbox-gl/maps/android/rctmgl/src/main/java/com/mapbox/rctmgl/components/location/RCTMGLNativeUserLocation.java
++++ b/node_modules/@react-native-mapbox-gl/maps/android/rctmgl/src/main/java/com/mapbox/rctmgl/components/location/RCTMGLNativeUserLocation.java
+@@ -4,7 +4,7 @@ import android.annotation.SuppressLint;
+ import android.content.Context;
+ import androidx.annotation.NonNull;
+ 
+-import com.mapbox.android.core.permissions.PermissionsManager;
++import com.mapbox.mapboxsdk.location.permissions.PermissionsManager;
+ import com.mapbox.mapboxsdk.location.modes.RenderMode;
+ import com.mapbox.mapboxsdk.maps.MapboxMap;
+ import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
+diff --git a/node_modules/@react-native-mapbox-gl/maps/android/rctmgl/src/main/java/com/mapbox/rctmgl/location/LocationManager.java b/node_modules/@react-native-mapbox-gl/maps/android/rctmgl/src/main/java/com/mapbox/rctmgl/location/LocationManager.java
+index e06b531..1222324 100644
+--- a/node_modules/@react-native-mapbox-gl/maps/android/rctmgl/src/main/java/com/mapbox/rctmgl/location/LocationManager.java
++++ b/node_modules/@react-native-mapbox-gl/maps/android/rctmgl/src/main/java/com/mapbox/rctmgl/location/LocationManager.java
+@@ -5,18 +5,12 @@ import android.location.Location;
+ import android.os.Looper;
+ import android.util.Log;
+ 
+-import com.mapbox.android.core.location.LocationEngine;
+-import com.mapbox.android.core.location.LocationEngineCallback;
+-
+-/*
+-import com.mapbox.android.core.location.LocationEngineListener;
+-import com.mapbox.android.core.location.LocationEnginePriority;
+-*/
+-
+-import com.mapbox.android.core.location.LocationEngineProvider;
+-import com.mapbox.android.core.location.LocationEngineRequest;
+-import com.mapbox.android.core.location.LocationEngineResult;
+-import com.mapbox.android.core.permissions.PermissionsManager;
++import com.mapbox.mapboxsdk.location.engine.LocationEngine;
++import com.mapbox.mapboxsdk.location.engine.LocationEngineCallback;
++import com.mapbox.mapboxsdk.location.engine.LocationEngineProvider;
++import com.mapbox.mapboxsdk.location.engine.LocationEngineRequest;
++import com.mapbox.mapboxsdk.location.engine.LocationEngineResult;
++import com.mapbox.mapboxsdk.location.permissions.PermissionsManager;
+ 
+ import java.lang.ref.WeakReference;
+ import java.util.ArrayList;
+diff --git a/node_modules/@react-native-mapbox-gl/maps/android/rctmgl/src/main/java/com/mapbox/rctmgl/modules/RCTMGLLocationModule.java b/node_modules/@react-native-mapbox-gl/maps/android/rctmgl/src/main/java/com/mapbox/rctmgl/modules/RCTMGLLocationModule.java
+index 7ef4dbc..28b8b00 100644
+--- a/node_modules/@react-native-mapbox-gl/maps/android/rctmgl/src/main/java/com/mapbox/rctmgl/modules/RCTMGLLocationModule.java
++++ b/node_modules/@react-native-mapbox-gl/maps/android/rctmgl/src/main/java/com/mapbox/rctmgl/modules/RCTMGLLocationModule.java
+@@ -10,8 +10,8 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
+ import com.facebook.react.bridge.ReactMethod;
+ import com.facebook.react.module.annotations.ReactModule;
+ import com.facebook.react.modules.core.RCTNativeAppEventEmitter;
+-import com.mapbox.android.core.location.LocationEngineCallback;
+-import com.mapbox.android.core.location.LocationEngineResult;
++import com.mapbox.mapboxsdk.location.engine.LocationEngineCallback;
++import com.mapbox.mapboxsdk.location.engine.LocationEngineResult;
+ import com.mapbox.rctmgl.events.EventEmitter;
+ import com.mapbox.rctmgl.events.IEvent;
+ import com.mapbox.rctmgl.events.LocationEvent;
+diff --git a/node_modules/@react-native-mapbox-gl/maps/android/rctmgl/src/main/java/com/mapbox/rctmgl/modules/RCTMGLModule.java b/node_modules/@react-native-mapbox-gl/maps/android/rctmgl/src/main/java/com/mapbox/rctmgl/modules/RCTMGLModule.java
+index c360777..a57b656 100644
+--- a/node_modules/@react-native-mapbox-gl/maps/android/rctmgl/src/main/java/com/mapbox/rctmgl/modules/RCTMGLModule.java
++++ b/node_modules/@react-native-mapbox-gl/maps/android/rctmgl/src/main/java/com/mapbox/rctmgl/modules/RCTMGLModule.java
+@@ -10,7 +10,6 @@ import com.facebook.react.bridge.ReactMethod;
+ import com.facebook.react.bridge.WritableMap;
+ import com.facebook.react.common.MapBuilder;
+ import com.facebook.react.module.annotations.ReactModule;
+-import com.mapbox.mapboxsdk.maps.TelemetryDefinition;
+ import com.mapbox.mapboxsdk.Mapbox;
+ // import com.mapbox.mapboxsdk.constants.Style;
+ import com.mapbox.mapboxsdk.style.layers.Property;
+@@ -61,14 +60,14 @@ public class RCTMGLModule extends ReactContextBaseJavaModule {
+     public Map<String, Object> getConstants() {
+         // map style urls
+         Map<String, String> styleURLS = new HashMap<>();
+-        styleURLS.put("Street", Style.MAPBOX_STREETS);
+-        styleURLS.put("Dark", Style.DARK);
+-        styleURLS.put("Light", Style.LIGHT);
+-        styleURLS.put("Outdoors", Style.OUTDOORS);
+-        styleURLS.put("Satellite", Style.SATELLITE);
+-        styleURLS.put("SatelliteStreet", Style.SATELLITE_STREETS);
+-        styleURLS.put("TrafficDay", Style.TRAFFIC_DAY);
+-        styleURLS.put("TrafficNight", Style.TRAFFIC_NIGHT);
++        styleURLS.put("Street", null);
++        styleURLS.put("Dark", null);
++        styleURLS.put("Light", null);
++        styleURLS.put("Outdoors", null);
++        styleURLS.put("Satellite", null);
++        styleURLS.put("SatelliteStreet", null);
++        styleURLS.put("TrafficDay", null);
++        styleURLS.put("TrafficNight", null);
+ 
+         // events
+         Map<String, String> eventTypes = new HashMap<>();
+@@ -289,7 +288,7 @@ public class RCTMGLModule extends ReactContextBaseJavaModule {
+         mReactContext.runOnUiQueueThread(new Runnable() {
+             @Override
+             public void run() {
+-                Mapbox.getInstance(getReactApplicationContext(), accessToken);
++                Mapbox.getInstance(getReactApplicationContext());
+             }
+         });
+     }
+@@ -322,27 +321,6 @@ public class RCTMGLModule extends ReactContextBaseJavaModule {
+         });
+     }
+ 
+-    @ReactMethod
+-    public void getAccessToken(Promise promise) {
+-        String token = Mapbox.getAccessToken();
+-        if(token == null) {
+-            promise.reject("missing_access_token", "No access token has been set");
+-        } else {
+-            promise.resolve(token);
+-        }
+-    }
+-
+-    @ReactMethod
+-    public void setTelemetryEnabled(final boolean telemetryEnabled) {
+-        mReactContext.runOnUiQueueThread(new Runnable() {
+-            @Override
+-            public void run() {
+-                TelemetryDefinition telemetry = Mapbox.getTelemetry();
+-                telemetry.setUserTelemetryRequestState(telemetryEnabled);
+-            }
+-        });
+-    }
+-
+     @ReactMethod
+     public void setConnected(final boolean connected) {
+         mReactContext.runOnUiQueueThread(new Runnable() {
+diff --git a/node_modules/@react-native-mapbox-gl/maps/android/rctmgl/src/main/java/com/mapbox/rctmgl/modules/RCTMGLOfflineModule.java b/node_modules/@react-native-mapbox-gl/maps/android/rctmgl/src/main/java/com/mapbox/rctmgl/modules/RCTMGLOfflineModule.java
+index 7e1be28..ca8aeca 100644
+--- a/node_modules/@react-native-mapbox-gl/maps/android/rctmgl/src/main/java/com/mapbox/rctmgl/modules/RCTMGLOfflineModule.java
++++ b/node_modules/@react-native-mapbox-gl/maps/android/rctmgl/src/main/java/com/mapbox/rctmgl/modules/RCTMGLOfflineModule.java
+@@ -54,7 +54,7 @@ public class RCTMGLOfflineModule extends ReactContextBaseJavaModule {
+     public static final String OFFLINE_ERROR = "MapboxOfflineRegionError";
+     public static final String OFFLINE_PROGRESS = "MapboxOfflineRegionProgress";
+ 
+-    public static final String DEFAULT_STYLE_URL = Style.MAPBOX_STREETS;
++    public static final String DEFAULT_STYLE_URL = "http://example.com";
+     public static final Double DEFAULT_MIN_ZOOM_LEVEL = 10.0;
+     public static final Double DEFAULT_MAX_ZOOM_LEVEL = 20.0;
+ 

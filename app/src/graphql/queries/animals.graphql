@@ -1,0 +1,5 @@
+query Animals {
+    animals {
+        ...Animal
+    }
+}

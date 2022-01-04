@@ -1,8 +1,8 @@
-// Learn more https://docs.expo.io/guides/customizing-metro
-const { getDefaultConfig } = require('expo/metro-config');
-
-const defaultConfig = getDefaultConfig(__dirname);
-
-defaultConfig.resolver.assetExts.push('mbtiles');
-
-module.exports = defaultConfig;
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { getDefaultConfig } = require('metro-config');
+const { resolver: defaultResolver } = getDefaultConfig.getDefaultValues();
+exports.resolver = {
+    ...defaultResolver,
+    sourceExts: [...defaultResolver.sourceExts, 'cjs'],
+    assetExts: [...defaultResolver.assetExts, 'mbtiles']
+};

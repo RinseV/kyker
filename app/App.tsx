@@ -1,28 +1,16 @@
-import AppLoading from 'expo-app-loading';
-import { NativeBaseProvider } from 'native-base';
 import React from 'react';
-import { Main } from './src/components/layout/Main';
-import { Map } from './src/components/map/Map';
-import { useFonts } from './src/hooks/useFonts';
-import { theme } from './src/theme';
+import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
+import { ApolloApp } from './src/ApolloApp';
+import { persistor, store } from './src/store/store';
 
 const App: React.VFC = () => {
-    const { isLoaded } = useFonts();
-
-    if (!isLoaded) {
-        return (
-            <NativeBaseProvider theme={theme}>
-                <AppLoading />
-            </NativeBaseProvider>
-        );
-    }
-
     return (
-        <NativeBaseProvider theme={theme}>
-            <Main>
-                <Map />
-            </Main>
-        </NativeBaseProvider>
+        <Provider store={store}>
+            <PersistGate loading={null} persistor={persistor}>
+                <ApolloApp />
+            </PersistGate>
+        </Provider>
     );
 };
 

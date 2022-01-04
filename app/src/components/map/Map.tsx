@@ -1,12 +1,13 @@
 import { LogBox } from 'react-native';
 import MapboxGL from '@react-native-mapbox-gl/maps';
-import { Box, Flex } from 'native-base';
+import { Box, Flex, useColorModeValue } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import { useAssets } from 'expo-asset';
 import AppLoading from 'expo-app-loading';
 import * as FileSystem from 'expo-file-system';
 import { unzip } from 'react-native-zip-archive';
-import mapStyle from '../../../assets/osm_liberty.json';
+import lightMapStyle from '../../../assets/kyker_light_theme.json';
+import darkMapStyle from '../../../assets/kyker_dark_theme.json';
 
 // Value does not matter
 MapboxGL.setAccessToken('');
@@ -23,8 +24,9 @@ const mapBounds: { ne: [number, number]; sw: [number, number] } = {
     sw: [32.692252, -22.16947]
 };
 
-const glyphsPath = `${FileSystem.cacheDirectory}glyphs`;
-const spritesPath = `${FileSystem.cacheDirectory}sprites`;
+const cacheDirectory = `${FileSystem.cacheDirectory}`;
+const glyphsPath = `${cacheDirectory}glyphs`;
+const spritesPath = `${cacheDirectory}sprites`;
 
 export const Map: React.VFC = () => {
     const [assets, error] = useAssets([
@@ -43,19 +45,21 @@ export const Map: React.VFC = () => {
         (async () => {
             // Glyphs
             const glyphsInfo = await FileSystem.getInfoAsync(glyphsPath);
-            if (!glyphsInfo.exists) {
-                await unzip(assets[1].localUri, FileSystem.cacheDirectory);
+            if (!glyphsInfo.exists && assets[1].localUri) {
+                await unzip(assets[1].localUri, cacheDirectory);
             }
 
             // Sprites
             const spritesInfo = await FileSystem.getInfoAsync(spritesPath);
-            if (!spritesInfo.exists) {
-                await unzip(assets[2].localUri, FileSystem.cacheDirectory);
+            if (!spritesInfo.exists && assets[2].localUri) {
+                await unzip(assets[2].localUri, cacheDirectory);
             }
 
             setLoading(false);
         })();
     }, [assets]);
+
+    const mapStyle = useColorModeValue(lightMapStyle, darkMapStyle);
 
     if (!assets || error || isLoading) {
         return <AppLoading />;

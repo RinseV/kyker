@@ -1,6 +1,5 @@
 import { Divider, VStack } from 'native-base';
 import React from 'react';
-import { DarkModeButton } from '../common/DarkModeButton';
 import { DarkModeSwitch } from '../common/DarkModeSwitch';
 import { SettingsRow } from './SettingsRow';
 

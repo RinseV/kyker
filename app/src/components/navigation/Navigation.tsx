@@ -13,6 +13,9 @@ export const Navigation: React.VFC = () => {
     const unfocusedIconColor = useColorModeValue('#71717a', '#a1a1aa');
     const focusedIconColor = useColorModeValue('#10b981', '#34d399');
 
+    const tintColor = useColorModeValue('#0f172a', '#ffffff');
+    const backgroundColor = useColorModeValue('#ffffff', '#0f172a');
+
     const getIconName = useCallback((route: RouteProp<ParamListBase, string>) => {
         switch (route.name) {
             case 'Map':
@@ -42,7 +45,13 @@ export const Navigation: React.VFC = () => {
                         );
                     },
                     tabBarActiveTintColor: focusedIconColor,
-                    tabBarInactiveTintColor: unfocusedIconColor
+                    tabBarInactiveTintColor: unfocusedIconColor,
+                    tabBarActiveBackgroundColor: backgroundColor,
+                    tabBarInactiveBackgroundColor: backgroundColor,
+                    headerStyle: {
+                        backgroundColor: backgroundColor
+                    },
+                    headerTintColor: tintColor
                 })}
             >
                 <Tab.Screen name="Map" component={MapScreen} />

@@ -1,6 +1,11 @@
 import React from 'react';
 import { Main } from '../layout/Main';
+import { Settings } from '../settings/Settings';
 
 export const SettingsScreen: React.VFC = () => {
-    return <Main>TODO</Main>;
+    return (
+        <Main>
+            <Settings />
+        </Main>
+    );
 };

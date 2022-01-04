@@ -328,7 +328,6 @@ describe('Spotting resolver tests', () => {
                         name: expect.any(String)
                     }),
                     location,
-                    description,
                     visibility,
                     traffic
                 })
@@ -369,7 +368,6 @@ describe('Spotting resolver tests', () => {
                         name: expect.any(String)
                     }),
                     location,
-                    description,
                     createdAt: date.getTime()
                 })
             })

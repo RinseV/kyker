@@ -1,10 +1,16 @@
-// eslint-disable-next-line import/no-unresolved
-import { MAPBOX_API_KEY } from '@env';
+import { LogBox } from 'react-native';
 import MapboxGL from '@react-native-mapbox-gl/maps';
-import { Box, Flex, useColorModeValue } from 'native-base';
+import { Box, Flex } from 'native-base';
 import React from 'react';
+import { useAssets } from 'expo-asset';
+import AppLoading from 'expo-app-loading';
+import mapStyle from '../../../assets/kyker.json';
 
-MapboxGL.setAccessToken(MAPBOX_API_KEY);
+// Value does not matter
+MapboxGL.setAccessToken('');
+MapboxGL.setConnected(true);
+
+LogBox.ignoreLogs(['Not found in mbtile database']);
 
 // Centered on Skukuza
 const center: [number, number] = [31.5896973, -24.9964431];
@@ -16,15 +22,27 @@ const mapBounds: { ne: [number, number]; sw: [number, number] } = {
 };
 
 export const Map: React.VFC = () => {
-    const styleURL = useColorModeValue(
-        'mapbox://styles/r1ns3v/ckul5qrakaf7y18qjbbj3hr91',
-        'mapbox://styles/r1ns3v/ckul61lvm3lbx17q1k88qsuyf'
-    );
+    const [assets, error] = useAssets([require('../../../assets/kruger.mbtiles')]);
+
+    if (!assets || error) {
+        return <AppLoading />;
+    }
+
+    const styleJSON = JSON.stringify({
+        ...mapStyle,
+        sources: {
+            ...mapStyle.sources,
+            composite: {
+                ...mapStyle.sources.composite,
+                url: `mbtiles://${assets[0].localUri}`
+            }
+        }
+    });
 
     return (
         <Flex flex={1} alignItems="center" justifyContent="center">
             <Box h="full" w="full">
-                <MapboxGL.MapView styleURL={styleURL} pitchEnabled={false} style={{ flex: 1 }}>
+                <MapboxGL.MapView styleJSON={styleJSON} pitchEnabled={false} style={{ flex: 1 }}>
                     <MapboxGL.Camera
                         maxBounds={mapBounds}
                         centerCoordinate={center}

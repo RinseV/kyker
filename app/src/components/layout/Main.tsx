@@ -1,6 +1,5 @@
 import { Flex, StatusBar, useColorModeValue } from 'native-base';
 import React from 'react';
-import { Header } from './Header';
 
 type MainProps = {
     children: React.ReactNode;
@@ -13,7 +12,6 @@ export const Main: React.VFC<MainProps> = ({ children }) => {
     return (
         <Flex flex={1} _dark={{ bg: 'blueGray.800' }} _light={{ bg: 'blueGray.50' }} flexDirection="column">
             <StatusBar barStyle={statusBarStyle} backgroundColor={statusBarBackground} />
-            <Header />
             {children}
         </Flex>
     );

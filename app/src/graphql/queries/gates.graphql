@@ -1,0 +1,5 @@
+query Gates {
+    gates {
+        ...Gate
+    }
+}

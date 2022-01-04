@@ -1,0 +1,5 @@
+mutation CreateSpotting($id: String!, $input: SpottingValidator!) {
+    createSpotting(id: $id, input: $input) {
+        ...Spotting
+    }
+}

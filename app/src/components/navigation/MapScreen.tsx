@@ -1,6 +1,6 @@
 import React from 'react';
-import { Main } from '../components/layout/Main';
-import { Map } from '../components/map/Map';
+import { Main } from '../layout/Main';
+import { Map } from '../map/Map';
 
 export const MapScreen: React.VFC = () => {
     return (

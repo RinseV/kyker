@@ -8693,6 +8693,11 @@ react-native-web@~0.13.12:
     prop-types "^15.6.0"
     react-timer-mixin "^0.13.4"
 
+react-native-zip-archive@^6.0.6:
+  version "6.0.6"
+  resolved "https://registry.yarnpkg.com/react-native-zip-archive/-/react-native-zip-archive-6.0.6.tgz#f6706ff6e9e87e37f7a05edead7928027ea7ba43"
+  integrity sha512-q5U4wKbdaUZ9jA9SKAiT7kZNHPJMkxwnqs6a0/ogw4WUF9xJ8mdDSrb8xGhRri0oGVVj04gD3EUri0llGCTYTg==
+
 react-native@0.66.4:
   version "0.66.4"
   resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.66.4.tgz#bf89a5fb18bd23046d889fb4de4ea2822a4d7805"

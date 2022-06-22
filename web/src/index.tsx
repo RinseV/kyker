@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 // eslint-disable-next-line import/no-unresolved
@@ -22,16 +22,16 @@ const updateSW = registerSW({
 });
 
 updateSW(true);
-
-ReactDOM.render(
+const container = document.getElementById('root') as HTMLDivElement;
+const root = createRoot(container);
+root.render(
     <React.StrictMode>
         <Provider store={store}>
             <PersistGate loading={null} persistor={persistor}>
                 <ApolloApp />
             </PersistGate>
         </Provider>
-    </React.StrictMode>,
-    document.getElementById('root')
+    </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function

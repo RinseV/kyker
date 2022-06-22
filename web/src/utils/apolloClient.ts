@@ -19,7 +19,8 @@ export async function createClient(dispatch: ThunkDispatch<RootState, null, AnyA
         }
     });
     // Link to queue requests when offline
-    const queueLink = new QueueLink();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const queueLink = new QueueLink() as any;
 
     // TODO: remove listeners on shut down
     window.addEventListener('offline', () => {
@@ -37,7 +38,7 @@ export async function createClient(dispatch: ThunkDispatch<RootState, null, AnyA
         queueLink.open();
     });
 
-    const serializingLink = new SerializingLink();
+    const serializingLink = new SerializingLink() as unknown as ApolloLink;
 
     // Link for saving queries to local storage
     const trackerLink = new ApolloLink((operation: Operation, forward: NextLink) => {

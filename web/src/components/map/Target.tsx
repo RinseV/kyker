@@ -12,7 +12,7 @@ type TargetProps = {
     onClose: () => void;
 };
 
-export const Target: React.VFC<TargetProps> = ({ info, setInfo, isOpen, setEditMode, onClose }) => {
+export const Target: React.FC<TargetProps> = ({ info, setInfo, isOpen, setEditMode, onClose }) => {
     const toast = useToast();
 
     // No info -> no marker

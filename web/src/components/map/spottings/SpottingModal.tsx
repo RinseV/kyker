@@ -9,7 +9,7 @@ type SpottingModalProps = {
     selectedSpotting: SpottingFragment | null;
 };
 
-export const SpottingModal: React.VFC<SpottingModalProps> = ({ isOpen, onClose, selectedSpotting }) => {
+export const SpottingModal: React.FC<SpottingModalProps> = ({ isOpen, onClose, selectedSpotting }) => {
     const initialRef = useRef(null);
     const finalRef = useRef(null);
 

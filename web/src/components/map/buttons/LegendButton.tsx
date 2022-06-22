@@ -6,6 +6,6 @@ type LegendButtonProps = {
     onClick: () => void;
 };
 
-export const LegendButton: React.VFC<LegendButtonProps> = ({ onClick }) => {
+export const LegendButton: React.FC<LegendButtonProps> = ({ onClick }) => {
     return <IconButton aria-label="Show legend" icon={<MdHelp />} title="Show legend" onClick={onClick} />;
 };

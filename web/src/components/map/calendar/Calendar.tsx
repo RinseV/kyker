@@ -28,7 +28,7 @@ type CalendarProps = {
     onClose: () => void;
 };
 
-export const Calendar: React.VFC<CalendarProps> = ({ isOpen, onClose }) => {
+export const Calendar: React.FC<CalendarProps> = ({ isOpen, onClose }) => {
     const initialRef = useRef(null);
     const finalRef = useRef(null);
 

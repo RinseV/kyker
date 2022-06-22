@@ -9,7 +9,7 @@ type SpottingRatingProps = {
     label: string;
 };
 
-export const SpottingRating: React.VFC<SpottingRatingProps> = ({ value, max, icon, label }) => {
+export const SpottingRating: React.FC<SpottingRatingProps> = ({ value, max, icon, label }) => {
     const activeColor = useColorModeValue('gray.700', 'gray.100');
     const disabledColor = useColorModeValue('gray.300', 'gray.500');
 

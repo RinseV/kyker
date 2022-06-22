@@ -9,7 +9,7 @@ type SpottingLayersProps = {
     onOpen: () => void;
 };
 
-export const SpottingsLayer: React.VFC<SpottingLayersProps> = ({ setSelectedSpotting, editMode, onOpen }) => {
+export const SpottingsLayer: React.FC<SpottingLayersProps> = ({ setSelectedSpotting, editMode, onOpen }) => {
     const hiddenAnimals = useAppSelector((state) => state.preferences.hiddenAnimals);
     const queryDate = useAppSelector((state) => state.query.date);
     const startHour = useAppSelector((state) => state.query.startHour);

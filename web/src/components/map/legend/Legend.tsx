@@ -18,7 +18,7 @@ type LegendProps = {
     onClose: () => void;
 };
 
-export const Legend: React.VFC<LegendProps> = ({ isOpen, onClose }) => {
+export const Legend: React.FC<LegendProps> = ({ isOpen, onClose }) => {
     const initialRef = useRef(null);
     const finalRef = useRef(null);
 

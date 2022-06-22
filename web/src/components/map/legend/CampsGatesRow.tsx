@@ -9,7 +9,7 @@ import { toggleHideCamps, toggleHideGates } from '../../../store/reducers/prefer
 import { BoomGate } from '../../icons/BoomGate';
 import { HomeGroup } from '../../icons/HomeGroup';
 
-export const CampsGatesRow: React.VFC = () => {
+export const CampsGatesRow: React.FC = () => {
     const hiddenCamps = useAppSelector((state) => state.preferences.hideCamps);
     const hiddenGates = useAppSelector((state) => state.preferences.hideGates);
 

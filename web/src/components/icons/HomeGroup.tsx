@@ -5,7 +5,7 @@ type HomeGroupProps = {
     size?: number;
 };
 
-export const HomeGroup: React.VFC<HomeGroupProps> = ({ color, size = 24 }) => {
+export const HomeGroup: React.FC<HomeGroupProps> = ({ color, size = 24 }) => {
     return (
         <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24">
             <path

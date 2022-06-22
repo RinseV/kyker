@@ -5,7 +5,7 @@ type BoomGateProps = {
     size?: number;
 };
 
-export const BoomGate: React.VFC<BoomGateProps> = ({ color, size = 24 }) => {
+export const BoomGate: React.FC<BoomGateProps> = ({ color, size = 24 }) => {
     return (
         <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24">
             <path

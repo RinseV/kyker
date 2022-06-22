@@ -1,7 +1,7 @@
 import { useColorModeValue } from '@chakra-ui/color-mode';
-import { MapLayerMouseEvent } from 'mapbox-gl';
-import React, { useCallback, useMemo } from 'react';
-import { GeoJSONLayer, Layer } from 'react-mapbox-gl';
+import { CircleLayer, MapLayerMouseEvent } from 'mapbox-gl';
+import React, { useCallback, useEffect, useMemo } from 'react';
+import { Layer, Source, useMap } from 'react-map-gl';
 import { AnimalFragment, SpottingFragment, SpottingsQuery } from '../../../generated/graphql';
 import { useAppSelector } from '../../../store/hooks';
 
@@ -13,17 +13,18 @@ type SpottingLayerProps = {
     onOpen: () => void;
 };
 
-export const SpottingLayer: React.VFC<SpottingLayerProps> = ({
+export const SpottingLayer: React.FC<SpottingLayerProps> = ({
     animal,
     spottings,
     setSelectedSpotting,
     editMode,
     onOpen
 }) => {
+    const layerName = `spottings-${animal.name}`;
     const spottingColor = useColorModeValue(animal.lightColor, animal.darkColor);
-    // Text color is just white or black since the contrast is fine for all colors used
-    const textColor = useColorModeValue('#FFFFFF', '#000000');
     const isHidden = useAppSelector((state) => state.preferences.hiddenAnimals).some((id) => id === animal.id);
+
+    const { current: map } = useMap();
 
     // Get spottings for current animal
     const animalSpottings = useMemo<SpottingFragment[]>(() => {
@@ -47,8 +48,9 @@ export const SpottingLayer: React.VFC<SpottingLayerProps> = ({
             }
 
             const feature = e.features?.[0];
+            const spotting = spottings.spottings.filter((s) => s.id === feature?.properties?.id)[0];
             // Get spotting from spottings using ID
-            setSelectedSpotting(spottings.spottings.filter((s) => s.id === feature?.properties?.id)[0]);
+            setSelectedSpotting(spotting);
             // Open spotting modal
             onOpen();
             return;
@@ -56,13 +58,29 @@ export const SpottingLayer: React.VFC<SpottingLayerProps> = ({
         [editMode, onOpen, setSelectedSpotting, spottings.spottings]
     );
 
-    const onMouseEnter = (e: MapLayerMouseEvent) => {
+    const onMouseEnter = useCallback((e: MapLayerMouseEvent) => {
         e.target.getCanvas().style.cursor = 'pointer';
-    };
+    }, []);
 
-    const onMouseLeave = (e: MapLayerMouseEvent) => {
+    const onMouseLeave = useCallback((e: MapLayerMouseEvent) => {
         e.target.getCanvas().style.cursor = '';
-    };
+    }, []);
+
+    useEffect(() => {
+        if (map) {
+            map.on('mouseenter', layerName, onMouseEnter);
+            map.on('mouseleave', layerName, onMouseLeave);
+            map.on('click', layerName, onSpottingClick);
+        }
+
+        return () => {
+            if (map) {
+                map.off('mouseenter', layerName, onMouseEnter);
+                map.off('mouseleave', layerName, onMouseLeave);
+                map.off('click', layerName, onSpottingClick);
+            }
+        };
+    }, [map, layerName, onMouseEnter, onMouseLeave, onSpottingClick]);
 
     const features = useMemo<GeoJSON.FeatureCollection<GeoJSON.Point>>(() => {
         return {
@@ -80,61 +98,22 @@ export const SpottingLayer: React.VFC<SpottingLayerProps> = ({
         };
     }, [animalSpottings]);
 
+    const layerStyle: CircleLayer = {
+        id: layerName,
+        type: 'circle',
+        paint: {
+            'circle-radius': 6,
+            'circle-color': spottingColor
+        }
+    };
+
     if (isHidden) {
         return null;
     }
 
     return (
-        <>
-            {/* Layer with data */}
-            <GeoJSONLayer
-                sourceOptions={{
-                    cluster: true,
-                    clusterMaxZoom: 12,
-                    clusterRadius: 40
-                }}
-                id={`${animal.id}-cluster`}
-                data={features}
-            />
-            {/* Layer of cluster spots */}
-            <Layer
-                id={`${animal.id}-cluster-layer`}
-                sourceId={`${animal.id}-cluster`}
-                filter={['has', 'point_count']}
-                type="circle"
-                paint={{
-                    'circle-radius': 16,
-                    'circle-color': spottingColor
-                }}
-            />
-            {/* Layer of cluster point count */}
-            <Layer
-                id={`${animal.id}-cluster-count`}
-                sourceId={`${animal.id}-cluster`}
-                filter={['has', 'point_count']}
-                layout={{
-                    'text-field': ['get', 'point_count'],
-                    'text-size': 16,
-                    'text-font': ['Open Sans Bold']
-                }}
-                paint={{
-                    'text-color': textColor
-                }}
-            />
-            {/* Layer of unclustered spots */}
-            <Layer
-                id={`${animal.id}-unclustered`}
-                sourceId={`${animal.id}-cluster`}
-                filter={['!has', 'point_count']}
-                type="circle"
-                paint={{
-                    'circle-radius': 6,
-                    'circle-color': spottingColor
-                }}
-                onClick={onSpottingClick}
-                onMouseEnter={onMouseEnter}
-                onMouseLeave={onMouseLeave}
-            />
-        </>
+        <Source id={layerName} type="geojson" data={features}>
+            <Layer {...layerStyle} />
+        </Source>
     );
 };

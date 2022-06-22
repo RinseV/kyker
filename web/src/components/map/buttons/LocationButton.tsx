@@ -1,9 +1,9 @@
 import { IconButton } from '@chakra-ui/button';
 import { useToast } from '@chakra-ui/react';
 import { LngLat } from 'mapbox-gl';
-import React, { useContext } from 'react';
+import React from 'react';
 import { MdMyLocation } from 'react-icons/md';
-import { MapContext } from 'react-mapbox-gl';
+import { useMap } from 'react-map-gl';
 import { mapBounds } from '../../../utils/constants';
 import { inBounds } from '../../../utils/inBounds';
 
@@ -12,10 +12,10 @@ type LocationButtonProps = {
     setUserLocation: React.Dispatch<React.SetStateAction<LngLat | null>>;
 };
 
-export const LocationButton: React.VFC<LocationButtonProps> = ({ userLocation, setUserLocation }) => {
+export const LocationButton: React.FC<LocationButtonProps> = ({ userLocation, setUserLocation }) => {
     const toast = useToast();
 
-    const map = useContext(MapContext);
+    const { current: map } = useMap();
 
     const handleLocationButtonClick = () => {
         if (!userLocation) {

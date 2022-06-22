@@ -2,7 +2,7 @@ import { useColorModeValue } from '@chakra-ui/color-mode';
 import { chakra, keyframes } from '@chakra-ui/system';
 import { LngLat } from 'mapbox-gl';
 import React from 'react';
-import { Marker } from 'react-mapbox-gl';
+import { Marker } from 'react-map-gl';
 
 const pulse = keyframes`
 0%   { transform: scale(1); opacity: 1; }
@@ -14,7 +14,7 @@ type UserLocationProps = {
     userLocation: LngLat | null;
 };
 
-export const UserLocation: React.VFC<UserLocationProps> = ({ userLocation }) => {
+export const UserLocation: React.FC<UserLocationProps> = ({ userLocation }) => {
     const locationColor = useColorModeValue('cyan.600', 'cyan.400');
     const pulseAnimation = `${pulse} 2s infinite`;
 
@@ -23,7 +23,7 @@ export const UserLocation: React.VFC<UserLocationProps> = ({ userLocation }) => 
     }
 
     return (
-        <Marker coordinates={userLocation.toArray()}>
+        <Marker longitude={userLocation.lng} latitude={userLocation.lat}>
             <chakra.div position="relative">
                 {/* Indicator with pulse animation */}
                 <chakra.div

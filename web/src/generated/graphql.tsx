@@ -1,10 +1,11 @@
 import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
+export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
-const defaultOptions = {};
+const defaultOptions = {} as const;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
     ID: string;
@@ -47,8 +48,8 @@ export enum CampSize {
 
 export type CreateSpottingInput = {
     animalId: Scalars['String'];
-    createdAt?: Maybe<Scalars['DateTime']>;
-    description?: Maybe<Scalars['String']>;
+    createdAt?: InputMaybe<Scalars['DateTime']>;
+    description?: InputMaybe<Scalars['String']>;
     latitude: Scalars['Float'];
     longitude: Scalars['Float'];
     traffic: Scalars['Int'];
@@ -106,11 +107,11 @@ export type Spotting = {
 };
 
 export type SpottingsFilter = {
-    animals?: Maybe<Array<Scalars['String']>>;
-    date?: Maybe<Scalars['String']>;
-    endHour?: Maybe<Scalars['String']>;
-    excludeAnimals?: Maybe<Array<Scalars['String']>>;
-    startHour?: Maybe<Scalars['String']>;
+    animals?: InputMaybe<Array<Scalars['String']>>;
+    date?: InputMaybe<Scalars['String']>;
+    endHour?: InputMaybe<Scalars['String']>;
+    excludeAnimals?: InputMaybe<Array<Scalars['String']>>;
+    startHour?: InputMaybe<Scalars['String']>;
 };
 
 export type AnimalFragment = {
@@ -136,11 +137,11 @@ export type GateFragment = { __typename?: 'Gate'; id: string; name: string; lati
 export type SpottingFragment = {
     __typename?: 'Spotting';
     id: string;
-    description?: string | null | undefined;
+    description?: string | null;
     latitude: number;
     longitude: number;
-    visibility?: number | null | undefined;
-    traffic?: number | null | undefined;
+    visibility?: number | null;
+    traffic?: number | null;
     createdAt: any;
     updatedAt: any;
     animal: {
@@ -155,12 +156,12 @@ export type SpottingFragment = {
 
 export type SpottingExtendedFragment = {
     __typename?: 'Spotting';
-    description?: string | null | undefined;
+    description?: string | null;
     id: string;
     latitude: number;
     longitude: number;
-    visibility?: number | null | undefined;
-    traffic?: number | null | undefined;
+    visibility?: number | null;
+    traffic?: number | null;
     createdAt: any;
     updatedAt: any;
     animal: {
@@ -181,12 +182,12 @@ export type CreateSpottingMutation = {
     __typename?: 'Mutation';
     createSpotting: {
         __typename?: 'Spotting';
-        description?: string | null | undefined;
+        description?: string | null;
         id: string;
         latitude: number;
         longitude: number;
-        visibility?: number | null | undefined;
-        traffic?: number | null | undefined;
+        visibility?: number | null;
+        traffic?: number | null;
         createdAt: any;
         updatedAt: any;
         animal: {
@@ -241,28 +242,25 @@ export type SpottingQueryVariables = Exact<{
 
 export type SpottingQuery = {
     __typename?: 'Query';
-    spotting?:
-        | {
-              __typename?: 'Spotting';
-              description?: string | null | undefined;
-              id: string;
-              latitude: number;
-              longitude: number;
-              visibility?: number | null | undefined;
-              traffic?: number | null | undefined;
-              createdAt: any;
-              updatedAt: any;
-              animal: {
-                  __typename?: 'Animal';
-                  id: string;
-                  name: string;
-                  disabled: boolean;
-                  lightColor: string;
-                  darkColor: string;
-              };
-          }
-        | null
-        | undefined;
+    spotting?: {
+        __typename?: 'Spotting';
+        description?: string | null;
+        id: string;
+        latitude: number;
+        longitude: number;
+        visibility?: number | null;
+        traffic?: number | null;
+        createdAt: any;
+        updatedAt: any;
+        animal: {
+            __typename?: 'Animal';
+            id: string;
+            name: string;
+            disabled: boolean;
+            lightColor: string;
+            darkColor: string;
+        };
+    } | null;
 };
 
 export type SpottingsQueryVariables = Exact<{
@@ -274,11 +272,11 @@ export type SpottingsQuery = {
     spottings: Array<{
         __typename?: 'Spotting';
         id: string;
-        description?: string | null | undefined;
+        description?: string | null;
         latitude: number;
         longitude: number;
-        visibility?: number | null | undefined;
-        traffic?: number | null | undefined;
+        visibility?: number | null;
+        traffic?: number | null;
         createdAt: any;
         updatedAt: any;
         animal: {

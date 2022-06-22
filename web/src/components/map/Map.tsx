@@ -1,11 +1,9 @@
 import { useColorModeValue } from '@chakra-ui/color-mode';
 import { useDisclosure } from '@chakra-ui/react';
-import * as mapboxgl from 'mapbox-gl';
-import { LngLat, Map as MapboxGLMap, MapMouseEvent } from 'mapbox-gl';
+import { LngLat, MapLayerMouseEvent } from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import React, { useEffect, useRef, useState } from 'react';
-import ReactMapboxGl from 'react-mapbox-gl';
-import { MapEvent } from 'react-mapbox-gl/lib/map-events';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import ReactMapboxGl, { MapProvider, MapRef } from 'react-map-gl';
 import { SpottingFragment } from '../../generated/graphql';
 import { mapBounds } from '../../utils/constants';
 import { MapButtons } from './buttons/MapButtons';
@@ -18,28 +16,16 @@ import { SpottingModal } from './spottings/SpottingModal';
 import { SpottingsLayer } from './spottings/SpottingsLayer';
 import { Target } from './Target';
 
-// We need to set this manually, otherwise Vite will error
-const accessTokenProperty = Object.getOwnPropertyDescriptor(mapboxgl, 'accessToken');
-accessTokenProperty?.set?.(import.meta.env.VITE_APP_MAPBOX_API_KEY);
-
-const MapboxMap = ReactMapboxGl({
-    accessToken: import.meta.env.VITE_APP_MAPBOX_API_KEY as string
-});
-
-// Centered on Skukuza
-const center: [number, number] = [31.5896973, -24.9964431];
-// Zoom to see southern part of park
-const zoom: [number] = [8];
-
 export interface TargetMarkerInfo {
     coordinates: LngLat;
 }
 
-export const Map: React.VFC = () => {
+export const Map: React.FC = () => {
     const style = useColorModeValue(
         'mapbox://styles/r1ns3v/ckul5qrakaf7y18qjbbj3hr91',
         'mapbox://styles/r1ns3v/ckul61lvm3lbx17q1k88qsuyf'
     );
+    const mapRef = useRef<MapRef | null>(null);
 
     // Whether we are in "edit" mode or not (able to add spottings)
     const [editMode, setEditMode] = useState(false);
@@ -65,13 +51,13 @@ export const Map: React.VFC = () => {
     const { isOpen: spottingOpen, onOpen: spottingOnOpen, onClose: spottingOnClose } = useDisclosure();
 
     // Called on map load
-    const onMapLoad = (map: mapboxgl.Map) => {
+    const onMapLoad = useCallback(() => {
         // Resize map to fill div
-        map.resize();
-    };
+        mapRef.current?.resize();
+    }, []);
 
     // On click event for map that displays popup
-    const handleMapClick = (_: MapboxGLMap, e: MapMouseEvent) => {
+    const handleMapClick = (e: MapLayerMouseEvent) => {
         // We have to use the ref here, otherwise it does not work
         if (editModeRef.current) {
             // Set coordinates (and other info)
@@ -92,16 +78,21 @@ export const Map: React.VFC = () => {
     }, [editMode]);
 
     return (
-        <MapboxMap
-            style={style}
-            containerStyle={{ flex: 1 }}
-            maxBounds={mapBounds}
-            center={center}
-            zoom={zoom}
-            onStyleLoad={onMapLoad}
-            onClick={handleMapClick as unknown as MapEvent}
-        >
-            <>
+        <MapProvider>
+            <ReactMapboxGl
+                mapboxAccessToken={import.meta.env.VITE_APP_MAPBOX_API_KEY as string}
+                initialViewState={{
+                    longitude: 31.5896973,
+                    latitude: -24.9964431,
+                    zoom: 8
+                }}
+                maxBounds={mapBounds}
+                style={{ flex: 1 }}
+                mapStyle={style}
+                ref={mapRef}
+                onLoad={onMapLoad}
+                onClick={handleMapClick}
+            >
                 <MapButtons
                     editMode={editMode}
                     setEditMode={setEditMode}
@@ -129,7 +120,7 @@ export const Map: React.VFC = () => {
                 <Calendar isOpen={calendarOpen} onClose={calendarOnClose} />
 
                 <SpottingModal isOpen={spottingOpen} onClose={spottingOnClose} selectedSpotting={selectedSpotting} />
-            </>
-        </MapboxMap>
+            </ReactMapboxGl>
+        </MapProvider>
     );
 };

@@ -10,7 +10,7 @@ type AddButtonProps = {
     setTargetMarker: React.Dispatch<React.SetStateAction<TargetMarkerInfo | null>>;
 };
 
-export const AddButton: React.VFC<AddButtonProps> = ({ editMode, setEditMode, setTargetMarker }) => {
+export const AddButton: React.FC<AddButtonProps> = ({ editMode, setEditMode, setTargetMarker }) => {
     const toast = useToast();
     const editToastRef = useRef<null | number | string | undefined>(null);
 

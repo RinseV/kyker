@@ -8,7 +8,7 @@ type AnimalRowProps = {
     toggleVisibility: () => void;
 };
 
-export const AnimalRow: React.VFC<AnimalRowProps> = ({ animal, visible, toggleVisibility }) => {
+export const AnimalRow: React.FC<AnimalRowProps> = ({ animal, visible, toggleVisibility }) => {
     const disabledColor = useColorModeValue('gray.400', 'gray.500');
     return (
         <Tr>

@@ -3,7 +3,7 @@ import React from 'react';
 import { DarkModeSwitch } from '../common/DarkModeSwitch';
 import { Logo } from '../common/Logo';
 
-export const Header: React.VFC = () => {
+export const Header: React.FC = () => {
     return (
         <Flex alignItems="center" justifyContent="space-between" p={4}>
             <Flex alignItems="center">

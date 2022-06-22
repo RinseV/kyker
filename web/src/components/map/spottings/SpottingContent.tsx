@@ -13,7 +13,7 @@ type SpottingContentProps = {
     spotting: SpottingFragment | undefined;
 };
 
-export const SpottingContent: React.VFC<SpottingContentProps> = ({ spotting }) => {
+export const SpottingContent: React.FC<SpottingContentProps> = ({ spotting }) => {
     const createdAtAsDate = useMemo<Date>(() => {
         return new Date(spotting?.createdAt);
     }, [spotting]);

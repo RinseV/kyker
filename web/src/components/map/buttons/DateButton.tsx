@@ -7,7 +7,7 @@ type DateButtonProps = {
     onClick: () => void;
 };
 
-export const DateButton: React.VFC<DateButtonProps> = ({ onClick }) => {
+export const DateButton: React.FC<DateButtonProps> = ({ onClick }) => {
     const online = useAppSelector((state) => state.online.online);
 
     return (

@@ -17,7 +17,7 @@ type MapButtonsProps = {
     onDateClick: () => void;
 };
 
-export const MapButtons: React.VFC<MapButtonsProps> = ({
+export const MapButtons: React.FC<MapButtonsProps> = ({
     editMode,
     setEditMode,
     setTargetMarker,

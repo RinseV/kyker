@@ -44,7 +44,7 @@ export function TimeRangeSlider<T extends FieldValues = FieldValues>({
     } = useController({ name, control });
 
     return (
-        <FormControl p={4} w="full" direction="column" isInvalid={invalid} isDisabled={isDisabled}>
+        <FormControl p={4} w="full" isInvalid={invalid} isDisabled={isDisabled}>
             {label ? <FormLabel htmlFor={name}>{label}</FormLabel> : null}
             <Flex pt={8} px={4}>
                 <RangeSlider

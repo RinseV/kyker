@@ -6,7 +6,7 @@ import { useAppDispatch, useAppSelector } from './store/hooks';
 import { theme } from './theme';
 import { createClient } from './utils/apolloClient';
 
-export const ApolloApp: React.VFC = () => {
+export const ApolloApp: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [client, setClient] = useState<ApolloClient<NormalizedCacheObject> | null>(null);
 

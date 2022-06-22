@@ -1,10 +1,10 @@
 import { useColorModeValue } from '@chakra-ui/color-mode';
 import React, { useMemo } from 'react';
-import { GeoJSONLayer } from 'react-mapbox-gl';
+import { Layer, Source, SymbolLayer } from 'react-map-gl';
 import { useGatesQuery } from '../../../generated/graphql';
 import { useAppSelector } from '../../../store/hooks';
 
-export const GateLayer: React.VFC = () => {
+export const GateLayer: React.FC = () => {
     const textColor = useColorModeValue('black', 'white');
     const isHidden = useAppSelector((state) => state.preferences.hideGates);
 
@@ -34,26 +34,29 @@ export const GateLayer: React.VFC = () => {
         };
     }, [gates]);
 
+    const layerStyle: SymbolLayer = {
+        id: 'gates',
+        type: 'symbol',
+        layout: {
+            'icon-image': 'boom-gate',
+            'icon-size': 0.6,
+            'text-field': ['get', 'name'],
+            'text-size': 14,
+            'text-variable-anchor': ['left', 'top', 'bottom', 'right'],
+            'text-offset': [0.75, 0]
+        },
+        paint: {
+            'text-color': textColor
+        }
+    };
+
     if (isHidden) {
         return null;
     }
 
     return (
-        <>
-            <GeoJSONLayer
-                data={features}
-                symbolLayout={{
-                    'icon-image': 'boom-gate',
-                    'icon-size': 0.6,
-                    'text-field': ['get', 'name'],
-                    'text-size': 14,
-                    'text-variable-anchor': ['left', 'top', 'bottom', 'right'],
-                    'text-offset': [0.75, 0]
-                }}
-                symbolPaint={{
-                    'text-color': textColor
-                }}
-            />
-        </>
+        <Source id="gates" type="geojson" data={features}>
+            <Layer {...layerStyle} />
+        </Source>
     );
 };

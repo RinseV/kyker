@@ -40,7 +40,7 @@ type InputModalProps = {
     onOfflineSuccess: () => void;
 };
 
-export const InputModal: React.VFC<InputModalProps> = ({
+export const InputModal: React.FC<InputModalProps> = ({
     coordinates,
     isOpen,
     onClose,

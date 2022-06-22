@@ -10,7 +10,7 @@ type LegendContentProps = {
     data: AnimalsQuery | undefined;
 };
 
-export const LegendContent: React.VFC<LegendContentProps> = ({ data }) => {
+export const LegendContent: React.FC<LegendContentProps> = ({ data }) => {
     const hiddenAnimals = useAppSelector((state) => state.preferences.hiddenAnimals);
     const dispatch = useAppDispatch();
 

@@ -13,7 +13,7 @@ type LocationInputProps = {
     labelSize?: string;
 };
 
-export const LocationInput: React.VFC<LocationInputProps> = ({ coordinates, register, isDisabled, labelSize }) => {
+export const LocationInput: React.FC<LocationInputProps> = ({ coordinates, register, isDisabled, labelSize }) => {
     return (
         <Flex direction="column">
             <FormLabel fontSize={labelSize}>Location</FormLabel>

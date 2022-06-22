@@ -1,26 +1,21 @@
 module.exports = {
-    parser: '@typescript-eslint/parser', // Specifies the ESLint parser
-    parserOptions: {
-        ecmaVersion: 2020, // Allows for the parsing of modern ECMAScript features
-        sourceType: 'module' // Allows for the use of imports
-    },
-    extends: [
-        'plugin:@typescript-eslint/recommended', // Uses the recommended rules from the @typescript-eslint/eslint-plugin
-        'plugin:import/recommended',
-        'plugin:import/typescript',
-        'prettier', // Disable conflicting ESLint rules
-        'plugin:prettier/recommended' // Displays prettier errors as ESLint errors
-    ],
-    plugins: ['@typescript-eslint', 'prettier', 'import'],
-    rules: {
-        'prettier/prettier': [
-            'error',
-            {
-                endOfLine: 'auto'
-            }
-        ],
-        indent: 'off',
-        quotes: ['warn', 'single'],
-        semi: ['warn', 'always']
-    }
+  parser: '@typescript-eslint/parser',
+  parserOptions: {
+    project: 'tsconfig.json',
+    sourceType: 'module'
+  },
+  plugins: ['@typescript-eslint/eslint-plugin'],
+  extends: ['plugin:@typescript-eslint/recommended', 'plugin:prettier/recommended'],
+  root: true,
+  env: {
+    node: true,
+    jest: true
+  },
+  ignorePatterns: ['.eslintrc.js'],
+  rules: {
+    '@typescript-eslint/interface-name-prefix': 'off',
+    '@typescript-eslint/explicit-function-return-type': 'off',
+    '@typescript-eslint/explicit-module-boundary-types': 'off',
+    '@typescript-eslint/no-explicit-any': 'off'
+  }
 };

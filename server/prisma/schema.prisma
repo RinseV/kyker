@@ -1,0 +1,71 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String     @id @default(dbgenerated("nanoid()"))
+  identifier String     @unique
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  spottings  Spotting[]
+}
+
+model Animal {
+  id         String     @id @default(dbgenerated("nanoid()"))
+  name       String     @unique
+  disabled   Boolean    @default(false)
+  lightColor String     @default("#ffffff")
+  darkColor  String     @default("#000000")
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  spottings  Spotting[]
+}
+
+model Spotting {
+  id          String   @id @default(dbgenerated("nanoid()"))
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String
+  animal      Animal   @relation(fields: [animalId], references: [id])
+  animalId    String
+  latitude    Float
+  longitude   Float
+  description String?
+  visibility  Int
+  traffic     Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Gate {
+  id        String   @id @default(dbgenerated("nanoid()"))
+  name      String   @unique
+  longitude Float
+  latitude  Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Camp {
+  id        String   @id @default(dbgenerated("nanoid()"))
+  name      String   @unique
+  longitude Float
+  latitude  Float
+  size      CampSize @default(PICNIC)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum CampSize {
+  REST
+  BUSH
+  SATELLITE
+  PICNIC
+}

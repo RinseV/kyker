@@ -1,12 +1,13 @@
 fragment Spotting on Spotting {
     id
     animal {
-        ...Animal
-    }
-    location {
-        lon
-        lat
+      ...Animal
     }
     description
+    latitude
+    longitude
+    visibility
+    traffic
     createdAt
+    updatedAt
 }

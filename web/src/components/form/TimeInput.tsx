@@ -1,8 +1,7 @@
-import { FormControl, FormErrorIcon, FormErrorMessage, FormLabel } from '@chakra-ui/form-control';
-import { Textarea } from '@chakra-ui/textarea';
+import { FormControl, FormErrorIcon, FormErrorMessage, FormLabel, Input } from '@chakra-ui/react';
 import { Control, FieldValues, Path, PathValue, UnpackNestedValue, useController } from 'react-hook-form';
 
-type DescriptionInputProps<T extends FieldValues = FieldValues> = {
+type TimeInputProps<T extends FieldValues = FieldValues> = {
     name: Path<T>;
     control: Control<T>;
     defaultValue?: UnpackNestedValue<PathValue<T, Path<T>>> | undefined;
@@ -12,15 +11,14 @@ type DescriptionInputProps<T extends FieldValues = FieldValues> = {
     placeholder?: string;
 };
 
-export function DescriptionInput<T extends FieldValues = FieldValues>({
+export function TimeInput<T extends FieldValues = FieldValues>({
     name,
     control,
     defaultValue,
     label,
     isDisabled,
-    isRequired,
-    placeholder
-}: DescriptionInputProps<T>): JSX.Element {
+    isRequired
+}: TimeInputProps<T>): JSX.Element {
     const {
         field: { onChange, onBlur, value, ref },
         fieldState: { invalid, error }
@@ -28,9 +26,7 @@ export function DescriptionInput<T extends FieldValues = FieldValues>({
         name,
         control,
         rules: {
-            required: isRequired ? 'Description is required' : undefined,
-            minLength: { value: 2, message: 'Description must contain at least 2 characters' },
-            maxLength: { value: 255, message: 'Description must be less than 255 characters' }
+            required: isRequired ? 'Time is required' : undefined
         },
         defaultValue
     });
@@ -38,14 +34,7 @@ export function DescriptionInput<T extends FieldValues = FieldValues>({
     return (
         <FormControl isInvalid={invalid} isDisabled={isDisabled}>
             {label ? <FormLabel htmlFor={name}>{label}</FormLabel> : null}
-            <Textarea
-                isRequired={isRequired}
-                placeholder={placeholder}
-                onChange={onChange}
-                onBlur={onBlur}
-                value={value}
-                ref={ref}
-            />
+            <Input ref={ref} type="time" value={value} onChange={onChange} onBlur={onBlur} />
             <FormErrorMessage>
                 <FormErrorIcon />
                 {error && error.message}

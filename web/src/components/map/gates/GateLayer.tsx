@@ -24,7 +24,7 @@ export const GateLayer: React.VFC = () => {
                 type: 'Feature',
                 geometry: {
                     type: 'Point',
-                    coordinates: [gate.location.lon, gate.location.lat]
+                    coordinates: [gate.longitude, gate.latitude]
                 },
                 properties: {
                     name: `${gate.name} Gate`,

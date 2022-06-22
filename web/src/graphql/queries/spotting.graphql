@@ -1,4 +1,4 @@
-query Spotting($id: Int!) {
+query Spotting($id: String!) {
     spotting(id: $id) {
         ...SpottingExtended
     }

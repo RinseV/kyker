@@ -1,9 +1,7 @@
 fragment Animal on Animal {
     id
     name
-    color {
-        light
-        dark
-    }
     disabled
+    lightColor
+    darkColor
 }

@@ -1,11 +1,4 @@
 fragment SpottingExtended on Spotting {
-    id
-    animal {
-        ...Animal
-    }
-    location {
-        lon
-        lat
-    }
+    ...Spotting
     description
 }

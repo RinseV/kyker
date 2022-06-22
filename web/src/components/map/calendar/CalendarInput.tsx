@@ -1,7 +1,6 @@
 import { FormControl, FormErrorIcon, FormErrorMessage, FormLabel } from '@chakra-ui/form-control';
 import { Flex } from '@chakra-ui/layout';
 import { useDayzed } from 'dayzed';
-import React from 'react';
 import { Control, FieldValues, Path, useController } from 'react-hook-form';
 import { SingleDatepickerCalendar } from '../../form/SingleDatepicker';
 

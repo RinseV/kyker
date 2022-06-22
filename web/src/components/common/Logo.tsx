@@ -1,5 +1,4 @@
 import { useColorModeValue } from '@chakra-ui/color-mode';
-import React from 'react';
 
 export const Logo = (): JSX.Element => {
     const logoColor = useColorModeValue('#1A202C', '#EDEEEE');

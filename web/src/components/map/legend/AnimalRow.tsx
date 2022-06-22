@@ -17,7 +17,7 @@ export const AnimalRow: React.VFC<AnimalRowProps> = ({ animal, visible, toggleVi
                     style={{
                         width: '20px',
                         height: '20px',
-                        backgroundColor: useColorModeValue(animal.color.light, animal.color.dark),
+                        backgroundColor: useColorModeValue(animal.lightColor, animal.darkColor),
                         borderRadius: '50%',
                         opacity: animal.disabled ? 0.3 : 1
                     }}

@@ -1,7 +1,7 @@
+import { FormControl, FormErrorIcon, FormErrorMessage, FormLabel } from '@chakra-ui/form-control';
+import { Select } from 'chakra-react-select';
 import React from 'react';
 import { Control, FieldValues, Path, RegisterOptions, useController } from 'react-hook-form';
-import { Select } from 'chakra-react-select';
-import { FormControl, FormErrorIcon, FormErrorMessage, FormLabel } from '@chakra-ui/form-control';
 
 type SearchSelectInputProps<T extends FieldValues = FieldValues> = {
     name: Path<T>;

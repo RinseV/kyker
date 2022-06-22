@@ -11,7 +11,7 @@ import {
     VStack
 } from '@chakra-ui/react';
 import { Calendar, DateObj, GetBackForwardPropsOptions, RenderProps } from 'dayzed';
-import React, { Fragment } from 'react';
+import { Fragment } from 'react';
 
 // Source: https://github.com/aboveyunhai/chakra-dayzed-datepicker
 

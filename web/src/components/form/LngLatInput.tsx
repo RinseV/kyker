@@ -1,6 +1,5 @@
 import { FormControl, FormLabel } from '@chakra-ui/form-control';
 import { Input } from '@chakra-ui/input';
-import React from 'react';
 import { FieldValues, Path, UseFormRegister } from 'react-hook-form';
 
 type LngLatInputProps<T extends FieldValues = FieldValues> = {

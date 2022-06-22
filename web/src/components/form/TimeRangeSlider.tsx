@@ -1,7 +1,6 @@
 import { FormControl, FormErrorIcon, FormErrorMessage, FormLabel } from '@chakra-ui/form-control';
 import { Flex, Text } from '@chakra-ui/layout';
 import { RangeSlider, RangeSliderFilledTrack, RangeSliderThumb, RangeSliderTrack } from '@chakra-ui/slider';
-import React from 'react';
 import { Control, FieldValues, Path, useController } from 'react-hook-form';
 
 type TimeRangeSliderProps<T extends FieldValues = FieldValues> = {

@@ -10,6 +10,7 @@ import {
     ModalOverlay,
     useToast
 } from '@chakra-ui/react';
+import { format, parse } from 'date-fns/esm';
 import { LngLat } from 'mapbox-gl';
 import React, { useRef } from 'react';
 import { useForm } from 'react-hook-form';
@@ -23,9 +24,12 @@ export type FormData = {
     lat: number;
     animal: {
         label: string;
-        value: number;
+        value: string;
     };
     description?: string;
+    visibility: number;
+    traffic: number;
+    time: string;
 };
 
 type InputModalProps = {
@@ -58,31 +62,46 @@ export const InputModal: React.VFC<InputModalProps> = ({
     const {
         control,
         handleSubmit,
-        formState: { isSubmitting }
+        formState: { isSubmitting },
+        setError
     } = useForm<FormData>({
         // Set initial values from coordinates since those can't be changed anyways
         defaultValues: {
             lng: coordinates.lng,
-            lat: coordinates.lat
+            lat: coordinates.lat,
+            visibility: 0,
+            traffic: 0,
+            time: format(new Date(), 'HH:mm')
         }
     });
 
     const onSubmit = async (data: FormData) => {
         // Get browser fingerprint as user ID
         const fingerPrint = await getFingerprint();
+        // Check that visibility and traffic ratings are set
+        if (data.visibility === 0) {
+            setError('visibility', { type: 'required', message: 'Visibility rating is required' });
+            return;
+        }
+        if (data.traffic === 0) {
+            setError('traffic', { type: 'required', message: 'Traffic rating is required' });
+            return;
+        }
         // If we are offline, just add spotting to queue and show success message
         if (!online) {
             // Add mutation to queue
             createSpotting({
                 variables: {
-                    id: fingerPrint,
                     input: {
-                        animal: data.animal.value,
+                        userIdentifier: fingerPrint,
+                        animalId: data.animal.value,
                         description: data.description,
-                        lon: data.lng,
-                        lat: data.lat,
+                        longitude: data.lng,
+                        latitude: data.lat,
+                        traffic: data.traffic,
+                        visibility: data.visibility,
                         // Add date since it will be submitted later
-                        createdAt: new Date().getTime()
+                        createdAt: parse(data.time, 'HH:mm', new Date())
                     }
                 }
             });
@@ -94,12 +113,15 @@ export const InputModal: React.VFC<InputModalProps> = ({
         try {
             const response = await createSpotting({
                 variables: {
-                    id: fingerPrint,
                     input: {
-                        animal: data.animal.value,
+                        userIdentifier: fingerPrint,
+                        animalId: data.animal.value,
                         description: data.description,
-                        lon: data.lng,
-                        lat: data.lat
+                        longitude: data.lng,
+                        latitude: data.lat,
+                        traffic: 1,
+                        visibility: 1,
+                        createdAt: parse(data.time, 'HH:mm', new Date())
                     }
                 }
             });
@@ -132,6 +154,9 @@ export const InputModal: React.VFC<InputModalProps> = ({
                         descriptionName="description"
                         control={control}
                         coordinates={coordinates}
+                        visibilityName="visibility"
+                        trafficName="traffic"
+                        dateName="time"
                         isSubmitting={isSubmitting}
                     />
                 </ModalBody>

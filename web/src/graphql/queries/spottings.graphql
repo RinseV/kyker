@@ -1,10 +1,5 @@
-query Spottings($animals: [Int!], $excludedAnimals: [Int!], $date: QueryDate, $hours: Hours) {
-    spottings(
-        animals: $animals
-        excludedAnimals: $excludedAnimals
-        date: $date
-        hours: $hours
-    ) {
-        ...Spotting
-    }
+query Spottings($filter:SpottingsFilter!) {
+  spottings(filter:$filter) {
+    ...Spotting
+  }
 }

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { Control, FieldValues, Path } from 'react-hook-form';
 import { useAnimalsQuery } from '../../generated/graphql';
 import { SearchSelectInput } from './SearchSelectInput';

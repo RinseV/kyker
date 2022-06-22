@@ -1,5 +1,3 @@
-import React from 'react';
-
 // eslint-disable-next-line import/no-unresolved
 import { useRegisterSW } from 'virtual:pwa-register/react';
 

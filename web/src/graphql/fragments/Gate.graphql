@@ -1,8 +1,6 @@
 fragment Gate on Gate {
     id
     name
-    location {
-        lon
-        lat
-    }
+    latitude
+    longitude
 }

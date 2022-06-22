@@ -12,61 +12,58 @@ export type Scalars = {
     Boolean: boolean;
     Int: number;
     Float: number;
-    /** The javascript `Date` as integer. Type represents date and time as number of milliseconds from start of UNIX epoch. */
-    Timestamp: any;
+    /** A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format. */
+    DateTime: any;
 };
 
 export type Animal = {
     __typename?: 'Animal';
-    color: Color;
-    createdAt: Scalars['Timestamp'];
+    createdAt: Scalars['DateTime'];
+    darkColor: Scalars['String'];
     disabled: Scalars['Boolean'];
-    id: Scalars['Int'];
+    id: Scalars['String'];
+    lightColor: Scalars['String'];
     name: Scalars['String'];
-    updatedAt: Scalars['Timestamp'];
+    updatedAt: Scalars['DateTime'];
 };
 
 export type Camp = {
     __typename?: 'Camp';
-    createdAt: Scalars['Timestamp'];
-    id: Scalars['Int'];
-    location: Location;
+    createdAt: Scalars['DateTime'];
+    id: Scalars['String'];
+    latitude: Scalars['Float'];
+    longitude: Scalars['Float'];
     name: Scalars['String'];
     size: CampSize;
-    updatedAt: Scalars['Timestamp'];
+    updatedAt: Scalars['DateTime'];
 };
 
-/** Camp size */
 export enum CampSize {
     Bush = 'BUSH',
+    Picnic = 'PICNIC',
     Rest = 'REST',
-    Sattelite = 'SATTELITE'
+    Satellite = 'SATELLITE'
 }
 
-export type Color = {
-    __typename?: 'Color';
-    dark: Scalars['String'];
-    light: Scalars['String'];
+export type CreateSpottingInput = {
+    animalId: Scalars['String'];
+    createdAt?: Maybe<Scalars['DateTime']>;
+    description?: Maybe<Scalars['String']>;
+    latitude: Scalars['Float'];
+    longitude: Scalars['Float'];
+    traffic: Scalars['Int'];
+    userIdentifier: Scalars['String'];
+    visibility: Scalars['Int'];
 };
 
 export type Gate = {
     __typename?: 'Gate';
-    createdAt: Scalars['Timestamp'];
-    id: Scalars['Int'];
-    location: Location;
+    createdAt: Scalars['DateTime'];
+    id: Scalars['String'];
+    latitude: Scalars['Float'];
+    longitude: Scalars['Float'];
     name: Scalars['String'];
-    updatedAt: Scalars['Timestamp'];
-};
-
-export type Hours = {
-    end: Scalars['String'];
-    start: Scalars['String'];
-};
-
-export type Location = {
-    __typename?: 'Location';
-    lat: Scalars['Float'];
-    lon: Scalars['Float'];
+    updatedAt: Scalars['DateTime'];
 };
 
 export type Mutation = {
@@ -75,8 +72,7 @@ export type Mutation = {
 };
 
 export type MutationCreateSpottingArgs = {
-    id: Scalars['String'];
-    input: SpottingValidator;
+    input: CreateSpottingInput;
 };
 
 export type Query = {
@@ -84,125 +80,123 @@ export type Query = {
     animals: Array<Animal>;
     camps: Array<Camp>;
     gates: Array<Gate>;
-    spotting: Spotting;
+    spotting?: Maybe<Spotting>;
     spottings: Array<Spotting>;
 };
 
 export type QuerySpottingArgs = {
-    id: Scalars['Int'];
+    id: Scalars['String'];
 };
 
 export type QuerySpottingsArgs = {
-    animals?: Maybe<Array<Scalars['Int']>>;
-    date?: Maybe<QueryDate>;
-    excludedAnimals?: Maybe<Array<Scalars['Int']>>;
-    hours?: Maybe<Hours>;
-};
-
-export type QueryDate = {
-    date: Scalars['String'];
+    filter: SpottingsFilter;
 };
 
 export type Spotting = {
     __typename?: 'Spotting';
     animal: Animal;
-    createdAt: Scalars['Timestamp'];
+    createdAt: Scalars['DateTime'];
     description?: Maybe<Scalars['String']>;
-    id: Scalars['Int'];
-    imageId?: Maybe<Scalars['String']>;
-    location: Location;
-    updatedAt: Scalars['Timestamp'];
-    user: User;
+    id: Scalars['String'];
+    latitude: Scalars['Float'];
+    longitude: Scalars['Float'];
+    traffic?: Maybe<Scalars['Int']>;
+    updatedAt: Scalars['DateTime'];
+    visibility?: Maybe<Scalars['Int']>;
 };
 
-export type SpottingValidator = {
-    animal: Scalars['Int'];
-    createdAt?: Maybe<Scalars['Timestamp']>;
-    description?: Maybe<Scalars['String']>;
-    lat: Scalars['Float'];
-    lon: Scalars['Float'];
-};
-
-export type User = {
-    __typename?: 'User';
-    createdAt: Scalars['Timestamp'];
-    id: Scalars['ID'];
-    spottings: Array<Spotting>;
-    updatedAt: Scalars['Timestamp'];
+export type SpottingsFilter = {
+    animals?: Maybe<Array<Scalars['String']>>;
+    date?: Maybe<Scalars['String']>;
+    endHour?: Maybe<Scalars['String']>;
+    excludeAnimals?: Maybe<Array<Scalars['String']>>;
+    startHour?: Maybe<Scalars['String']>;
 };
 
 export type AnimalFragment = {
     __typename?: 'Animal';
-    id: number;
+    id: string;
     name: string;
     disabled: boolean;
-    color: { __typename?: 'Color'; light: string; dark: string };
+    lightColor: string;
+    darkColor: string;
 };
 
 export type CampFragment = {
     __typename?: 'Camp';
-    id: number;
+    id: string;
     name: string;
     size: CampSize;
-    location: { __typename?: 'Location'; lon: number; lat: number };
+    latitude: number;
+    longitude: number;
 };
 
-export type GateFragment = {
-    __typename?: 'Gate';
-    id: number;
-    name: string;
-    location: { __typename?: 'Location'; lon: number; lat: number };
-};
+export type GateFragment = { __typename?: 'Gate'; id: string; name: string; latitude: number; longitude: number };
 
 export type SpottingFragment = {
     __typename?: 'Spotting';
-    id: number;
+    id: string;
     description?: string | null | undefined;
+    latitude: number;
+    longitude: number;
+    visibility?: number | null | undefined;
+    traffic?: number | null | undefined;
     createdAt: any;
+    updatedAt: any;
     animal: {
         __typename?: 'Animal';
-        id: number;
+        id: string;
         name: string;
         disabled: boolean;
-        color: { __typename?: 'Color'; light: string; dark: string };
+        lightColor: string;
+        darkColor: string;
     };
-    location: { __typename?: 'Location'; lon: number; lat: number };
 };
 
 export type SpottingExtendedFragment = {
     __typename?: 'Spotting';
-    id: number;
     description?: string | null | undefined;
+    id: string;
+    latitude: number;
+    longitude: number;
+    visibility?: number | null | undefined;
+    traffic?: number | null | undefined;
+    createdAt: any;
+    updatedAt: any;
     animal: {
         __typename?: 'Animal';
-        id: number;
+        id: string;
         name: string;
         disabled: boolean;
-        color: { __typename?: 'Color'; light: string; dark: string };
+        lightColor: string;
+        darkColor: string;
     };
-    location: { __typename?: 'Location'; lon: number; lat: number };
 };
 
 export type CreateSpottingMutationVariables = Exact<{
-    id: Scalars['String'];
-    input: SpottingValidator;
+    input: CreateSpottingInput;
 }>;
 
 export type CreateSpottingMutation = {
     __typename?: 'Mutation';
     createSpotting: {
         __typename?: 'Spotting';
-        id: number;
         description?: string | null | undefined;
+        id: string;
+        latitude: number;
+        longitude: number;
+        visibility?: number | null | undefined;
+        traffic?: number | null | undefined;
         createdAt: any;
+        updatedAt: any;
         animal: {
             __typename?: 'Animal';
-            id: number;
+            id: string;
             name: string;
             disabled: boolean;
-            color: { __typename?: 'Color'; light: string; dark: string };
+            lightColor: string;
+            darkColor: string;
         };
-        location: { __typename?: 'Location'; lon: number; lat: number };
     };
 };
 
@@ -212,10 +206,11 @@ export type AnimalsQuery = {
     __typename?: 'Query';
     animals: Array<{
         __typename?: 'Animal';
-        id: number;
+        id: string;
         name: string;
         disabled: boolean;
-        color: { __typename?: 'Color'; light: string; dark: string };
+        lightColor: string;
+        darkColor: string;
     }>;
 };
 
@@ -225,10 +220,11 @@ export type CampsQuery = {
     __typename?: 'Query';
     camps: Array<{
         __typename?: 'Camp';
-        id: number;
+        id: string;
         name: string;
         size: CampSize;
-        location: { __typename?: 'Location'; lon: number; lat: number };
+        latitude: number;
+        longitude: number;
     }>;
 };
 
@@ -236,57 +232,63 @@ export type GatesQueryVariables = Exact<{ [key: string]: never }>;
 
 export type GatesQuery = {
     __typename?: 'Query';
-    gates: Array<{
-        __typename?: 'Gate';
-        id: number;
-        name: string;
-        location: { __typename?: 'Location'; lon: number; lat: number };
-    }>;
+    gates: Array<{ __typename?: 'Gate'; id: string; name: string; latitude: number; longitude: number }>;
 };
 
 export type SpottingQueryVariables = Exact<{
-    id: Scalars['Int'];
+    id: Scalars['String'];
 }>;
 
 export type SpottingQuery = {
     __typename?: 'Query';
-    spotting: {
-        __typename?: 'Spotting';
-        id: number;
-        description?: string | null | undefined;
-        animal: {
-            __typename?: 'Animal';
-            id: number;
-            name: string;
-            disabled: boolean;
-            color: { __typename?: 'Color'; light: string; dark: string };
-        };
-        location: { __typename?: 'Location'; lon: number; lat: number };
-    };
+    spotting?:
+        | {
+              __typename?: 'Spotting';
+              description?: string | null | undefined;
+              id: string;
+              latitude: number;
+              longitude: number;
+              visibility?: number | null | undefined;
+              traffic?: number | null | undefined;
+              createdAt: any;
+              updatedAt: any;
+              animal: {
+                  __typename?: 'Animal';
+                  id: string;
+                  name: string;
+                  disabled: boolean;
+                  lightColor: string;
+                  darkColor: string;
+              };
+          }
+        | null
+        | undefined;
 };
 
 export type SpottingsQueryVariables = Exact<{
-    animals?: Maybe<Array<Scalars['Int']> | Scalars['Int']>;
-    excludedAnimals?: Maybe<Array<Scalars['Int']> | Scalars['Int']>;
-    date?: Maybe<QueryDate>;
-    hours?: Maybe<Hours>;
+    filter: SpottingsFilter;
 }>;
 
 export type SpottingsQuery = {
     __typename?: 'Query';
     spottings: Array<{
         __typename?: 'Spotting';
-        id: number;
+        id: string;
         description?: string | null | undefined;
+        latitude: number;
+        longitude: number;
+        visibility?: number | null | undefined;
+        traffic?: number | null | undefined;
         createdAt: any;
+        updatedAt: any;
         animal: {
             __typename?: 'Animal';
-            id: number;
+            id: string;
             name: string;
             disabled: boolean;
-            color: { __typename?: 'Color'; light: string; dark: string };
+            lightColor: string;
+            darkColor: string;
         };
-        location: { __typename?: 'Location'; lon: number; lat: number };
     }>;
 };
 
@@ -294,32 +296,26 @@ export const CampFragmentDoc = gql`
     fragment Camp on Camp {
         id
         name
-        location {
-            lon
-            lat
-        }
         size
+        latitude
+        longitude
     }
 `;
 export const GateFragmentDoc = gql`
     fragment Gate on Gate {
         id
         name
-        location {
-            lon
-            lat
-        }
+        latitude
+        longitude
     }
 `;
 export const AnimalFragmentDoc = gql`
     fragment Animal on Animal {
         id
         name
-        color {
-            light
-            dark
-        }
         disabled
+        lightColor
+        darkColor
     }
 `;
 export const SpottingFragmentDoc = gql`
@@ -328,36 +324,30 @@ export const SpottingFragmentDoc = gql`
         animal {
             ...Animal
         }
-        location {
-            lon
-            lat
-        }
         description
+        latitude
+        longitude
+        visibility
+        traffic
         createdAt
+        updatedAt
     }
     ${AnimalFragmentDoc}
 `;
 export const SpottingExtendedFragmentDoc = gql`
     fragment SpottingExtended on Spotting {
-        id
-        animal {
-            ...Animal
-        }
-        location {
-            lon
-            lat
-        }
+        ...Spotting
         description
     }
-    ${AnimalFragmentDoc}
+    ${SpottingFragmentDoc}
 `;
 export const CreateSpottingDocument = gql`
-    mutation CreateSpotting($id: String!, $input: SpottingValidator!) {
-        createSpotting(id: $id, input: $input) {
-            ...Spotting
+    mutation CreateSpotting($input: CreateSpottingInput!) {
+        createSpotting(input: $input) {
+            ...SpottingExtended
         }
     }
-    ${SpottingFragmentDoc}
+    ${SpottingExtendedFragmentDoc}
 `;
 export type CreateSpottingMutationFn = Apollo.MutationFunction<CreateSpottingMutation, CreateSpottingMutationVariables>;
 
@@ -374,7 +364,6 @@ export type CreateSpottingMutationFn = Apollo.MutationFunction<CreateSpottingMut
  * @example
  * const [createSpottingMutation, { data, loading, error }] = useCreateSpottingMutation({
  *   variables: {
- *      id: // value for 'id'
  *      input: // value for 'input'
  *   },
  * });
@@ -497,7 +486,7 @@ export type GatesQueryHookResult = ReturnType<typeof useGatesQuery>;
 export type GatesLazyQueryHookResult = ReturnType<typeof useGatesLazyQuery>;
 export type GatesQueryResult = Apollo.QueryResult<GatesQuery, GatesQueryVariables>;
 export const SpottingDocument = gql`
-    query Spotting($id: Int!) {
+    query Spotting($id: String!) {
         spotting(id: $id) {
             ...SpottingExtended
         }
@@ -533,8 +522,8 @@ export type SpottingQueryHookResult = ReturnType<typeof useSpottingQuery>;
 export type SpottingLazyQueryHookResult = ReturnType<typeof useSpottingLazyQuery>;
 export type SpottingQueryResult = Apollo.QueryResult<SpottingQuery, SpottingQueryVariables>;
 export const SpottingsDocument = gql`
-    query Spottings($animals: [Int!], $excludedAnimals: [Int!], $date: QueryDate, $hours: Hours) {
-        spottings(animals: $animals, excludedAnimals: $excludedAnimals, date: $date, hours: $hours) {
+    query Spottings($filter: SpottingsFilter!) {
+        spottings(filter: $filter) {
             ...Spotting
         }
     }
@@ -553,14 +542,11 @@ export const SpottingsDocument = gql`
  * @example
  * const { data, loading, error } = useSpottingsQuery({
  *   variables: {
- *      animals: // value for 'animals'
- *      excludedAnimals: // value for 'excludedAnimals'
- *      date: // value for 'date'
- *      hours: // value for 'hours'
+ *      filter: // value for 'filter'
  *   },
  * });
  */
-export function useSpottingsQuery(baseOptions?: Apollo.QueryHookOptions<SpottingsQuery, SpottingsQueryVariables>) {
+export function useSpottingsQuery(baseOptions: Apollo.QueryHookOptions<SpottingsQuery, SpottingsQueryVariables>) {
     const options = { ...defaultOptions, ...baseOptions };
     return Apollo.useQuery<SpottingsQuery, SpottingsQueryVariables>(SpottingsDocument, options);
 }

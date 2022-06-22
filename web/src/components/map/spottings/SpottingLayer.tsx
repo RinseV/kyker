@@ -20,7 +20,7 @@ export const SpottingLayer: React.VFC<SpottingLayerProps> = ({
     editMode,
     onOpen
 }) => {
-    const spottingColor = useColorModeValue(animal.color.light, animal.color.dark);
+    const spottingColor = useColorModeValue(animal.lightColor, animal.darkColor);
     // Text color is just white or black since the contrast is fine for all colors used
     const textColor = useColorModeValue('#FFFFFF', '#000000');
     const isHidden = useAppSelector((state) => state.preferences.hiddenAnimals).some((id) => id === animal.id);
@@ -71,7 +71,7 @@ export const SpottingLayer: React.VFC<SpottingLayerProps> = ({
                 type: 'Feature',
                 geometry: {
                     type: 'Point',
-                    coordinates: [spotting.location.lon, spotting.location.lat]
+                    coordinates: [spotting.longitude, spotting.latitude]
                 },
                 properties: {
                     id: spotting.id

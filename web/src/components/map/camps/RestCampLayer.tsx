@@ -25,7 +25,7 @@ export const RestCampLayer: React.VFC = () => {
                     type: 'Feature',
                     geometry: {
                         type: 'Point',
-                        coordinates: [restCamp.location.lon, restCamp.location.lat]
+                        coordinates: [restCamp.longitude, restCamp.latitude]
                     },
                     properties: {
                         name: restCamp.name,
@@ -51,8 +51,10 @@ export const RestCampLayer: React.VFC = () => {
                         'home-group',
                         ['==', ['get', 'size'], CampSize.Bush],
                         'home',
-                        ['==', ['get', 'size'], CampSize.Sattelite],
+                        ['==', ['get', 'size'], CampSize.Satellite],
                         'video-input-antenna',
+                        ['==', ['get', 'size'], CampSize.Picnic],
+                        'picnic-table',
                         'home'
                     ],
                     'icon-size': 0.6,

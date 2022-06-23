@@ -1,4 +1,5 @@
 import { FormControl, FormErrorIcon, FormErrorMessage, FormLabel } from '@chakra-ui/form-control';
+import { useColorModeValue } from '@chakra-ui/react';
 import { Textarea } from '@chakra-ui/textarea';
 import { Control, FieldValues, Path, PathValue, UnpackNestedValue, useController } from 'react-hook-form';
 
@@ -35,6 +36,8 @@ export function DescriptionInput<T extends FieldValues = FieldValues>({
         defaultValue
     });
 
+    const focusColor = useColorModeValue('green.500', 'green.200');
+
     return (
         <FormControl isInvalid={invalid} isDisabled={isDisabled}>
             {label ? <FormLabel htmlFor={name}>{label}</FormLabel> : null}
@@ -45,6 +48,7 @@ export function DescriptionInput<T extends FieldValues = FieldValues>({
                 onBlur={onBlur}
                 value={value}
                 ref={ref}
+                focusBorderColor={focusColor}
             />
             <FormErrorMessage>
                 <FormErrorIcon />

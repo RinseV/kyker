@@ -1,4 +1,4 @@
-import { FormControl, FormErrorIcon, FormErrorMessage, FormLabel, Input } from '@chakra-ui/react';
+import { FormControl, FormErrorIcon, FormErrorMessage, FormLabel, Input, useColorModeValue } from '@chakra-ui/react';
 import { Control, FieldValues, Path, PathValue, UnpackNestedValue, useController } from 'react-hook-form';
 
 type TimeInputProps<T extends FieldValues = FieldValues> = {
@@ -31,10 +31,19 @@ export function TimeInput<T extends FieldValues = FieldValues>({
         defaultValue
     });
 
+    const focusColor = useColorModeValue('green.500', 'green.200');
+
     return (
         <FormControl isInvalid={invalid} isDisabled={isDisabled}>
             {label ? <FormLabel htmlFor={name}>{label}</FormLabel> : null}
-            <Input ref={ref} type="time" value={value} onChange={onChange} onBlur={onBlur} />
+            <Input
+                ref={ref}
+                type="time"
+                value={value}
+                onChange={onChange}
+                onBlur={onBlur}
+                focusBorderColor={focusColor}
+            />
             <FormErrorMessage>
                 <FormErrorIcon />
                 {error && error.message}

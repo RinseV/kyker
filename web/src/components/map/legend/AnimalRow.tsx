@@ -35,6 +35,7 @@ export const AnimalRow: React.FC<AnimalRowProps> = ({ animal, visible, toggleVis
                     isChecked={animal.disabled ? false : visible}
                     onChange={toggleVisibility}
                     isDisabled={animal.disabled}
+                    colorScheme="green"
                 />
             </Td>
         </Tr>

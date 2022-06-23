@@ -1,4 +1,5 @@
 import { FormControl, FormErrorIcon, FormErrorMessage, FormLabel } from '@chakra-ui/form-control';
+import { useColorModeValue } from '@chakra-ui/react';
 import { Select } from 'chakra-react-select';
 import React from 'react';
 import { Control, FieldValues, Path, RegisterOptions, useController } from 'react-hook-form';
@@ -24,11 +25,21 @@ export function SearchSelectInput<T extends FieldValues = FieldValues>({
         fieldState: { invalid, error }
     } = useController({ name, control, rules });
 
+    const focusColor = useColorModeValue('green.500', 'green.200');
+
     return (
         <FormControl isInvalid={invalid} isDisabled={isDisabled}>
             {label ? <FormLabel htmlFor={name}>{label}</FormLabel> : null}
 
-            <Select name={name} ref={ref} onChange={onChange} onBlur={onBlur} value={value} {...props} />
+            <Select
+                name={name}
+                ref={ref}
+                onChange={onChange}
+                onBlur={onBlur}
+                value={value}
+                focusBorderColor={focusColor}
+                {...props}
+            />
 
             <FormErrorMessage>
                 <FormErrorIcon />

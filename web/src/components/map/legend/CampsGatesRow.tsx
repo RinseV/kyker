@@ -31,7 +31,11 @@ export const CampsGatesRow: React.FC = () => {
                 </Td>
                 <Td>Camps</Td>
                 <Td>
-                    <Checkbox isChecked={!hiddenCamps} onChange={() => dispatch(toggleHideCamps())} />
+                    <Checkbox
+                        isChecked={!hiddenCamps}
+                        onChange={() => dispatch(toggleHideCamps())}
+                        colorScheme="green"
+                    />
                 </Td>
             </Tr>
             <Tr>
@@ -40,7 +44,11 @@ export const CampsGatesRow: React.FC = () => {
                 </Td>
                 <Td>Gates</Td>
                 <Td>
-                    <Checkbox isChecked={!hiddenGates} onChange={() => dispatch(toggleHideGates())} />
+                    <Checkbox
+                        isChecked={!hiddenGates}
+                        onChange={() => dispatch(toggleHideGates())}
+                        colorScheme="green"
+                    />
                 </Td>
             </Tr>
         </>

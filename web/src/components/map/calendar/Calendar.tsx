@@ -65,7 +65,7 @@ export const Calendar: React.FC<CalendarProps> = ({ isOpen, onClose }) => {
             <ModalContent p={0} my={4}>
                 <ModalHeader>Date & time options</ModalHeader>
                 <ModalCloseButton />
-                <ModalBody p={0} justifyContent="center">
+                <ModalBody p={4} justifyContent="center">
                     <form onSubmit={handleSubmit(onSubmit)}>
                         <VStack spacing={4}>
                             <CalendarInput<FormData> name="date" control={control} label="Date" />

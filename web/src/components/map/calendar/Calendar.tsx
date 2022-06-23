@@ -10,7 +10,7 @@ import {
     VStack
 } from '@chakra-ui/react';
 import { format, parse } from 'date-fns';
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { setHours, setDate } from '../../../store/reducers/query.slice';
@@ -40,13 +40,21 @@ export const Calendar: React.FC<CalendarProps> = ({ isOpen, onClose }) => {
     const {
         control,
         handleSubmit,
-        formState: { isSubmitting }
+        formState: { isSubmitting },
+        reset
     } = useForm<FormData>({
         defaultValues: {
             date: parse(queryDate, ISO_DATE_FORMAT, new Date()),
             hours: [timeToMinutes(startHour), timeToMinutes(endHour)]
         }
     });
+
+    // Reset the form when the modal is closed
+    useEffect(() => {
+        if (!isOpen) {
+            reset();
+        }
+    }, [isOpen, reset]);
 
     const onSubmit = (data: FormData) => {
         // Convert to HH:mm strings

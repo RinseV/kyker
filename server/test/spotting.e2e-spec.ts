@@ -1,17 +1,18 @@
+import { faker } from '@faker-js/faker';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
-import { NestFastifyApplication, FastifyAdapter } from '@nestjs/platform-fastify';
-import { TestingModule, Test } from '@nestjs/testing';
+import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
+import { Test, TestingModule } from '@nestjs/testing';
 import { Animal, Spotting, User } from '@prisma/client';
 import { useContainer } from 'class-validator';
+import { addDays, format, setHours } from 'date-fns';
+import each from 'jest-each';
+import request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { PrismaService } from '../src/prisma/prisma.service';
-import { SpottingFactory } from './factory/spotting.factory';
-import request from 'supertest';
-import each from 'jest-each';
-import { UserFactory } from './factory/user.factory';
 import { validationConstants } from '../src/spotting/constants';
-import { faker } from '@faker-js/faker';
-import { addDays, format, setHours } from 'date-fns';
+import { AnimalFactory } from './factory/animal.factory';
+import { SpottingFactory } from './factory/spotting.factory';
+import { UserFactory } from './factory/user.factory';
 
 const gql = '/graphql';
 
@@ -71,12 +72,13 @@ describe('Animal (e2e)', () => {
   let prisma: PrismaService;
 
   let user: User;
+  let animal: Animal;
+  let animal2: Animal;
   let spotting: Spotting;
   let spotting2: Spotting;
   let spotting3: Spotting;
   let spotting4: Spotting;
   let spotting5: Spotting;
-  let animals: Animal[];
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -94,18 +96,21 @@ describe('Animal (e2e)', () => {
     await app.getHttpAdapter().getInstance().ready();
 
     user = await UserFactory.create(prisma);
-    animals = await prisma.animal.findMany({});
+
+    animal = await AnimalFactory.create(prisma);
+    animal2 = await AnimalFactory.create(prisma);
+
     const now = new Date();
     const yesterday = addDays(now, -1);
-    spotting = await SpottingFactory.create(prisma, user.identifier, animals[0].id, now);
+    spotting = await SpottingFactory.create(prisma, user.identifier, animal.id, now);
     // Spotting2 was yesterday for filter test
-    spotting2 = await SpottingFactory.create(prisma, user.identifier, animals[1].id, yesterday);
+    spotting2 = await SpottingFactory.create(prisma, user.identifier, animal.id, yesterday);
     // Spotting3 was with animals[2] for filter test
-    spotting3 = await SpottingFactory.create(prisma, user.identifier, animals[2].id, now);
+    spotting3 = await SpottingFactory.create(prisma, user.identifier, animal2.id, now);
     // Spotting4 was made at 6 for filter test
-    spotting4 = await SpottingFactory.create(prisma, user.identifier, animals[0].id, setHours(now, 6));
+    spotting4 = await SpottingFactory.create(prisma, user.identifier, animal.id, setHours(now, 6));
     // Spotting5 was made at 20 for filter test
-    spotting5 = await SpottingFactory.create(prisma, user.identifier, animals[0].id, setHours(now, 20));
+    spotting5 = await SpottingFactory.create(prisma, user.identifier, animal.id, setHours(now, 20));
   });
 
   afterAll(async () => {
@@ -224,7 +229,7 @@ describe('Animal (e2e)', () => {
         query: spottingsQuery,
         variables: {
           filter: {
-            animals: [animals[0].id]
+            animals: [animal.id]
           }
         }
       });
@@ -247,7 +252,7 @@ describe('Animal (e2e)', () => {
         query: spottingsQuery,
         variables: {
           filter: {
-            excludeAnimals: [animals[0].id]
+            excludeAnimals: [animal.id]
           }
         }
       });
@@ -367,7 +372,7 @@ describe('Animal (e2e)', () => {
         variables: {
           input: {
             userIdentifier: user.identifier,
-            animalId: animals[0].id,
+            animalId: animal.id,
             latitude: -24,
             longitude: 31,
             description: null,
@@ -402,7 +407,7 @@ describe('Animal (e2e)', () => {
         variables: {
           input: {
             userIdentifier: user.identifier,
-            animalId: animals[0].id,
+            animalId: animal.id,
             latitude: -24,
             longitude: 31,
             description: null,
@@ -437,7 +442,7 @@ describe('Animal (e2e)', () => {
         variables: {
           input: {
             userIdentifier: user.identifier,
-            animalId: animals[0].id,
+            animalId: animal.id,
             latitude,
             longitude: -31,
             description: null,
@@ -459,7 +464,7 @@ describe('Animal (e2e)', () => {
         variables: {
           input: {
             userIdentifier: user.identifier,
-            animalId: animals[0].id,
+            animalId: animal.id,
             latitude: -24,
             longitude,
             description: null,
@@ -481,7 +486,7 @@ describe('Animal (e2e)', () => {
         variables: {
           input: {
             userIdentifier: user.identifier,
-            animalId: animals[0].id,
+            animalId: animal.id,
             latitude: -24,
             longitude: 31,
             description: 'a'.repeat(validationConstants.maxDescriptionLength + 1),

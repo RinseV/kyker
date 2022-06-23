@@ -5,6 +5,7 @@ import { useContainer } from 'class-validator';
 import request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { PrismaService } from '../src/prisma/prisma.service';
+import { GateFactory } from './factory/gate.factory';
 
 const gql = '/graphql';
 
@@ -34,9 +35,13 @@ describe('Gate (e2e)', () => {
 
     await app.init();
     await app.getHttpAdapter().getInstance().ready();
+
+    await GateFactory.create(prisma);
+    await GateFactory.create(prisma);
   });
 
   afterAll(async () => {
+    await prisma.truncate();
     await prisma.$disconnect();
     await app.close();
   });

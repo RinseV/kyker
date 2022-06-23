@@ -5,6 +5,7 @@ import { useContainer } from 'class-validator';
 import request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { PrismaService } from '../src/prisma/prisma.service';
+import { AnimalFactory } from './factory/animal.factory';
 
 const gql = '/graphql';
 
@@ -35,9 +36,13 @@ describe('Animal (e2e)', () => {
 
     await app.init();
     await app.getHttpAdapter().getInstance().ready();
+
+    await AnimalFactory.create(prisma);
+    await AnimalFactory.create(prisma);
   });
 
   afterAll(async () => {
+    await prisma.truncate();
     await prisma.$disconnect();
     await app.close();
   });

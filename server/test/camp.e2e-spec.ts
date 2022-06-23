@@ -5,6 +5,7 @@ import { useContainer } from 'class-validator';
 import request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { PrismaService } from '../src/prisma/prisma.service';
+import { CampFactory } from './factory/camp.factory';
 
 const gql = '/graphql';
 
@@ -35,9 +36,13 @@ describe('Camp (e2e)', () => {
 
     await app.init();
     await app.getHttpAdapter().getInstance().ready();
+
+    await CampFactory.create(prisma);
+    await CampFactory.create(prisma);
   });
 
   afterAll(async () => {
+    await prisma.truncate();
     await prisma.$disconnect();
     await app.close();
   });

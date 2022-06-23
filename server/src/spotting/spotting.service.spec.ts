@@ -3,8 +3,8 @@ import { randomBytes, randomUUID } from 'crypto';
 import { MockFunctionMetadata, ModuleMocker } from 'jest-mock';
 import { AnimalService } from '../animal/animal.service';
 import { PrismaService } from '../prisma/prisma.service';
-import { SpottingService } from './spotting.service';
 import { UserService } from '../user/user.service';
+import { SpottingService } from './spotting.service';
 
 const moduleMocker = new ModuleMocker(global);
 
@@ -23,7 +23,8 @@ const db = {
   spotting: {
     create: jest.fn().mockResolvedValue(oneSpotting),
     findUnique: jest.fn().mockResolvedValue(oneSpotting),
-    findMany: jest.fn().mockResolvedValue(spottingArray)
+    findMany: jest.fn().mockResolvedValue(spottingArray),
+    count: jest.fn().mockResolvedValue(spottingArray.length)
   }
 };
 
@@ -95,7 +96,11 @@ describe('SpottingService', () => {
 
   describe('getSpottings', () => {
     it('should get an array of spottings', () => {
-      expect(service.getSpottings({ date: '', animals: [], excludeAnimals: [] })).resolves.toEqual(spottingArray);
+      expect(service.getSpottings({ date: '', animals: [], excludeAnimals: [] })).resolves.toStrictEqual(
+        expect.objectContaining({
+          nodes: expect.arrayContaining(spottingArray)
+        })
+      );
     });
   });
 });

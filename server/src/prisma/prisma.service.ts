@@ -28,7 +28,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   async truncate() {
     const records = await this.$queryRawUnsafe<Array<any>>(`SELECT tablename
     FROM pg_tables
-    WHERE schemaname = 'test'`);
+    WHERE schemaname = 'public'`);
     records.forEach((record) => this.truncateTable(record['tablename']));
   }
 
@@ -37,7 +37,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
       return;
     }
     try {
-      await this.$executeRawUnsafe(`TRUNCATE TABLE "test"."${tablename}" CASCADE;`);
+      await this.$executeRawUnsafe(`TRUNCATE TABLE "public"."${tablename}" CASCADE;`);
     } catch (error) {
       console.log({ error });
     }

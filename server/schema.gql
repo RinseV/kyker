@@ -55,11 +55,22 @@ type Spotting {
   animal: Animal!
 }
 
+type PageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  totalCount: Int!
+}
+
+type PaginatedSpottings {
+  nodes: [Spotting!]!
+  pageInfo: PageInfo!
+}
+
 type Query {
   animals: [Animal!]!
   camps: [Camp!]!
   gates: [Gate!]!
-  spottings(filter: SpottingsFilter!): [Spotting!]!
+  spottings(filter: SpottingsFilter!, orderBy: SpottingsOrderBy, paginationInput: SpottingsPaginationInput): PaginatedSpottings!
   spotting(id: String!): Spotting
 }
 
@@ -69,6 +80,21 @@ input SpottingsFilter {
   date: String = "2022-06-23"
   startHour: String
   endHour: String
+}
+
+input SpottingsOrderBy {
+  date: Sort
+}
+
+"""Sort direction"""
+enum Sort {
+  asc
+  desc
+}
+
+input SpottingsPaginationInput {
+  offset: Int = 0
+  limit: Int
 }
 
 type Mutation {

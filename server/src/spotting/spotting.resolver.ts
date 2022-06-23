@@ -4,15 +4,23 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateSpottingInput } from './dto/create-spotting.input';
 import { SpottingObject } from './dto/spotting.object';
 import { SpottingsFilter } from './dto/spottings-filter.input';
+import { SpottingsOrderBy } from './dto/spottings-order.input';
+import { SpottingsPaginationInput } from './dto/spottings-pagination.input';
+import { PaginatedSpottings } from './dto/spottings.object';
 import { SpottingService } from './spotting.service';
 
 @Resolver(() => SpottingObject)
 export class SpottingResolver {
   constructor(private readonly spottingService: SpottingService, private readonly prisma: PrismaService) {}
 
-  @Query(() => [SpottingObject])
-  async spottings(@Args('filter', { type: () => SpottingsFilter }) filter: SpottingsFilter): Promise<SpottingObject[]> {
-    return this.spottingService.getSpottings(filter);
+  @Query(() => PaginatedSpottings)
+  async spottings(
+    @Args('filter', { type: () => SpottingsFilter }) filter: SpottingsFilter,
+    @Args('orderBy', { type: () => SpottingsOrderBy, nullable: true }) orderBy?: SpottingsOrderBy,
+    @Args('paginationInput', { type: () => SpottingsPaginationInput, nullable: true })
+    paginationInput?: SpottingsPaginationInput
+  ): Promise<PaginatedSpottings> {
+    return this.spottingService.getSpottings(filter, orderBy, paginationInput);
   }
 
   @Query(() => SpottingObject, { nullable: true })

@@ -38,18 +38,16 @@ const spottingQuery = `query Spotting($id:String!) {
   }
 }`;
 
-const spottingsQuery = `query Spottings($filter:SpottingsFilter!) {
-  spottings(filter:$filter) {
-    id
-    animal {
+const spottingsQuery = `query Spottings($filter:SpottingsFilter!, $order:SpottingsOrderBy, $input:SpottingsPaginationInput) {
+  spottings(filter:$filter, orderBy:$order, paginationInput:$input) {
+    nodes {
       id
-      name
     }
-    latitude
-    longitude
-    visibility
-    traffic
-    createdAt
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      totalCount
+    }
   }
 }`;
 
@@ -158,20 +156,18 @@ describe('Animal (e2e)', () => {
 
       expect(status).toBe(200);
       expect(body.data).toEqual({
-        spottings: expect.arrayContaining([
-          expect.objectContaining({
-            id: spotting.id,
-            animal: expect.objectContaining({
-              id: expect.any(String),
-              name: expect.any(String)
-            }),
-            latitude: expect.any(Number),
-            longitude: expect.any(Number),
-            visibility: expect.any(Number),
-            traffic: expect.any(Number),
-            createdAt: expect.any(String)
+        spottings: expect.objectContaining({
+          nodes: expect.arrayContaining([
+            expect.objectContaining({
+              id: spotting.id
+            })
+          ]),
+          pageInfo: expect.objectContaining({
+            hasNextPage: false,
+            hasPreviousPage: false,
+            totalCount: 4
           })
-        ])
+        })
       });
     });
 
@@ -188,20 +184,18 @@ describe('Animal (e2e)', () => {
 
       expect(status).toBe(200);
       expect(body.data).toEqual({
-        spottings: expect.arrayContaining([
-          expect.objectContaining({
-            id: spotting2.id,
-            animal: expect.objectContaining({
-              id: expect.any(String),
-              name: expect.any(String)
-            }),
-            latitude: expect.any(Number),
-            longitude: expect.any(Number),
-            visibility: expect.any(Number),
-            traffic: expect.any(Number),
-            createdAt: expect.any(String)
+        spottings: expect.objectContaining({
+          nodes: expect.arrayContaining([
+            expect.objectContaining({
+              id: spotting2.id
+            })
+          ]),
+          pageInfo: expect.objectContaining({
+            hasNextPage: false,
+            hasPreviousPage: false,
+            totalCount: 1
           })
-        ])
+        })
       });
     });
 
@@ -218,7 +212,9 @@ describe('Animal (e2e)', () => {
 
       expect(status).toBe(200);
       expect(body.data).toEqual({
-        spottings: []
+        spottings: expect.objectContaining({
+          nodes: []
+        })
       });
     });
 
@@ -235,11 +231,13 @@ describe('Animal (e2e)', () => {
 
       expect(status).toBe(200);
       expect(body.data).toEqual({
-        spottings: expect.not.arrayContaining([
-          expect.objectContaining({
-            id: spotting3.id
-          })
-        ])
+        spottings: expect.objectContaining({
+          nodes: expect.not.arrayContaining([
+            expect.objectContaining({
+              id: spotting3.id
+            })
+          ])
+        })
       });
     });
 
@@ -256,11 +254,13 @@ describe('Animal (e2e)', () => {
 
       expect(status).toBe(200);
       expect(body.data).toEqual({
-        spottings: expect.not.arrayContaining([
-          expect.objectContaining({
-            id: spotting.id
-          })
-        ])
+        spottings: expect.objectContaining({
+          nodes: expect.not.arrayContaining([
+            expect.objectContaining({
+              id: spotting.id
+            })
+          ])
+        })
       });
     });
 
@@ -277,11 +277,13 @@ describe('Animal (e2e)', () => {
 
       expect(status).toBe(200);
       expect(body.data).toEqual({
-        spottings: expect.not.arrayContaining([
-          expect.objectContaining({
-            id: spotting4.id
-          })
-        ])
+        spottings: expect.objectContaining({
+          nodes: expect.not.arrayContaining([
+            expect.objectContaining({
+              id: spotting4.id
+            })
+          ])
+        })
       });
     });
 
@@ -298,11 +300,13 @@ describe('Animal (e2e)', () => {
 
       expect(status).toBe(200);
       expect(body.data).toEqual({
-        spottings: expect.not.arrayContaining([
-          expect.objectContaining({
-            id: spotting5.id
-          })
-        ])
+        spottings: expect.objectContaining({
+          nodes: expect.not.arrayContaining([
+            expect.objectContaining({
+              id: spotting5.id
+            })
+          ])
+        })
       });
     });
 

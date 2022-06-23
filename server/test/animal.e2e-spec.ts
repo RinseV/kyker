@@ -38,7 +38,6 @@ describe('Animal (e2e)', () => {
   });
 
   afterAll(async () => {
-    await prisma.truncate();
     await prisma.$disconnect();
     await app.close();
   });

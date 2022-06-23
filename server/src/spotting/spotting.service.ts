@@ -4,8 +4,12 @@ import { endOfDay, parse, startOfDay } from 'date-fns';
 import { AnimalService } from '../animal/animal.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { UserService } from '../user/user.service';
+import { paginationConstants } from './constants';
 import { CreateSpottingInput } from './dto/create-spotting.input';
 import { SpottingsFilter } from './dto/spottings-filter.input';
+import { SpottingsOrderBy } from './dto/spottings-order.input';
+import { SpottingsPaginationInput } from './dto/spottings-pagination.input';
+import { PaginatedSpottings } from './dto/spottings.object';
 
 @Injectable()
 export class SpottingService {
@@ -47,12 +51,76 @@ export class SpottingService {
     return spotting;
   }
 
-  async getSpottings(filter: SpottingsFilter): Promise<Spotting[]> {
+  async getSpottings(
+    filter: SpottingsFilter,
+    orderByInput?: SpottingsOrderBy,
+    pagination?: SpottingsPaginationInput
+  ): Promise<PaginatedSpottings> {
+    const { skip, take } = this.generatePagination(pagination);
     const where = this.generateFilter(filter);
+    const orderBy = this.generateOrder(orderByInput);
     const spottings = await this.prisma.spotting.findMany({
-      where
+      where,
+      orderBy,
+      take,
+      skip
     });
-    return spottings;
+    const totalCount = await this.prisma.spotting.count({ where });
+    return {
+      nodes: take ? spottings.slice(0, take - 1) : spottings,
+      pageInfo: {
+        hasNextPage: spottings.length === take,
+        hasPreviousPage: skip > 0,
+        totalCount
+      }
+    };
+  }
+
+  private generatePagination(pagination?: SpottingsPaginationInput): {
+    skip: number;
+    take: number | undefined;
+  } {
+    if (!pagination) {
+      return { skip: 0, take: undefined };
+    }
+
+    const { offset, limit } = pagination || {};
+    const skip = offset || paginationConstants.defaultOffset;
+    // Take one more in case limit was given, otherwise just take all
+    const realLimitPlusOne = limit ? limit + 1 : undefined;
+    return {
+      skip,
+      take: realLimitPlusOne
+    };
+  }
+
+  private generateOrder(orderByInput?: SpottingsOrderBy): Prisma.Enumerable<Prisma.SpottingOrderByWithRelationInput> {
+    if (!orderByInput) {
+      return {
+        createdAt: 'desc'
+      };
+    }
+
+    // Default order is createdAt desc (newest first)
+    let orderBy: Prisma.Enumerable<Prisma.SpottingOrderByWithRelationInput> = [
+      {
+        createdAt: 'desc'
+      },
+      {
+        id: 'desc'
+      }
+    ];
+
+    if (orderByInput.date) {
+      orderBy = [
+        ...orderBy,
+        {
+          createdAt: orderByInput.date
+        }
+      ];
+    }
+
+    return orderBy;
   }
 
   private generateFilter({

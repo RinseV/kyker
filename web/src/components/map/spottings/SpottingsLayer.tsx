@@ -33,7 +33,7 @@ export const SpottingsLayer: React.FC<SpottingLayersProps> = ({ setSelectedSpott
         !animals?.animals ||
         animals.animals.length === 0 ||
         !spottings?.spottings ||
-        spottings.spottings.length === 0
+        spottings.spottings.nodes.length === 0
     ) {
         return null;
     }
@@ -47,7 +47,7 @@ export const SpottingsLayer: React.FC<SpottingLayersProps> = ({ setSelectedSpott
                     <SpottingLayer
                         key={animal.id}
                         animal={animal}
-                        spottings={spottings}
+                        spottings={spottings.spottings.nodes}
                         setSelectedSpotting={setSelectedSpotting}
                         editMode={editMode}
                         onOpen={onOpen}

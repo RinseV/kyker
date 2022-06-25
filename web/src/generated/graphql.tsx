@@ -76,13 +76,26 @@ export type MutationCreateSpottingArgs = {
     input: CreateSpottingInput;
 };
 
+export type PageInfo = {
+    __typename?: 'PageInfo';
+    hasNextPage: Scalars['Boolean'];
+    hasPreviousPage: Scalars['Boolean'];
+    totalCount: Scalars['Int'];
+};
+
+export type PaginatedSpottings = {
+    __typename?: 'PaginatedSpottings';
+    nodes: Array<Spotting>;
+    pageInfo: PageInfo;
+};
+
 export type Query = {
     __typename?: 'Query';
     animals: Array<Animal>;
     camps: Array<Camp>;
     gates: Array<Gate>;
     spotting?: Maybe<Spotting>;
-    spottings: Array<Spotting>;
+    spottings: PaginatedSpottings;
 };
 
 export type QuerySpottingArgs = {
@@ -91,13 +104,22 @@ export type QuerySpottingArgs = {
 
 export type QuerySpottingsArgs = {
     filter: SpottingsFilter;
+    orderBy?: InputMaybe<SpottingsOrderBy>;
+    paginationInput?: InputMaybe<SpottingsPaginationInput>;
 };
+
+/** Sort direction */
+export enum Sort {
+    Asc = 'asc',
+    Desc = 'desc'
+}
 
 export type Spotting = {
     __typename?: 'Spotting';
     animal: Animal;
     createdAt: Scalars['DateTime'];
     description?: Maybe<Scalars['String']>;
+    distance?: Maybe<Scalars['Float']>;
     id: Scalars['String'];
     latitude: Scalars['Float'];
     longitude: Scalars['Float'];
@@ -112,6 +134,22 @@ export type SpottingsFilter = {
     endHour?: InputMaybe<Scalars['String']>;
     excludeAnimals?: InputMaybe<Array<Scalars['String']>>;
     startHour?: InputMaybe<Scalars['String']>;
+};
+
+export type SpottingsOrderBy = {
+    date?: InputMaybe<Sort>;
+    nearby?: InputMaybe<SpottingsOrderNearby>;
+};
+
+export type SpottingsOrderNearby = {
+    latitude: Scalars['Float'];
+    longitude: Scalars['Float'];
+    nearby: Sort;
+};
+
+export type SpottingsPaginationInput = {
+    limit?: InputMaybe<Scalars['Int']>;
+    offset?: InputMaybe<Scalars['Int']>;
 };
 
 export type AnimalFragment = {
@@ -134,6 +172,13 @@ export type CampFragment = {
 
 export type GateFragment = { __typename?: 'Gate'; id: string; name: string; latitude: number; longitude: number };
 
+export type PageInfoFragment = {
+    __typename?: 'PageInfo';
+    totalCount: number;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+};
+
 export type SpottingFragment = {
     __typename?: 'Spotting';
     id: string;
@@ -142,6 +187,7 @@ export type SpottingFragment = {
     longitude: number;
     visibility?: number | null;
     traffic?: number | null;
+    distance?: number | null;
     createdAt: any;
     updatedAt: any;
     animal: {
@@ -162,6 +208,7 @@ export type SpottingExtendedFragment = {
     longitude: number;
     visibility?: number | null;
     traffic?: number | null;
+    distance?: number | null;
     createdAt: any;
     updatedAt: any;
     animal: {
@@ -188,6 +235,7 @@ export type CreateSpottingMutation = {
         longitude: number;
         visibility?: number | null;
         traffic?: number | null;
+        distance?: number | null;
         createdAt: any;
         updatedAt: any;
         animal: {
@@ -250,6 +298,7 @@ export type SpottingQuery = {
         longitude: number;
         visibility?: number | null;
         traffic?: number | null;
+        distance?: number | null;
         createdAt: any;
         updatedAt: any;
         animal: {
@@ -269,25 +318,30 @@ export type SpottingsQueryVariables = Exact<{
 
 export type SpottingsQuery = {
     __typename?: 'Query';
-    spottings: Array<{
-        __typename?: 'Spotting';
-        id: string;
-        description?: string | null;
-        latitude: number;
-        longitude: number;
-        visibility?: number | null;
-        traffic?: number | null;
-        createdAt: any;
-        updatedAt: any;
-        animal: {
-            __typename?: 'Animal';
+    spottings: {
+        __typename?: 'PaginatedSpottings';
+        nodes: Array<{
+            __typename?: 'Spotting';
             id: string;
-            name: string;
-            disabled: boolean;
-            lightColor: string;
-            darkColor: string;
-        };
-    }>;
+            description?: string | null;
+            latitude: number;
+            longitude: number;
+            visibility?: number | null;
+            traffic?: number | null;
+            distance?: number | null;
+            createdAt: any;
+            updatedAt: any;
+            animal: {
+                __typename?: 'Animal';
+                id: string;
+                name: string;
+                disabled: boolean;
+                lightColor: string;
+                darkColor: string;
+            };
+        }>;
+        pageInfo: { __typename?: 'PageInfo'; totalCount: number; hasNextPage: boolean; hasPreviousPage: boolean };
+    };
 };
 
 export const CampFragmentDoc = gql`
@@ -305,6 +359,13 @@ export const GateFragmentDoc = gql`
         name
         latitude
         longitude
+    }
+`;
+export const PageInfoFragmentDoc = gql`
+    fragment PageInfo on PageInfo {
+        totalCount
+        hasNextPage
+        hasPreviousPage
     }
 `;
 export const AnimalFragmentDoc = gql`
@@ -327,6 +388,7 @@ export const SpottingFragmentDoc = gql`
         longitude
         visibility
         traffic
+        distance
         createdAt
         updatedAt
     }
@@ -522,10 +584,16 @@ export type SpottingQueryResult = Apollo.QueryResult<SpottingQuery, SpottingQuer
 export const SpottingsDocument = gql`
     query Spottings($filter: SpottingsFilter!) {
         spottings(filter: $filter) {
-            ...Spotting
+            nodes {
+                ...Spotting
+            }
+            pageInfo {
+                ...PageInfo
+            }
         }
     }
     ${SpottingFragmentDoc}
+    ${PageInfoFragmentDoc}
 `;
 
 /**
@@ -572,6 +640,7 @@ export const namedOperations = {
         Animal: 'Animal',
         Camp: 'Camp',
         Gate: 'Gate',
+        PageInfo: 'PageInfo',
         Spotting: 'Spotting',
         SpottingExtended: 'SpottingExtended'
     }

@@ -8,6 +8,7 @@ fragment Spotting on Spotting {
     longitude
     visibility
     traffic
+    distance
     createdAt
     updatedAt
 }

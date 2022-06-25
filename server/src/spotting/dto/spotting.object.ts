@@ -20,6 +20,9 @@ export class SpottingObject {
   @Field(() => Int, { nullable: true })
   traffic: number;
 
+  @Field(() => Float, { nullable: true })
+  distance: number;
+
   @Field(() => Date)
   createdAt: Date;
 

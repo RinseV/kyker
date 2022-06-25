@@ -6,7 +6,7 @@ export abstract class AnimalFactory {
   public static async create(prisma: PrismaService): Promise<Animal> {
     return prisma.animal.create({
       data: {
-        name: faker.animal.type(),
+        name: faker.lorem.word(),
         disabled: false,
         lightColor: `#${faker.random.alphaNumeric(6)}`,
         darkColor: `#${faker.random.alphaNumeric(6)}`

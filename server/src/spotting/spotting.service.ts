@@ -1,11 +1,12 @@
 import { BadRequestException, forwardRef, Inject, Injectable } from '@nestjs/common';
-import { Prisma, Spotting } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { endOfDay, parse, startOfDay } from 'date-fns';
 import { AnimalService } from '../animal/animal.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { UserService } from '../user/user.service';
 import { paginationConstants } from './constants';
 import { CreateSpottingInput } from './dto/create-spotting.input';
+import { SpottingObject } from './dto/spotting.object';
 import { SpottingsFilter } from './dto/spottings-filter.input';
 import { SpottingsOrderBy } from './dto/spottings-order.input';
 import { SpottingsPaginationInput } from './dto/spottings-pagination.input';
@@ -19,7 +20,7 @@ export class SpottingService {
     @Inject(forwardRef(() => AnimalService)) private readonly animalService: AnimalService
   ) {}
 
-  async create(input: CreateSpottingInput): Promise<Spotting> {
+  async create(input: CreateSpottingInput): Promise<SpottingObject> {
     // Find existing user or create one
     const user = await this.userService.findOrCreate({ identifier: input.userIdentifier });
     // Find animal from spotting and make sure it exists and is not disabled
@@ -40,15 +41,25 @@ export class SpottingService {
         createdAt: input.createdAt
       }
     });
-    return spotting;
+    // Set location field in database
+    await this.prisma.$executeRaw`UPDATE "Spotting"
+      SET location = ST_GeomFromEWKT(${this.lonLatToPoint(input.longitude, input.latitude)})
+      WHERE id = ${spotting.id};`;
+    return {
+      ...spotting,
+      distance: null
+    };
   }
 
-  async getSpotting(id: string): Promise<Spotting | null> {
+  async getSpotting(id: string): Promise<SpottingObject | null> {
     const spotting = await this.prisma.spotting.findUnique({ where: { id } });
     if (!spotting) {
       return null;
     }
-    return spotting;
+    return {
+      ...spotting,
+      distance: null
+    };
   }
 
   async getSpottings(
@@ -58,16 +69,26 @@ export class SpottingService {
   ): Promise<PaginatedSpottings> {
     const { skip, take } = this.generatePagination(pagination);
     const where = this.generateFilter(filter);
-    const orderBy = this.generateOrder(orderByInput);
+    const [orderBy, idOrder] = await this.generateOrder(orderByInput);
     const spottings = await this.prisma.spotting.findMany({
       where,
       orderBy,
       take,
       skip
     });
+    // Return results in order of idOrder
+    const orderedSpottings = spottings.sort((a, b) => {
+      return idOrder.findIndex((id) => id.id === a.id) - idOrder.findIndex((id) => id.id === b.id);
+    });
+    // Add distance from idOrder to each spotting
+    const orderedSpottingsWithDistance = orderedSpottings.map((spotting) => {
+      let distance = idOrder.find((id) => id.id === spotting.id)?.distance;
+      distance = distance || distance === 0 ? Math.round(distance) : null;
+      return { ...spotting, distance };
+    });
     const totalCount = await this.prisma.spotting.count({ where });
     return {
-      nodes: take ? spottings.slice(0, take - 1) : spottings,
+      nodes: take ? orderedSpottingsWithDistance.slice(0, take - 1) : orderedSpottingsWithDistance,
       pageInfo: {
         hasNextPage: spottings.length === take,
         hasPreviousPage: skip > 0,
@@ -94,11 +115,17 @@ export class SpottingService {
     };
   }
 
-  private generateOrder(orderByInput?: SpottingsOrderBy): Prisma.Enumerable<Prisma.SpottingOrderByWithRelationInput> {
+  private async generateOrder(
+    orderByInput?: SpottingsOrderBy
+  ): Promise<[Prisma.Enumerable<Prisma.SpottingOrderByWithRelationInput>, { id: string; distance: number }[]]> {
+    let ids = [];
     if (!orderByInput) {
-      return {
-        createdAt: 'desc'
-      };
+      return [
+        {
+          createdAt: 'desc'
+        },
+        ids
+      ];
     }
 
     // Default order is createdAt desc (newest first)
@@ -120,7 +147,24 @@ export class SpottingService {
       ];
     }
 
-    return orderBy;
+    if (orderByInput.nearby) {
+      // Order by distance to user by creating a new field
+      const result: { id: string; distance: number }[] = await this.prisma.$queryRaw`
+        SELECT id, ST_Distance(
+          location,
+          ST_GeomFromEWKT(${this.lonLatToPoint(orderByInput.nearby.longitude, orderByInput.nearby.latitude)})
+        ) AS distance
+        FROM "Spotting"
+        ORDER BY distance;
+      `;
+      // Reverse results if order is ascending
+      if (orderByInput.nearby.nearby === 'asc') {
+        result.reverse();
+      }
+      ids = result;
+    }
+
+    return [orderBy, ids];
   }
 
   private generateFilter({
@@ -176,5 +220,9 @@ export class SpottingService {
     };
 
     return where;
+  }
+
+  private lonLatToPoint(lon: number, lat: number): string {
+    return `SRID=4326;POINT(${lon} ${lat})`;
   }
 }

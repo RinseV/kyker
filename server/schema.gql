@@ -50,6 +50,7 @@ type Spotting {
   description: String
   visibility: Int
   traffic: Int
+  distance: Float
   createdAt: DateTime!
   updatedAt: DateTime!
   animal: Animal!
@@ -77,19 +78,26 @@ type Query {
 input SpottingsFilter {
   animals: [String!] = []
   excludeAnimals: [String!] = []
-  date: String = "2022-06-23"
+  date: String = "2022-06-25"
   startHour: String
   endHour: String
 }
 
 input SpottingsOrderBy {
   date: Sort
+  nearby: SpottingsOrderNearby
 }
 
 """Sort direction"""
 enum Sort {
   asc
   desc
+}
+
+input SpottingsOrderNearby {
+  nearby: Sort!
+  longitude: Float!
+  latitude: Float!
 }
 
 input SpottingsPaginationInput {

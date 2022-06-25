@@ -13,9 +13,9 @@ const userIdentifier = randomBytes(16).toString('hex');
 const animalId = randomUUID();
 
 const spottingArray = [
-  { id: spottingId, userIdentifier, animalId },
-  { id: randomUUID(), userIdentifier, animalId },
-  { id: randomUUID(), userIdentifier, animalId }
+  { id: spottingId, userIdentifier, animalId, distance: null },
+  { id: randomUUID(), userIdentifier, animalId, distance: null },
+  { id: randomUUID(), userIdentifier, animalId, distance: null }
 ];
 const oneSpotting = spottingArray[0];
 
@@ -25,7 +25,8 @@ const db = {
     findUnique: jest.fn().mockResolvedValue(oneSpotting),
     findMany: jest.fn().mockResolvedValue(spottingArray),
     count: jest.fn().mockResolvedValue(spottingArray.length)
-  }
+  },
+  $executeRaw: jest.fn().mockResolvedValue(null)
 };
 
 describe('SpottingService', () => {

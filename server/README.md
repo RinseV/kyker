@@ -6,6 +6,7 @@
 * [Yarn](https://yarnpkg.com/) package manager
 * [Node.js](https://nodejs.org/en/) > v16.14.2 (LTS) (or [NVM](https://github.com/nvm-sh/nvm))
 * [PostgreSQL](https://www.postgresql.org/) database version 14+
+* [PostGIS](https://postgis.net/) version 3.2+
 
 ### Installation
 To install all dependencies run:
@@ -19,6 +20,8 @@ psql postgres
 
 CREATE DATABASE kyker;
 ```
+
+Make sure you have installed [PostGIS](https://postgis.net/) v3.2+ since the database is using it.
 
 Run the backend using:
 ```bash

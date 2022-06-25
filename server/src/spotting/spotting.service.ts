@@ -69,7 +69,8 @@ export class SpottingService {
   ): Promise<PaginatedSpottings> {
     const { skip, take } = this.generatePagination(pagination);
     const where = this.generateFilter(filter);
-    const [orderBy, idOrder] = await this.generateOrder(orderByInput);
+    const orderBy = this.generateOrder(orderByInput);
+    const idOrder = await this.getClosestDistanceIds(filter, orderByInput);
     const spottings = await this.prisma.spotting.findMany({
       where,
       orderBy,
@@ -115,16 +116,38 @@ export class SpottingService {
     };
   }
 
-  private async generateOrder(
+  private async getClosestDistanceIds(
+    { date, startHour, endHour }: SpottingsFilter,
     orderByInput?: SpottingsOrderBy
-  ): Promise<[Prisma.Enumerable<Prisma.SpottingOrderByWithRelationInput>, { id: string; distance: number }[]]> {
-    let ids = [];
+  ): Promise<{ id: string; distance: number }[]> {
+    if (!orderByInput || !orderByInput.nearby) {
+      return [];
+    }
+    // Parse query date to Date
+    const [start, end] = this.getQueryDates(date, startHour, endHour);
+    // Order by distance to user by creating a new field
+    const result: { id: string; distance: number }[] = await this.prisma.$queryRaw`
+      SELECT id, ST_Distance(
+        location,
+        ST_GeomFromEWKT(${this.lonLatToPoint(orderByInput.nearby.longitude, orderByInput.nearby.latitude)})
+      ) AS distance
+      FROM "Spotting"
+      WHERE "createdAt" >= ${start} AND "createdAt" <= ${end}
+      ORDER BY distance;
+    `;
+    // Reverse results if order is ascending
+    if (orderByInput.nearby.nearby === 'desc') {
+      result.reverse();
+    }
+    return result;
+  }
+
+  private generateOrder(orderByInput?: SpottingsOrderBy): Prisma.Enumerable<Prisma.SpottingOrderByWithRelationInput> {
     if (!orderByInput) {
       return [
         {
           createdAt: 'desc'
-        },
-        ids
+        }
       ];
     }
 
@@ -147,24 +170,7 @@ export class SpottingService {
       ];
     }
 
-    if (orderByInput.nearby) {
-      // Order by distance to user by creating a new field
-      const result: { id: string; distance: number }[] = await this.prisma.$queryRaw`
-        SELECT id, ST_Distance(
-          location,
-          ST_GeomFromEWKT(${this.lonLatToPoint(orderByInput.nearby.longitude, orderByInput.nearby.latitude)})
-        ) AS distance
-        FROM "Spotting"
-        ORDER BY distance;
-      `;
-      // Reverse results if order is ascending
-      if (orderByInput.nearby.nearby === 'asc') {
-        result.reverse();
-      }
-      ids = result;
-    }
-
-    return [orderBy, ids];
+    return orderBy;
   }
 
   private generateFilter({
@@ -198,17 +204,7 @@ export class SpottingService {
         }
       };
     }
-
-    // Parse query date to Date
-    const dateAsDate = parse(date, 'yyyy-MM-dd', new Date());
-    let start = startOfDay(dateAsDate);
-    let end = endOfDay(dateAsDate);
-    if (startHour) {
-      start = parse(startHour, 'HH:mm', dateAsDate);
-    }
-    if (endHour) {
-      end = parse(endHour, 'HH:mm', dateAsDate);
-    }
+    const [start, end] = this.getQueryDates(date, startHour, endHour);
 
     // Add date and time to filter
     where = {
@@ -220,6 +216,20 @@ export class SpottingService {
     };
 
     return where;
+  }
+
+  private getQueryDates(date: string, startHour: string, endHour: string): [Date, Date] {
+    // Parse query date to Date
+    const dateAsDate = parse(date, 'yyyy-MM-dd', new Date());
+    let start = startOfDay(dateAsDate);
+    let end = endOfDay(dateAsDate);
+    if (startHour) {
+      start = parse(startHour, 'HH:mm', dateAsDate);
+    }
+    if (endHour) {
+      end = parse(endHour, 'HH:mm', dateAsDate);
+    }
+    return [start, end];
   }
 
   private lonLatToPoint(lon: number, lat: number): string {

@@ -1,5 +1,5 @@
 import { Stack } from '@chakra-ui/layout';
-import { LngLat } from 'mapbox-gl';
+import { LngLat } from 'maplibre-gl';
 import { Control, FieldValues, Path } from 'react-hook-form';
 import { FaBinoculars, FaCar } from 'react-icons/fa';
 import { AnimalInput } from './AnimalInput';

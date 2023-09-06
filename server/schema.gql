@@ -78,7 +78,7 @@ type Query {
 input SpottingsFilter {
   animals: [String!] = []
   excludeAnimals: [String!] = []
-  date: String = "2022-06-25"
+  date: String = "2023-09-06"
   startHour: String
   endHour: String
 }

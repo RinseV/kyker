@@ -1,9 +1,7 @@
-import { useColorModeValue } from '@chakra-ui/color-mode';
 import { useDisclosure } from '@chakra-ui/react';
-import { LngLat, MapLayerMouseEvent } from 'mapbox-gl';
-import 'mapbox-gl/dist/mapbox-gl.css';
+import { LngLat } from 'maplibre-gl';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import ReactMapboxGl, { MapProvider, MapRef } from 'react-map-gl';
+import ReactMapboxGl, { MapLayerMouseEvent, MapProvider, MapRef } from 'react-map-gl/maplibre';
 import { SpottingFragment } from '../../generated/graphql';
 import { mapBounds } from '../../utils/constants';
 import { MapButtons } from './buttons/MapButtons';
@@ -16,15 +14,15 @@ import { SpottingModal } from './spottings/SpottingModal';
 import { SpottingsLayer } from './spottings/SpottingsLayer';
 import { Target } from './Target';
 
+import { style } from './style';
+
+import 'maplibre-gl/dist/maplibre-gl.css';
+
 export interface TargetMarkerInfo {
     coordinates: LngLat;
 }
 
 export const Map: React.FC = () => {
-    const style = useColorModeValue(
-        'mapbox://styles/r1ns3v/ckul5qrakaf7y18qjbbj3hr91',
-        'mapbox://styles/r1ns3v/ckul61lvm3lbx17q1k88qsuyf'
-    );
     const mapRef = useRef<MapRef | null>(null);
 
     // Whether we are in "edit" mode or not (able to add spottings)

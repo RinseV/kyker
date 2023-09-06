@@ -1,4 +1,4 @@
-import { LngLat } from 'mapbox-gl';
+import { LngLat } from 'maplibre-gl';
 
 export const inBounds = (point: LngLat, bounds: [[number, number], [number, number]]): boolean => {
     const sw = bounds[0];

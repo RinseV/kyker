@@ -1,6 +1,6 @@
 import { FormLabel } from '@chakra-ui/form-control';
 import { Flex, HStack } from '@chakra-ui/layout';
-import { LngLat } from 'mapbox-gl';
+import { LngLat } from 'maplibre-gl';
 import React from 'react';
 import { UseFormRegister } from 'react-hook-form';
 import { FormData } from './InputModal';

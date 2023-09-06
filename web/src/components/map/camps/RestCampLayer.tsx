@@ -1,6 +1,6 @@
 import { useColorModeValue } from '@chakra-ui/color-mode';
 import React, { useMemo } from 'react';
-import { Source, Layer, SymbolLayer } from 'react-map-gl';
+import { Source, Layer, SymbolLayer } from 'react-map-gl/maplibre';
 import { CampSize, useCampsQuery } from '../../../generated/graphql';
 import { useAppSelector } from '../../../store/hooks';
 
@@ -38,6 +38,7 @@ export const RestCampLayer: React.FC = () => {
 
     const layerStyle: SymbolLayer = {
         id: 'camps',
+        source: 'camps',
         type: 'symbol',
         layout: {
             'icon-image': [

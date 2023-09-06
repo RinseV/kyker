@@ -1,7 +1,6 @@
 import { useColorModeValue } from '@chakra-ui/color-mode';
-import { CircleLayer, MapLayerMouseEvent } from 'mapbox-gl';
 import React, { useCallback, useEffect, useMemo } from 'react';
-import { Layer, Source, useMap } from 'react-map-gl';
+import { CircleLayer, MapLayerMouseEvent, Layer, Source, useMap } from 'react-map-gl/maplibre';
 import { AnimalFragment, SpottingFragment, SpottingsQuery } from '../../../generated/graphql';
 import { useAppSelector } from '../../../store/hooks';
 
@@ -100,6 +99,7 @@ export const SpottingLayer: React.FC<SpottingLayerProps> = ({
 
     const layerStyle: CircleLayer = {
         id: layerName,
+        source: layerName,
         type: 'circle',
         paint: {
             'circle-radius': 6,

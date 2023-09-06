@@ -1,6 +1,6 @@
 import { useColorModeValue } from '@chakra-ui/color-mode';
 import React, { useMemo } from 'react';
-import { Layer, Source, SymbolLayer } from 'react-map-gl';
+import { Layer, Source, SymbolLayer } from 'react-map-gl/maplibre';
 import { useGatesQuery } from '../../../generated/graphql';
 import { useAppSelector } from '../../../store/hooks';
 
@@ -36,6 +36,7 @@ export const GateLayer: React.FC = () => {
 
     const layerStyle: SymbolLayer = {
         id: 'gates',
+        source: 'gates',
         type: 'symbol',
         layout: {
             'icon-image': 'boom-gate',

@@ -1,8 +1,8 @@
 import Icon from '@chakra-ui/icon';
 import React from 'react';
 import { FaMapMarkerAlt } from 'react-icons/fa';
-import { Marker as MapboxMarker } from 'react-map-gl';
-import type { MarkerProps as Props } from 'react-map-gl';
+import { Marker as MapboxMarker } from 'react-map-gl/maplibre';
+import type { MarkerProps as Props } from 'react-map-gl/maplibre';
 
 type MarkerProps = {
     coordinates: [number, number];

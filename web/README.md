@@ -16,7 +16,7 @@ Then, copy the `.env.example` file, rename it to `.env.local` and add your Mapbo
 
 Run the frontend using:
 ```bash
-yarn start
+yarn dev
 ```
 
 To build for production, use:

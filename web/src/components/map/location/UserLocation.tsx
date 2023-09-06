@@ -1,8 +1,8 @@
 import { useColorModeValue } from '@chakra-ui/color-mode';
 import { chakra, keyframes } from '@chakra-ui/system';
-import { LngLat } from 'mapbox-gl';
+import { LngLat } from 'maplibre-gl';
 import React from 'react';
-import { Marker } from 'react-map-gl';
+import { Marker } from 'react-map-gl/maplibre';
 
 const pulse = keyframes`
 0%   { transform: scale(1); opacity: 1; }

@@ -1,9 +1,9 @@
 import { IconButton } from '@chakra-ui/button';
 import { useToast } from '@chakra-ui/react';
-import { LngLat } from 'mapbox-gl';
+import { LngLat } from 'maplibre-gl';
 import React from 'react';
 import { MdMyLocation } from 'react-icons/md';
-import { useMap } from 'react-map-gl';
+import { useMap } from 'react-map-gl/maplibre';
 import { mapBounds } from '../../../utils/constants';
 import { inBounds } from '../../../utils/inBounds';
 

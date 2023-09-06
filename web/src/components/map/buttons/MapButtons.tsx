@@ -1,5 +1,5 @@
 import { VStack } from '@chakra-ui/layout';
-import { LngLat } from 'mapbox-gl';
+import { LngLat } from 'maplibre-gl';
 import React from 'react';
 import { TargetMarkerInfo } from '../Map';
 import { AddButton } from './AddButton';

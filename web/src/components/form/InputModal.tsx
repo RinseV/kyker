@@ -11,7 +11,7 @@ import {
     useToast
 } from '@chakra-ui/react';
 import { format, parse } from 'date-fns/esm';
-import { LngLat } from 'mapbox-gl';
+import { LngLat } from 'maplibre-gl';
 import React, { useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { namedOperations, useCreateSpottingMutation } from '../../generated/graphql';

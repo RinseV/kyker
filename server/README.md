@@ -25,7 +25,7 @@ Make sure you have installed [PostGIS](https://postgis.net/) v3.2+ since the dat
 
 Run the backend using:
 ```bash
-yarn dev
+yarn start:dev
 ```
 
 ## Built with

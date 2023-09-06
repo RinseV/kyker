@@ -1,7 +1,7 @@
 import { useColorModeValue } from '@chakra-ui/color-mode';
 import { Flex, Stack, Text } from '@chakra-ui/layout';
 import { format, formatDistanceToNow, isToday } from 'date-fns';
-import { LngLat } from 'mapbox-gl';
+import { LngLat } from 'maplibre-gl';
 import React, { useMemo } from 'react';
 import { FaBinoculars, FaCar } from 'react-icons/fa';
 import { SpottingFragment } from '../../../generated/graphql';
